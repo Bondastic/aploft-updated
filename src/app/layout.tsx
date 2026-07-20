@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 
-import type { Metadata } from "next";
-
 const siteName = "AP Klar";
-const siteUrl = "https://apklar.vercel.app/"; // ret til dit rigtige domæne
+const siteUrl = "https://apklar.vercel.app/";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
