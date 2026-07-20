@@ -1,0 +1,18 @@
+# Secrets — aldrig commit disse
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# Node / Next.js
+node_modules/
+.next/
+out/
+build/
+dist/
+
+# Misc
+.DS_Store
+*.log
+npm-debug.log*

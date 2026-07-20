@@ -1,0 +1,301 @@
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;500;600;700;800&display=swap");
+
+@import "tailwindcss";
+
+/* Class-baseret dark mode (Tailwind v4): "dark:"-varianten slår til, når
+   forfaren har klassen "dark" (sat på <html> af utils/darkMode.ts). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-ink: #2c2440;
+  --color-ink-dark: #ece7f9;
+  --color-purple: #7c4fe0;
+  --color-purple-dark: #5b32b8;
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Baloo 2", "Nunito", ui-sans-serif, system-ui, sans-serif;
+}
+
+html,
+body {
+  font-family: var(--font-sans);
+  background-color: #faf8ff;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background-color: rgba(124, 79, 224, 0.3);
+  border-radius: 999px;
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float-slow {
+  animation: float-slow 5s ease-in-out infinite;
+}
+
+/* Tilgængelighed: reducér/slå animationer fra, hvis brugeren har bedt om det
+   på OS-niveau (prefers-reduced-motion), ud over vores egen in-app toggle. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* =========================================================================
+   NATTETILSTAND (dark mode)
+   Tailwind v4 bruger CSS-variabler til farvetokens (--color-ink,
+   --color-purple), så de opdateres automatisk i hele appen, når vi
+   omdefinerer dem under .dark. Derudover overstyrer vi eksplicit de
+   "hårdkodede" Tailwind-paletfarver (bg-white, bg-emerald-50, osv.), der
+   bruges til kort, baggrunde og status-feedback, så alt bevarer god
+   kontrast og læsbarhed i mørkt tema — inkl. grønt/rødt/gult
+   rigtigt/forkert-feedback, som ellers er svært at se i mørkt tema.
+   ======================================================================= */
+.dark {
+  --color-ink: var(--color-ink-dark);
+  color-scheme: dark;
+}
+
+.dark body,
+.dark .bg-\[\#faf8ff\] {
+  background-color: #171225 !important;
+}
+
+/* Kort- og panel-baggrunde */
+.dark .bg-white {
+  background-color: #241d38 !important;
+}
+.dark .bg-white\/95 {
+  background-color: rgba(23, 18, 37, 0.95) !important;
+}
+.dark .bg-white\/80 {
+  background-color: rgba(36, 29, 56, 0.8) !important;
+}
+.dark .bg-white\/70 {
+  background-color: rgba(36, 29, 56, 0.7) !important;
+}
+.dark .bg-white\/60 {
+  background-color: rgba(36, 29, 56, 0.6) !important;
+}
+.dark .bg-white\/15 {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+.dark .border-white {
+  border-color: rgba(255, 255, 255, 0.25) !important;
+}
+.dark .text-white,
+.dark .text-white\/80 {
+  color: #fdfcff !important;
+}
+
+/* Ink (tekst/kant/baggrund baseret på grundfarven) */
+.dark .bg-ink\/5 {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+.dark .bg-ink\/10 {
+  background-color: rgba(255, 255, 255, 0.09) !important;
+}
+.dark .border-ink\/5 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+.dark .border-ink\/10 {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.dark .border-ink\/15 {
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+.dark .border-ink\/20 {
+  border-color: rgba(255, 255, 255, 0.22) !important;
+}
+.dark .text-ink\/30 {
+  color: rgba(236, 231, 249, 0.35) !important;
+}
+.dark .text-ink\/40 {
+  color: rgba(236, 231, 249, 0.45) !important;
+}
+.dark .text-ink\/50 {
+  color: rgba(236, 231, 249, 0.58) !important;
+}
+.dark .text-ink\/60 {
+  color: rgba(236, 231, 249, 0.68) !important;
+}
+.dark .text-ink\/70 {
+  color: rgba(236, 231, 249, 0.78) !important;
+}
+.dark .text-ink\/80 {
+  color: rgba(236, 231, 249, 0.86) !important;
+}
+
+/* Lilla accent (bruges til knapper, links, fremhævet tekst) */
+.dark .text-purple {
+  color: #bda3f7 !important;
+}
+.dark .bg-purple\/5 {
+  background-color: rgba(124, 79, 224, 0.14) !important;
+}
+.dark .bg-purple\/10 {
+  background-color: rgba(124, 79, 224, 0.26) !important;
+}
+.dark .border-purple\/20 {
+  border-color: rgba(124, 79, 224, 0.35) !important;
+}
+.dark .border-purple\/30 {
+  border-color: rgba(124, 79, 224, 0.45) !important;
+}
+.dark .border-purple\/40 {
+  border-color: rgba(124, 79, 224, 0.55) !important;
+}
+.dark .border-purple\/50 {
+  border-color: rgba(124, 79, 224, 0.6) !important;
+}
+.dark .ring-purple\/20 {
+  --tw-ring-color: rgba(124, 79, 224, 0.35) !important;
+}
+.dark .ring-purple\/30 {
+  --tw-ring-color: rgba(124, 79, 224, 0.45) !important;
+}
+
+/* Status: rigtigt (grønt) / forkert (rødt) / opmærksomhed (gult) —
+   de lyse pastelbaggrunde fra lys-temaet ombygges til tonede, mørke
+   varianter med lys, tydelig tekst ovenpå. */
+.dark .bg-emerald-50 {
+  background-color: rgba(16, 185, 129, 0.16) !important;
+}
+.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.22) !important;
+}
+.dark .border-emerald-300 {
+  border-color: rgba(52, 211, 153, 0.6) !important;
+}
+.dark .border-emerald-400 {
+  border-color: #34d399 !important;
+}
+.dark .text-emerald-600 {
+  color: #6ee7b7 !important;
+}
+.dark .text-emerald-700 {
+  color: #86efac !important;
+}
+.dark .text-emerald-800 {
+  color: #bbf7d0 !important;
+}
+
+.dark .bg-rose-50 {
+  background-color: rgba(244, 63, 94, 0.16) !important;
+}
+.dark .bg-rose-100 {
+  background-color: rgba(244, 63, 94, 0.22) !important;
+}
+.dark .border-rose-200 {
+  border-color: rgba(251, 113, 133, 0.4) !important;
+}
+.dark .border-rose-300 {
+  border-color: rgba(251, 113, 133, 0.6) !important;
+}
+.dark .border-rose-400 {
+  border-color: #fb7185 !important;
+}
+.dark .text-rose-600 {
+  color: #fca5a5 !important;
+}
+.dark .text-rose-700 {
+  color: #fda4af !important;
+}
+.dark .text-rose-800 {
+  color: #fecdd3 !important;
+}
+.dark .bg-rose-600 {
+  background-color: #e11d48 !important;
+}
+
+.dark .bg-amber-50 {
+  background-color: rgba(245, 158, 11, 0.16) !important;
+}
+.dark .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.22) !important;
+}
+.dark .border-amber-300 {
+  border-color: rgba(252, 211, 77, 0.55) !important;
+}
+.dark .text-amber-500 {
+  color: #fbbf24 !important;
+}
+.dark .text-amber-600 {
+  color: #fcd34d !important;
+}
+.dark .text-amber-700 {
+  color: #fde68a !important;
+}
+.dark .text-amber-800 {
+  color: #fef3c7 !important;
+}
+.dark .ring-amber-300 {
+  --tw-ring-color: rgba(252, 211, 77, 0.5) !important;
+}
+
+/* Kategori-badgefarver (bruges af CATEGORY_COLOR_CLASSES) */
+.dark .bg-blue-100 { background-color: rgba(59, 130, 246, 0.22) !important; }
+.dark .text-blue-600 { color: #93c5fd !important; }
+.dark .text-blue-700 { color: #bfdbfe !important; }
+.dark .border-blue-300 { border-color: rgba(147, 197, 253, 0.6) !important; }
+.dark .ring-blue-300 { --tw-ring-color: rgba(147, 197, 253, 0.5) !important; }
+
+.dark .bg-cyan-100 { background-color: rgba(6, 182, 212, 0.22) !important; }
+.dark .text-cyan-700 { color: #a5f3fc !important; }
+.dark .ring-cyan-300 { --tw-ring-color: rgba(165, 243, 252, 0.5) !important; }
+
+.dark .bg-orange-100 { background-color: rgba(249, 115, 22, 0.22) !important; }
+.dark .text-orange-600 { color: #fdba74 !important; }
+.dark .text-orange-700 { color: #fed7aa !important; }
+.dark .ring-orange-300 { --tw-ring-color: rgba(253, 186, 116, 0.5) !important; }
+
+.dark .bg-teal-100 { background-color: rgba(20, 184, 166, 0.22) !important; }
+.dark .text-teal-700 { color: #99f6e4 !important; }
+.dark .border-teal-300 { border-color: rgba(153, 246, 228, 0.6) !important; }
+.dark .ring-teal-300 { --tw-ring-color: rgba(153, 246, 228, 0.5) !important; }
+
+.dark .bg-indigo-100 { background-color: rgba(99, 102, 241, 0.22) !important; }
+.dark .text-indigo-700 { color: #c7d2fe !important; }
+.dark .ring-indigo-300 { --tw-ring-color: rgba(199, 210, 254, 0.5) !important; }
+
+.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.22) !important; }
+.dark .text-red-700 { color: #fca5a5 !important; }
+.dark .border-red-300 { border-color: rgba(252, 165, 165, 0.6) !important; }
+.dark .ring-red-300 { --tw-ring-color: rgba(252, 165, 165, 0.5) !important; }
+
+.dark .bg-violet-100 { background-color: rgba(139, 92, 246, 0.22) !important; }
+.dark .text-violet-700 { color: #ddd6fe !important; }
+.dark .ring-violet-300 { --tw-ring-color: rgba(221, 214, 254, 0.5) !important; }
+
+.dark .bg-fuchsia-100 { background-color: rgba(217, 70, 239, 0.22) !important; }
+.dark .text-fuchsia-700 { color: #f5d0fe !important; }
+.dark .border-fuchsia-300 { border-color: rgba(245, 208, 254, 0.6) !important; }
+.dark .ring-fuchsia-300 { --tw-ring-color: rgba(245, 208, 254, 0.5) !important; }
+
+.dark .bg-purple-100 { background-color: rgba(124, 79, 224, 0.24) !important; }
+.dark .text-purple-700 { color: #d8ccfb !important; }
+.dark .border-purple-300 { border-color: rgba(216, 204, 251, 0.6) !important; }
+.dark .ring-purple-300 { --tw-ring-color: rgba(216, 204, 251, 0.5) !important; }
+
+/* Stone/parkament-toner (oversættelsesarket) forbliver bevidst lyse —
+   det er et "papirark", som skal ligne rigtigt papir uanset tema. */
+
