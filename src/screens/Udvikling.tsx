@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Progress } from "../types";
-import { ALL_CATEGORIES, CATEGORY_COLOR_CLASSES } from "../data/categories";
+import type { Education, Progress } from "../types";
+import { ALL_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES } from "../data/categories";
 import { getCategoryPath } from "../data/paths";
 import { LESSON_PASS_THRESHOLD } from "../lib/progress";
 import Mascot from "../components/Mascot";
@@ -27,6 +27,11 @@ const CATEGORY_WEIGHT: Record<string, number> = {
   saetningsled: 1.3,
   grammatik: 1.2,
   sumesse: 1.0,
+  // HHX-vægte: kommunikation og pragmatik er kernen i HHX-pensum.
+  kommunikation: 1.2,
+  pragmatik: 1.1,
+  semantik: 1.1,
+  sproghandlinger: 1.1,
 };
 
 const MIN_ANSWERS_FOR_GRADE = 15;
@@ -37,21 +42,23 @@ function gradeFor(pct: number): { grade: string; label: string } {
   return found ?? GRADE_SCALE[GRADE_SCALE.length - 1];
 }
 
-export default function UdviklingPage({ progress }: { progress: Progress }) {
+export default function UdviklingPage({ education, progress }: { education: Education; progress: Progress }) {
   const [showGrade, setShowGrade] = useState(false);
   const reduceMotion = progress.settings.reduceMotion;
+  const isHhx = education === "hhx";
 
   const rows = useMemo(() => {
-    return ALL_CATEGORIES.map((cat) => {
+    const cats = isHhx ? HHX_CATEGORIES : ALL_CATEGORIES;
+    return cats.map((cat) => {
       const stat = progress.categoryStats[cat.id];
       const total = stat?.total ?? 0;
       const correct = stat?.correct ?? 0;
       const pct = total > 0 ? Math.round((correct / total) * 100) : null;
-      const path = getCategoryPath(cat.id);
+      const path = getCategoryPath(cat.id, education);
       const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
       return { cat, total, correct, pct, lessonsPassed, lessonsTotal: path.nodes.length };
     });
-  }, [progress]);
+  }, [progress, education, isHhx]);
 
   const totalAnswered = rows.reduce((s, r) => s + r.total, 0);
   const eligibleRows = rows.filter((r) => r.total >= MIN_ANSWERS_PER_CATEGORY);

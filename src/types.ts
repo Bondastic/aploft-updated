@@ -1,6 +1,13 @@
 // Delte typer for APLOFT
 
-export type Track = "almen" | "latin";
+// Hvilken gymnasial uddannelse brugeren går på. STX = det almene gymnasium
+// (rød farveprofil), HHX = det merkantile gymnasium (blå farveprofil).
+// Valges første gang i velkomstskærmen og kan skiftes under Profil →
+// Indstillinger. Bemærk: HTX har ikke AP — derfor kun STX og HHX.
+export type Education = "stx" | "hhx";
+
+// "Spor" i appen: de to STX-spor (almen + latin) og HHX-sporet.
+export type Track = "almen" | "latin" | "hhx";
 
 export type AlmenCategoryId =
   | "ordklasser"
@@ -18,7 +25,19 @@ export type LatinCategoryId =
   | "oversaettelse"
   | "kultur";
 
-export type CategoryId = AlmenCategoryId | LatinCategoryId;
+// HHX-kategorier (jf. læreplanens faglige indhold: kommunikationsteori,
+// sproghandlinger, semantik, pragmatik, genrebevidst formidling, elementær
+// sproghistorie samt strategier for sprogtilegnelse).
+export type HhxCategoryId =
+  | "kommunikation"
+  | "sproghandlinger"
+  | "semantik"
+  | "pragmatik"
+  | "genrer"
+  | "sproghistorie"
+  | "laeringsstrategier";
+
+export type CategoryId = AlmenCategoryId | LatinCategoryId | HhxCategoryId;
 
 // De 7 officielle sætningsled-symboler (analysetegn), brugt som identifikatorer.
 // Det visuelle tegn tegnes af <LedGlyph /> i components/icons.tsx, så de altid
@@ -46,8 +65,17 @@ export type IconName =
   | "grammatik"
   | "oversaettelse"
   | "kultur"
+  | "kommunikation"
+  | "sproghandlinger"
+  | "semantik"
+  | "pragmatik"
+  | "genrer"
+  | "sproghistorie"
+  | "laeringsstrategier"
   | "almen"
   | "latin"
+  | "hhx"
+  | "stx"
   | "fuld"
   | "bolt"
   | "ultimativ"
@@ -201,6 +229,12 @@ export interface LessonResult {
 export interface Progress {
   userId: string;
   nickname: string;
+  // Hvilken uddannelse appen viser indhold for ("stx" eller "hhx").
+  // Sættes i velkomstskærmen, skiftes under Profil → Indstillinger.
+  education: Education;
+  // Om brugeren har gennemgået velkomstskærmen (uddannelsesvalg). Eksisterende
+  // brugere med gemt progress migreres til true, så de ikke møder skærmen igen.
+  onboarded: boolean;
   xp: number;
   streakDays: number;
   multiplier: number;

@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import type { CategoryId, MascotPose, Progress, Task, Track } from "../types";
+import type { CategoryId, Education, MascotPose, Progress, Task, Track } from "../types";
 import { isContentTask } from "../types";
-import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, LATIN_CATEGORIES, getCategory } from "../data/categories";
+import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
 import { getCategoryPath, getLessonTasks, type LessonNode } from "../data/paths";
 import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import TranslationSheet from "../components/TranslationSheet";
@@ -24,17 +25,19 @@ function shuffle<T>(arr: T[]): T[] {
 type View = "categories" | "path" | "session" | "result";
 
 export default function PracticePage({
+  education,
   progress,
   onCorrect,
   onWrong,
   onLessonComplete,
 }: {
+  education: Education;
   progress: Progress;
   onCorrect: (category: CategoryId) => void;
   onWrong: (category: CategoryId) => void;
   onLessonComplete: (lessonId: string, pct: number) => void;
 }) {
-  const [tab, setTab] = useState<Track>("almen");
+  const [tab, setTab] = useState<Track>(education === "hhx" ? "hhx" : "almen");
   const [view, setView] = useState<View>("categories");
   const [activeCategory, setActiveCategory] = useState<CategoryId | null>(null);
   const [activeNode, setActiveNode] = useState<LessonNode | null>(null);
@@ -46,7 +49,9 @@ export default function PracticePage({
   const [pose, setPose] = useState<MascotPose>("explain");
   const [prevBestPct, setPrevBestPct] = useState<number | null>(null);
 
-  const categories = tab === "almen" ? ALMEN_CATEGORIES : LATIN_CATEGORIES;
+  const isHhx = education === "hhx";
+  const theme = getEducation(education);
+  const categories = isHhx ? HHX_CATEGORIES : tab === "almen" ? ALMEN_CATEGORIES : LATIN_CATEGORIES;
   const reduceMotion = progress.settings.reduceMotion;
 
   function openCategory(catId: CategoryId) {
@@ -60,7 +65,7 @@ export default function PracticePage({
 
   function startLesson(node: LessonNode) {
     const alreadyPassed = (progress.completedLessons[node.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
-    const authored = getLessonTasks(node);
+    const authored = getLessonTasks(node, education);
     // FØRSTE gennemgang: fast, gennemtænkt rækkefølge — undervisning før
     // opgaver, aldrig tilfældig. Kun EFTER beståelse må træningen randomiseres,
     // og så er det kun opgaverne (ikke undervisningstrinene), der blandes,
@@ -134,7 +139,7 @@ export default function PracticePage({
           aria-valuemax={sessionTasks.length}
           aria-label="Fremgang i forløbet"
         >
-          <div className="h-full rounded-full bg-purple transition-all" style={{ width: `${(index / sessionTasks.length) * 100}%` }} />
+          <div className={cn("h-full rounded-full transition-all", theme.bar)} style={{ width: `${(index / sessionTasks.length) * 100}%` }} />
         </div>
         {gradableCount > 0 && (index > 0 || answered) && (
           <p className="text-center text-xs font-semibold text-ink/40" aria-live="polite">
@@ -173,7 +178,7 @@ export default function PracticePage({
         <Mascot pose={pct >= 70 ? "celebrate" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
         <h2 className="font-display text-2xl font-extrabold text-ink">{activeNode?.title ?? "Forløb"} klaret!</h2>
         <p className="text-ink/60">
-          Du fik <span className="font-bold text-purple">{correctCount}</span> ud af {gradableCount} rigtige (
+          Du fik <span className={cn("font-bold", theme.accentText)}>{correctCount}</span> ud af {gradableCount} rigtige (
           <span className="font-bold">{pct}%</span>).
         </p>
         {passed ? (
@@ -189,7 +194,7 @@ export default function PracticePage({
           <p
             className={cn(
               "mx-auto max-w-sm rounded-2xl px-4 py-3 text-sm font-semibold",
-              isNewBest ? "bg-purple/10 text-purple" : "bg-ink/5 text-ink/60"
+              isNewBest ? cn("bg-ink/5", theme.accentText) : "bg-ink/5 text-ink/60"
             )}
             aria-live="polite"
           >
@@ -207,7 +212,7 @@ export default function PracticePage({
           {activeNode && (
             <button
               onClick={() => startLesson(activeNode)}
-              className="rounded-full bg-purple px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30"
+              className={cn("rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md", theme.solidBg)}
             >
               Øv dette forløb igen
             </button>
@@ -223,7 +228,7 @@ export default function PracticePage({
   if (view === "path" && activeCategory) {
     const cat = getCategory(activeCategory)!;
     const colors = CATEGORY_COLOR_CLASSES[cat.color];
-    const path = getCategoryPath(activeCategory);
+    const path = getCategoryPath(activeCategory, education);
     const stat = progress.categoryStats[activeCategory];
     const overallPct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
 
@@ -247,7 +252,7 @@ export default function PracticePage({
           <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
             <div className="mb-1.5 flex items-center justify-between text-sm">
               <span className="font-bold text-ink">Din gennemsnitlige score i {cat.short}</span>
-              <span className="font-bold text-purple">{overallPct}% rigtige</span>
+              <span className={cn("font-bold", theme.accentText)}>{overallPct}% rigtige</span>
             </div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10">
               <div className={cn("h-full rounded-full", colors.solid)} style={{ width: `${overallPct}%` }} />
@@ -282,7 +287,7 @@ export default function PracticePage({
                   className={cn(
                     "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
                     unlocked ? "border-ink/10 bg-white hover:-translate-y-0.5 hover:shadow-md" : "cursor-not-allowed border-ink/5 bg-ink/5 opacity-60",
-                    isReview && unlocked && "border-purple/30 bg-purple/5"
+                    isReview && unlocked && cn("border-ink/10 bg-ink/5")
                   )}
                 >
                   <div
@@ -296,7 +301,11 @@ export default function PracticePage({
                   <div className="min-w-0 flex-1">
                     <p className={cn("font-bold", unlocked ? "text-ink" : "text-ink/40")}>
                       {node.title}
-                      {isReview && <span className="ml-2 rounded-full bg-purple/10 px-2 py-0.5 text-[10px] font-bold uppercase text-purple">Opsamling</span>}
+                      {isReview && (
+                        <span className={cn("ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold uppercase", theme.accentText)}>
+                          Opsamling
+                        </span>
+                      )}
                     </p>
                     {result ? (
                       <p className="text-xs text-ink/50">Bedste resultat: {result.bestPct}% rigtige · forsøgt {result.timesPlayed}×</p>
@@ -323,36 +332,49 @@ export default function PracticePage({
     <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Øv dig</h1>
-        <p className="text-sm text-ink/50">Vælg en kategori for at se dens forløb — de vigtigste og mest grundlæggende emner står øverst.</p>
+        <p className="text-sm text-ink/50">
+          {isHhx
+            ? "Her er HHX-pensum: fælles grammatik + kommunikation, semantik, pragmatik, genrer, sproghistorie og læringsstrategier."
+            : "Vælg en kategori for at se dens forløb — de vigtigste og mest grundlæggende emner står øverst."}
+        </p>
       </div>
 
-      <div className="flex rounded-2xl bg-ink/5 p-1">
-        <button
-          onClick={() => setTab("almen")}
-          className={cn("flex-1 rounded-xl py-2 text-sm font-bold transition", tab === "almen" ? "bg-white text-purple shadow-sm" : "text-ink/40")}
-        >
-          <span className="inline-flex items-center justify-center gap-1.5">
-            <CategoryIcon name="almen" className="h-4 w-4" />
-            Almen del
-          </span>
-        </button>
-        <button
-          onClick={() => setTab("latin")}
-          className={cn("flex-1 rounded-xl py-2 text-sm font-bold transition", tab === "latin" ? "bg-white text-orange-600 shadow-sm" : "text-ink/40")}
-        >
-          <span className="inline-flex items-center justify-center gap-1.5">
-            <CategoryIcon name="latin" className="h-4 w-4" />
-            Latindel
-          </span>
-        </button>
-      </div>
+      {isHhx ? (
+        <div className="flex rounded-2xl bg-ink/5 p-1">
+          <div className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white py-2 text-sm font-bold shadow-sm text-blue-600">
+            <CategoryIcon name="hhx" className="h-4 w-4" />
+            HHX-pensum
+          </div>
+        </div>
+      ) : (
+        <div className="flex rounded-2xl bg-ink/5 p-1">
+          <button
+            onClick={() => setTab("almen")}
+            className={cn("flex-1 rounded-xl py-2 text-sm font-bold transition", tab === "almen" ? "bg-white text-purple shadow-sm" : "text-ink/40")}
+          >
+            <span className="inline-flex items-center justify-center gap-1.5">
+              <CategoryIcon name="almen" className="h-4 w-4" />
+              Almen del
+            </span>
+          </button>
+          <button
+            onClick={() => setTab("latin")}
+            className={cn("flex-1 rounded-xl py-2 text-sm font-bold transition", tab === "latin" ? "bg-white text-orange-600 shadow-sm" : "text-ink/40")}
+          >
+            <span className="inline-flex items-center justify-center gap-1.5">
+              <CategoryIcon name="latin" className="h-4 w-4" />
+              Latindel
+            </span>
+          </button>
+        </div>
+      )}
 
       <div className="space-y-3">
         {categories.map((cat) => {
           const stat = progress.categoryStats[cat.id];
           const colors = CATEGORY_COLOR_CLASSES[cat.color];
           const pct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
-          const path = getCategoryPath(cat.id);
+          const path = getCategoryPath(cat.id, education);
           const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
           return (
             <button

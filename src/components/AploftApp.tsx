@@ -1,20 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { CategoryId, CategoryStat, Progress } from "../types";
+import { AnimatePresence, motion } from "framer-motion";
+import type { CategoryId, CategoryStat, Education, Progress } from "../types";
 import type { ExamTrack } from "../lib/examGenerator";
 import {
   addXp,
+  completeOnboarding,
   loadProgress,
   recordAnswer,
   recordExamAttempt,
   recordLessonResult,
   resetProgress,
   saveProgress,
+  setEducation,
   touchStreak,
 } from "../lib/progress";
 import TopBar from "./TopBar";
 import BottomNav, { type NavPage } from "./BottomNav";
+import WelcomePage from "../screens/Welcome";
 import HomePage from "../screens/Home";
 import PracticePage from "../screens/Practice";
 import ExamPage from "../screens/Exam";
@@ -41,6 +45,28 @@ export default function AploftApp() {
     if (hydrated) saveProgress(progress);
   }, [progress, hydrated]);
 
+  // Før hydration kender vi ikke brugerens rigtige tilstand (uddannelse,
+  // onboarded, XP) — den ligger i localStorage. For at undgå en hydration-
+  // mismatch mellem server- og klient-rendering viser vi derfor en tom,
+  // neutral skal, indtil vi har læst tilstanden i browseren.
+  if (!hydrated) {
+    return <div className="min-h-screen bg-[#faf8ff]" aria-hidden="true" />;
+  }
+
+  // Første besøg: vis velkomstskærmen (uddannelsesvalg + valgfrit brugernavn).
+  // Når valget er taget, gemmes det i localStorage — næste besøg starter
+  // direkte i appen med den valgte uddannelse.
+  if (!progress.onboarded) {
+    return (
+      <div className="min-h-screen bg-[#faf8ff]">
+        <WelcomePage
+          reduceMotion={progress.settings.reduceMotion}
+          onComplete={(education, nickname) => setProgress((p) => completeOnboarding(p, education, nickname))}
+        />
+      </div>
+    );
+  }
+
   function handleCorrect(category: CategoryId) {
     setProgress((p) => addXp(recordAnswer(p, category, true), 10));
   }
@@ -65,6 +91,13 @@ export default function AploftApp() {
     });
   }
 
+  function handleSetEducation(education: Education) {
+    // XP, streak og resultater beholdes — kun indholdet skifter spor.
+    setProgress((p) => setEducation(p, education));
+  }
+
+  const education = progress.education;
+
   return (
     <div className="min-h-screen bg-[#faf8ff]">
       <a
@@ -75,25 +108,48 @@ export default function AploftApp() {
       </a>
       <TopBar progress={progress} />
       <main id="main-content">
-        {page === "home" && <HomePage progress={progress} onNavigate={(p) => setPage(p)} />}
-        {page === "practice" && (
-          <PracticePage progress={progress} onCorrect={handleCorrect} onWrong={handleWrong} onLessonComplete={handleLessonComplete} />
-        )}
-        {page === "exam" && (
-          <ExamPage progress={progress} onCorrect={handleCorrect} onWrong={handleWrong} onExamComplete={handleExamComplete} />
-        )}
-        {page === "symbols" && <SymbolsPage progress={progress} />}
-        {page === "lynkursus" && <LynkursusPage progress={progress} />}
-        {page === "udvikling" && <UdviklingPage progress={progress} />}
-        {page === "profile" && (
-          <ProfilePage
-            progress={progress}
-            onNavigate={(p) => setPage(p)}
-            onSetNickname={(name) => setProgress((p) => ({ ...p, nickname: name }))}
-            onSetReduceMotion={(v) => setProgress((p) => ({ ...p, settings: { ...p.settings, reduceMotion: v } }))}
-            onReset={() => setProgress(resetProgress())}
-          />
-        )}
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={page}
+            initial={progress.settings.reduceMotion ? false : { opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={progress.settings.reduceMotion ? undefined : { opacity: 0, y: -8 }}
+            transition={{ duration: 0.16, ease: "easeOut" }}
+          >
+            {page === "home" && <HomePage progress={progress} onNavigate={(p) => setPage(p)} />}
+            {page === "practice" && (
+              <PracticePage
+                education={education}
+                progress={progress}
+                onCorrect={handleCorrect}
+                onWrong={handleWrong}
+                onLessonComplete={handleLessonComplete}
+              />
+            )}
+            {page === "exam" && (
+              <ExamPage
+                education={education}
+                progress={progress}
+                onCorrect={handleCorrect}
+                onWrong={handleWrong}
+                onExamComplete={handleExamComplete}
+              />
+            )}
+            {page === "symbols" && <SymbolsPage progress={progress} />}
+            {page === "lynkursus" && <LynkursusPage education={education} progress={progress} />}
+            {page === "udvikling" && <UdviklingPage education={education} progress={progress} />}
+            {page === "profile" && (
+              <ProfilePage
+                progress={progress}
+                onNavigate={(p) => setPage(p)}
+                onSetNickname={(name) => setProgress((p) => ({ ...p, nickname: name }))}
+                onSetReduceMotion={(v) => setProgress((p) => ({ ...p, settings: { ...p.settings, reduceMotion: v } }))}
+                onSetEducation={handleSetEducation}
+                onReset={() => setProgress(resetProgress())}
+              />
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
       <BottomNav
         page={(["home", "practice", "exam", "symbols", "profile"] as NavPage[]).includes(page as NavPage) ? (page as NavPage) : "home"}

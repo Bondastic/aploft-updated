@@ -12,7 +12,7 @@ export const metadata: Metadata = {
     template: `%s | ${siteName}`,
   },
   description:
-    "Gratis øvelsesapp til Almen Sprogforståelse (AP): ordklasser, sætningsled, tempus, kasus, syntaks og latin. Din progression gemmes lokalt — ingen login, ingen tredjepartscookies.",
+    "Gratis øvelsesapp til Almen Sprogforståelse (AP) på STX og HHX: ordklasser, sætningsled, tempus, kasus, syntaks, latin — og på HHX også kommunikation, semantik, pragmatik, genrer og sproghistorie. Din progression gemmes lokalt — ingen login, ingen tredjepartscookies.",
   applicationName: siteName,
   keywords: [
     "almen sprogforståelse",
@@ -26,6 +26,10 @@ export const metadata: Metadata = {
     "gymnasium",
     "STX",
     "HHX",
+    "kommunikation",
+    "semantik",
+    "pragmatik",
+    "sproghandlinger",
   ],
   authors: [{ name: siteName }],
   creator: siteName,

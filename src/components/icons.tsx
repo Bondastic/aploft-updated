@@ -51,10 +51,13 @@ export function ExamIcon({ className }: IconProps) {
 export function SymbolsIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <rect x="3" y="3" width="7" height="7" rx="1" />
-      <circle cx="17.5" cy="6.5" r="3.5" />
-      <path d="M3.5 21l6-11 6 11z" />
-      <path d="M14 21h7" />
+      {/* ○ = udsagnsled med × = grundled indeni */}
+      <circle cx="9.5" cy="10" r="5" />
+      <path d="M7.2 7.8l4.6 4.6M11.8 7.8l-4.6 4.6" />
+      {/* △ = genstandsled */}
+      <path d="M19 6.5l-2.2 4h4.4z" />
+      {/* 〰 = adverbial */}
+      <path d="M5.5 18.5q1.1.9 2.2 0t2.2 0t2.2 0t2.2 0" />
     </svg>
   );
 }
@@ -427,6 +430,92 @@ export function LockIcon({ className }: IconProps) {
   );
 }
 
+// --- HHX-kategori-ikoner ------------------------------------------------
+
+export function KommunikationIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 11.5a8.5 8.5 0 0 1-8.5 8.5c-1.2 0-2.4-.25-3.5-.7L3 21l1.7-6A8.5 8.5 0 1 1 21 11.5Z" />
+      <path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01" />
+    </svg>
+  );
+}
+
+export function SproghandlingerIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 12a8.5 8.5 0 0 1-8.5 8.5c-1.2 0-2.4-.25-3.5-.7L3 21l1.7-6A8.5 8.5 0 1 1 21 12Z" />
+      <path d="M12 8v4M12 15h.01" />
+    </svg>
+  );
+}
+
+export function SemantikIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 6c-1.5-1.2-3.5-2-6-2H3v13h3c2.5 0 4.5.8 6 2 1.5-1.2 3.5-2 6-2h3V4h-3c-2.5 0-4.5.8-6 2Z" />
+      <path d="M12 3.5l.9 1.8 1.8.9-1.8.9-.9 1.8-.9-1.8-1.8-.9 1.8-.9Z" />
+    </svg>
+  );
+}
+
+export function PragmatikIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M21 12a8 8 0 0 1-8 8c-1.1 0-2.2-.22-3.2-.62L4 21l1.62-5.8A8 8 0 1 1 21 12Z" />
+      <path d="M9.5 9.5h6M9.5 12.5h3.5" />
+    </svg>
+  );
+}
+
+export function GenrerIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="m12 3 9 5-9 5-9-5 9-5Z" />
+      <path d="m3 13 9 5 9-5" />
+    </svg>
+  );
+}
+
+export function SproghistorieIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M7 3h10M7 21h10" />
+      <path d="M8 3c0 4.5 1.8 6.5 4 6.5s4-2 4-6.5" />
+      <path d="M8 21c0-4.5 1.8-6.5 4-6.5s4 2 4 6.5" />
+    </svg>
+  );
+}
+
+export function LaeringsstrategierIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 3a6 6 0 0 0-3.5 10.9c.8.6 1.5 1.3 1.5 2.1h4c0-.8.7-1.5 1.5-2.1A6 6 0 0 0 12 3Z" />
+      <path d="M9.5 18.5h5M10.5 21h3" />
+    </svg>
+  );
+}
+
+export function HhxIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <path d="M3 12.5h18" />
+    </svg>
+  );
+}
+
+export function StxIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="m2 9 10-5 10 5-10 5L2 9Z" />
+      <path d="M6 11v4c0 1.5 2.7 3 6 3s6-1.5 6-3v-4" />
+      <path d="M22 9v5" />
+    </svg>
+  );
+}
+
 const ICON_MAP: Record<IconName, (p: IconProps) => React.ReactElement> = {
   ordklasser: WordClassIcon,
   saetningsled: SentenceIcon,
@@ -440,8 +529,17 @@ const ICON_MAP: Record<IconName, (p: IconProps) => React.ReactElement> = {
   grammatik: TempleIcon,
   oversaettelse: BookIcon,
   kultur: AmphoraIcon,
+  kommunikation: KommunikationIcon,
+  sproghandlinger: SproghandlingerIcon,
+  semantik: SemantikIcon,
+  pragmatik: PragmatikIcon,
+  genrer: GenrerIcon,
+  sproghistorie: SproghistorieIcon,
+  laeringsstrategier: LaeringsstrategierIcon,
   almen: TextIcon,
   latin: TempleIcon,
+  hhx: HhxIcon,
+  stx: StxIcon,
   fuld: GraduationCapIcon,
   bolt: BoltIcon,
   ultimativ: InfinityStarIcon,

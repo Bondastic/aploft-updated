@@ -1,6 +1,7 @@
 import { ALMEN_TASKS } from "../data/questions";
 import { LATIN_TASKS } from "../data/latinQuestions";
-import type { Task, Track } from "../types";
+import { HHX_TASKS } from "../data/hhxQuestions";
+import type { Education, Task, Track } from "../types";
 
 export type ExamTrack = Track | "fuld" | "ultimativ";
 
@@ -13,19 +14,23 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+// STX-banken: almen del + latindel.
 export const ALL_TASKS: Task[] = [...ALMEN_TASKS, ...LATIN_TASKS];
+// HHX-banken: fælles grammatik + HHX-emnerne.
+export const ALL_HHX_TASKS: Task[] = HHX_TASKS;
 
-export function poolForTrack(track: ExamTrack): Task[] {
+export function poolForTrack(track: ExamTrack, education: Education = "stx"): Task[] {
   if (track === "almen") return ALMEN_TASKS;
   if (track === "latin") return LATIN_TASKS;
-  // "fuld" og "ultimativ" trækker begge fra hele puljen.
-  return ALL_TASKS;
+  if (track === "hhx") return HHX_TASKS;
+  // "fuld" og "ultimativ" trækker fra hele puljen for den valgte uddannelse.
+  return education === "hhx" ? HHX_TASKS : ALL_TASKS;
 }
 
 // Vælger `count` opgaver, spreder på tværs af kategorier og undgår gentagelser,
 // så vidt puljen tillader det.
-export function generateExam(track: ExamTrack, count: number): Task[] {
-  const pool = poolForTrack(track);
+export function generateExam(track: ExamTrack, count: number, education: Education = "stx"): Task[] {
+  const pool = poolForTrack(track, education);
   const shuffled = shuffle(pool);
 
   if (count >= shuffled.length) return shuffled;

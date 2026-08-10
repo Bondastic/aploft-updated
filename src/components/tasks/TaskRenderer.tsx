@@ -7,6 +7,7 @@ import { isContentTask } from "../../types";
 import { SYMBOLS, getSymbolDef } from "../../data/symbols";
 import { isWriteAnswerCorrect } from "../../data/builders";
 import { CheckIcon, XIcon, LedGlyph, LightbulbIcon } from "../icons";
+import AskAiButton from "../AskAi";
 import { cn } from "../../utils/cn";
 
 function shuffle<T>(arr: T[]): T[] {
@@ -27,11 +28,23 @@ export default function TaskRenderer({
 }) {
   const [answered, setAnswered] = useState(false);
   const [wasCorrect, setWasCorrect] = useState(false);
+  const [checking, setChecking] = useState(false);
 
   function finish(correct: boolean) {
     setAnswered(true);
     setWasCorrect(correct);
     onSubmit(correct);
+  }
+
+  // Lille "Lingua tænker…"-pause, før svaret afsløres — det gør oplevelsen
+  // lidt mere levende, som om maskotten lige skal vurdere svaret.
+  function finishWithPause(correct: boolean) {
+    if (checking) return;
+    setChecking(true);
+    window.setTimeout(() => {
+      setChecking(false);
+      finish(correct);
+    }, 450);
   }
 
   // Rene undervisningstrin ("teach"/"info") har ikke noget rigtigt/forkert —
@@ -41,18 +54,33 @@ export default function TaskRenderer({
       <div className="space-y-4">
         {task.type === "teach" && <TeachTask task={task} onContinue={() => finish(true)} />}
         {task.type === "info" && <InfoTask task={task} onContinue={() => finish(true)} />}
+        <div className="flex justify-end">
+          <AskAiButton task={task} />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      {task.type === "choice" && <ChoiceTask task={task} answered={answered} onFinish={finish} />}
-      {task.type === "click-word" && <ClickWordTask task={task} answered={answered} onFinish={finish} />}
-      {task.type === "analysis" && <AnalysisTask task={task} answered={answered} onFinish={finish} />}
-      {task.type === "build-sentence" && <BuildSentenceTask task={task} answered={answered} onFinish={finish} />}
-      {task.type === "write" && <WriteTask task={task} answered={answered} onFinish={finish} />}
-      {task.type === "table-fill" && <TableFillTask task={task} answered={answered} onFinish={finish} />}
+    <div className="relative space-y-4">
+      {task.type === "choice" && <ChoiceTask task={task} answered={answered} onFinish={finishWithPause} />}
+      {task.type === "click-word" && <ClickWordTask task={task} answered={answered} onFinish={finishWithPause} />}
+      {task.type === "analysis" && <AnalysisTask task={task} answered={answered} onFinish={finishWithPause} />}
+      {task.type === "build-sentence" && <BuildSentenceTask task={task} answered={answered} onFinish={finishWithPause} />}
+      {task.type === "write" && <WriteTask task={task} answered={answered} onFinish={finishWithPause} />}
+      {task.type === "table-fill" && <TableFillTask task={task} answered={answered} onFinish={finishWithPause} />}
+
+      {checking && (
+        <div
+          className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/70 backdrop-blur-[2px]"
+          aria-live="polite"
+        >
+          <div className="flex items-center gap-2.5 rounded-full border border-ink/10 bg-white px-4 py-2.5 shadow-md">
+            <span className="h-4 w-4 animate-spin rounded-full border-2 border-purple border-t-transparent" aria-hidden="true" />
+            <span className="text-sm font-semibold text-ink/70">Lingua tænker…</span>
+          </div>
+        </div>
+      )}
 
       {answered && (
         <motion.div
@@ -67,11 +95,14 @@ export default function TaskRenderer({
         >
           <div className="mb-1 flex items-center gap-2 font-semibold">
             {wasCorrect ? <CheckIcon className="h-4 w-4" /> : <XIcon className="h-4 w-4" />}
-            {wasCorrect ? "Rigtigt!" : "Ikke helt."}
+            {wasCorrect ? "Rigtigt! 🎉" : "Næsten! Sådan hænger det sammen:"}
           </div>
           <p>{task.explanation}</p>
         </motion.div>
       )}
+      <div className="flex justify-end">
+        <AskAiButton task={task} />
+      </div>
     </div>
   );
 }
@@ -221,7 +252,7 @@ function ChoiceTask({
         <button
           onClick={check}
           disabled={selected === null}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
         >
           Tjek svar
         </button>
@@ -289,7 +320,7 @@ function ClickWordTask({
         <button
           onClick={check}
           disabled={selected.size === 0}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 disabled:opacity-40"
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
         >
           Tjek svar
         </button>
@@ -435,7 +466,7 @@ function AnalysisTask({
         <button
           onClick={check}
           disabled={!allAssigned}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 disabled:opacity-40"
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
         >
           Tjek svar
         </button>
@@ -565,7 +596,7 @@ function BuildSentenceTask({
         <button
           onClick={check}
           disabled={chosen.length !== task.words.length}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 disabled:opacity-40"
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
         >
           Tjek svar
         </button>
@@ -683,7 +714,7 @@ function TableFillTask({
         <button
           onClick={check}
           disabled={!allFilled}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 disabled:opacity-40"
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
         >
           Tjek svar
         </button>
@@ -744,7 +775,7 @@ function WriteTask({
         <button
           onClick={check}
           disabled={value.trim().length === 0}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 disabled:opacity-40"
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
         >
           Tjek svar
         </button>

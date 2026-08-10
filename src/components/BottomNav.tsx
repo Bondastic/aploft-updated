@@ -24,7 +24,7 @@ export default function BottomNav({ page, onNavigate }: { page: NavPage; onNavig
               onClick={() => onNavigate(item.id)}
               aria-current={active ? "page" : undefined}
               className={cn(
-                "flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
+                "flex flex-1 flex-col items-center gap-0.5 py-2.5 text-[11px] font-semibold transition active:scale-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
                 active ? "text-purple" : "text-ink/40"
               )}
             >
