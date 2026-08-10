@@ -13,7 +13,9 @@ import { cn } from "../utils/cn";
 //
 // Hvert trin peger på et element via en data-tour-attribut. Trinnet skifter
 // selv side via onNavigate, venter på at siden er rendret, og måler så
-// elementets position for at placere hullet.
+// elementets position for at placere hullet. For "side-trin" (Lynkursus og
+// Din udvikling) sidder attributten på hele sidens indhold, og hullet klippes
+// til skærmen, så det er tydeligt, at det er siden som helhed, der vises frem.
 
 export type TourPage = "profile" | "home" | "practice" | "exam" | "symbols" | "lynkursus" | "udvikling";
 
@@ -33,9 +35,9 @@ const STEPS: TourStep[] = [
   },
   {
     page: "home",
-    target: '[data-tour="hjem-kort"]',
+    target: '[data-tour="hjem"]',
     title: "Hjem",
-    text: "Forsiden samler dine statusser og genveje til alle dele af appen. Herfra kan du altid finde vej.",
+    text: "Hjem-fanen nederst på skærmen fører dig altid tilbage til forsiden med dine statusser og genveje til hele appen.",
   },
   {
     page: "practice",
@@ -59,13 +61,13 @@ const STEPS: TourStep[] = [
     page: "lynkursus",
     target: '[data-tour="lynkursus"]',
     title: "Lynkursus",
-    text: "Et hurtigt opslagsværk, når du skal genopfriske en regel eller en bøjning, før du tager en prøve.",
+    text: "Hele siden er et hurtigt opslagsværk: her kan du genopfriske en regel eller en bøjning, før du tager en prøve.",
   },
   {
     page: "udvikling",
     target: '[data-tour="udvikling"]',
     title: "Din udvikling",
-    text: "Følg dine fremskridt kategori for kategori, og få en standpunktskarakter af mig, når du har trænet lidt.",
+    text: "Her samles hele din udvikling: fremskridt kategori for kategori og en standpunktskarakter fra mig, når du har trænet lidt.",
   },
 ];
 
@@ -106,11 +108,23 @@ export default function GuidedTour({
   }, [active]);
 
   // Mål det aktuelle trins målelement og gem dets position (viewport-koordinater).
+  // Højden af bund-navigationen: hullet lukkes over den, så den ikke lyser med.
+  const NAV_GAP = 72;
   const measure = useCallback(() => {
     const el = document.querySelector<HTMLElement>(STEPS[step].target);
     if (!el) return;
     const r = el.getBoundingClientRect();
-    setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    // Hold hullet inden for vinduet. Når målet er en hel side (fx Lynkursus
+    // eller Din udvikling), der er højere end skærmen, lukkes hullet ved
+    // vinduets bund i stedet for at dække hele skærmen og forsvinde.
+    const top = Math.max(0, r.top);
+    const left = Math.max(0, r.left);
+    const right = Math.min(vw, r.right);
+    const bottom = r.bottom > vh ? vh - NAV_GAP : Math.min(vh, r.bottom);
+    if (right <= left || bottom <= top) return;
+    setRect({ top, left, width: right - left, height: bottom - top });
   }, [step]);
 
   // Skift til trinnets side, og mål målet, når siden er rendret. To forsøg:

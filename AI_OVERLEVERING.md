@@ -179,8 +179,8 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
 - **src/db/** er ubrugt boilerplate (drizzle/postgres). Rør den ikke.
 - **Guide og AnimatePresence:** GuidedTour navigerer selv via onNavigate (stabil
   useCallback) og måler med 80/280 ms delays. data-tour-attributter skal følge med,
-  hvis man flytter/omdøber elementer (profil, hjem-kort, ov-dig, proeve, symboler,
-  lynkursus, udvikling).
+  hvis man flytter/omdøber elementer (profil, hjem, ov-dig, proeve, symboler +
+  lynkursus/udvikling, som sidder på sidenes rod-div, så hele siden lyser op).
 
 ---
 

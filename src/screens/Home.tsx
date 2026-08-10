@@ -17,8 +17,7 @@ export default function HomePage({
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
-      {/* data-tour: rundvisningens mål på Hjem-siden */}
-      <div data-tour="hjem-kort" className={cn("overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white shadow-lg", isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30")}>
+      <div className={cn("overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white shadow-lg", isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30")}>
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="font-display text-xl font-extrabold">{greeting}</p>
