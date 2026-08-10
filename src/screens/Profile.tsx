@@ -138,7 +138,7 @@ export default function ProfilePage({
         <div className="rounded-2xl border border-ink/10 bg-ink/[0.02] p-4">
           <p className="mb-1 text-sm font-bold text-ink">Uddannelse</p>
           <p className="mb-3 text-xs text-ink/50">
-            Valgte du forkert i starten? Skift her — dine XP og resultater bliver bevaret. Du kan altid skifte tilbage.
+            Valgte du forkert i starten? Skift her. Dine XP og resultater bliver bevaret, og du kan altid skifte tilbage.
           </p>
           <div className="grid grid-cols-2 gap-2">
             <button

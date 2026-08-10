@@ -114,7 +114,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
                     <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
                   </span>
                   <span className="flex-1 text-ink/70">
-                    <span className="font-semibold text-ink">{r.cat.short}</span> — {r.pct}% rigtige indtil videre
+                    <span className="font-semibold text-ink">{r.cat.short}</span>: {r.pct}% rigtige indtil videre
                   </span>
                 </li>
               ))}
@@ -141,7 +141,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/10">
                 <div className={cn("h-full rounded-full", CATEGORY_COLOR_CLASSES[r.cat.color].solid)} style={{ width: `${r.pct ?? 0}%` }} />
               </div>
-              <span className="w-20 shrink-0 text-right text-xs font-semibold text-ink/50">{r.pct !== null ? `${r.pct}%` : "—"}</span>
+              <span className="w-20 shrink-0 text-right text-xs font-semibold text-ink/50">{r.pct !== null ? `${r.pct}%` : "-"}</span>
             </div>
           ))}
         </div>
@@ -184,7 +184,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
 
         <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-800">
           Bemærk: opgavebanken i AP Klar er endnu ikke fuldt færdig. Karakteren er derfor kun et estimat baseret på det, du allerede har
-          trænet — den kan blive langt mere præcis, når flere kategorier og forløb er fuldt udbyggede.
+          trænet. Den kan blive langt mere præcis, når flere kategorier og forløb er fuldt udbyggede.
         </p>
       </div>
     </div>

@@ -7,7 +7,6 @@ import { getEducation } from "../lib/education";
 import { getCategory } from "../data/categories";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
-import TranslationSheet from "../components/TranslationSheet";
 import { cn } from "../utils/cn";
 import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
 
@@ -116,7 +115,7 @@ export default function ExamPage({
           <h1 className="font-display text-2xl font-extrabold text-ink">Tag en prøve</h1>
           <p className="text-sm text-ink/50">
             {isHhx
-              ? `Vælg hvor lang prøven skal være — den trækker fra hele HHX-pensum (${ALL_HHX_TASKS.length} spørgsmål).`
+              ? `Vælg hvor lang prøven skal være. Den trækker fra hele HHX-pensum (${ALL_HHX_TASKS.length} spørgsmål).`
               : "Vælg spor og hvor lang prøven skal være, så finder vi de bedste spørgsmål til dig."}
           </p>
         </div>
@@ -239,9 +238,8 @@ export default function ExamPage({
         </div>
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
-          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} />
+          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
         </div>
-        {task.showSheet && <TranslationSheet reduceMotion={reduceMotion} />}
         {answered && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}

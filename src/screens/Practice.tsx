@@ -9,7 +9,6 @@ import { LESSON_PASS_THRESHOLD } from "../lib/progress";
 import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
-import TranslationSheet from "../components/TranslationSheet";
 import { cn } from "../utils/cn";
 import { CategoryIcon, CheckIcon, ChevronRightIcon, LockIcon } from "../components/icons";
 
@@ -66,7 +65,7 @@ export default function PracticePage({
   function startLesson(node: LessonNode) {
     const alreadyPassed = (progress.completedLessons[node.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
     const authored = getLessonTasks(node, education);
-    // FØRSTE gennemgang: fast, gennemtænkt rækkefølge — undervisning før
+    // FØRSTE gennemgang: fast, gennemtænkt rækkefølge med undervisning før
     // opgaver, aldrig tilfældig. Kun EFTER beståelse må træningen randomiseres,
     // og så er det kun opgaverne (ikke undervisningstrinene), der blandes,
     // så eleven ikke skal læse forklaringer igen, hun allerede har set.
@@ -149,11 +148,8 @@ export default function PracticePage({
         )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
-          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} />
+          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
         </div>
-        {(task.category === "oversaettelse" || task.category === "sumesse" || task.showSheet) && (
-          <TranslationSheet reduceMotion={reduceMotion} />
-        )}
         {answered && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= sessionTasks.length ? "Se resultat →" : "Næste →"}
@@ -187,7 +183,7 @@ export default function PracticePage({
           </p>
         ) : (
           <p className="mx-auto max-w-sm rounded-2xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
-            Du skal have mindst {LESSON_PASS_THRESHOLD}% rigtige for at låse det næste forløb op. Prøv igen — det går bedre næste gang!
+            Du skal have mindst {LESSON_PASS_THRESHOLD}% rigtige for at låse det næste forløb op. Prøv igen. Det går bedre næste gang!
           </p>
         )}
         {!isFirstAttempt && (
@@ -201,7 +197,7 @@ export default function PracticePage({
             {isNewBest && <>🎉 Ny rekord! Din bedste score i dette forløb er nu {bestPctNow}% (forrige bedste: {prevBestPct}%).</>}
             {isSameAsBest && <>Du matchede din bedste score på {bestPctNow}%.</>}
             {!isNewBest && !isSameAsBest && (
-              <>Din bedste score for dette forløb er stadig {bestPctNow}% (denne gang fik du {pct}%) — den højeste score gemmes altid.</>
+              <>Din bedste score for dette forløb er stadig {bestPctNow}% (denne gang fik du {pct}%). Den højeste score gemmes altid.</>
             )}
           </p>
         )}
@@ -335,7 +331,7 @@ export default function PracticePage({
         <p className="text-sm text-ink/50">
           {isHhx
             ? "Her er HHX-pensum: fælles grammatik + kommunikation, semantik, pragmatik, genrer, sproghistorie og læringsstrategier."
-            : "Vælg en kategori for at se dens forløb — de vigtigste og mest grundlæggende emner står øverst."}
+            : "Vælg en kategori for at se dens forløb. De vigtigste og mest grundlæggende emner står øverst."}
         </p>
       </div>
 

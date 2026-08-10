@@ -1,0 +1,29 @@
+{
+  "name": "AP Klar",
+  "short_name": "AP Klar",
+  "description": "Gratis øvelsesapp til Almen Sprogforståelse (AP) på STX og HHX: grammatik, latin, kommunikation, semantik, pragmatik og sproghistorie. Din progression gemmes lokalt, uden login.",
+  "lang": "da",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#faf8ff",
+  "theme_color": "#7c4fe0",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

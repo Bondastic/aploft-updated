@@ -6,9 +6,15 @@ import type { LedSymbol, Task } from "../../types";
 import { isContentTask } from "../../types";
 import { SYMBOLS, getSymbolDef } from "../../data/symbols";
 import { isWriteAnswerCorrect } from "../../data/builders";
-import { CheckIcon, XIcon, LedGlyph, LightbulbIcon } from "../icons";
+import { CheckIcon, XIcon, LedGlyph, LightbulbIcon, ScrollIcon } from "../icons";
 import AskAiButton from "../AskAi";
+import TranslationSheet from "../TranslationSheet";
 import { cn } from "../../utils/cn";
+
+// Kategorier, hvor ordforråd/bøjning faktisk er en del af opgaven. Her må
+// eleven altid slå op i oversættelsesarket, inden hun svarer. Logikken ligger
+// samlet her i TaskRenderer, så arket opfører sig ens i Øv dig og i prøver.
+const SHEET_CATEGORIES = new Set<string>(["oversaettelse", "grammatik", "sumesse", "ordforraad"]);
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -22,13 +28,22 @@ function shuffle<T>(arr: T[]): T[] {
 export default function TaskRenderer({
   task,
   onSubmit,
+  reduceMotion = false,
 }: {
   task: Task;
   onSubmit: (correct: boolean) => void;
+  reduceMotion?: boolean;
 }) {
   const [answered, setAnswered] = useState(false);
   const [wasCorrect, setWasCorrect] = useState(false);
   const [checking, setChecking] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  // Oversættelsesarket vises kun ved latinske opgaver, hvor ordforråd eller
+  // bøjning er en del af opgaven (oversættelse, grammatik, sum/esse og
+  // ordforråd) - og kun indtil opgaven er besvaret, så man ikke kan "snyde"
+  // bagefter.
+  const showSheet = !answered && (task.showSheet === true || SHEET_CATEGORIES.has(task.category));
 
   function finish(correct: boolean) {
     setAnswered(true);
@@ -36,7 +51,7 @@ export default function TaskRenderer({
     onSubmit(correct);
   }
 
-  // Lille "Lingua tænker…"-pause, før svaret afsløres — det gør oplevelsen
+  // Lille "Lingua tænker…"-pause, før svaret afsløres. Det gør oplevelsen
   // lidt mere levende, som om maskotten lige skal vurdere svaret.
   function finishWithPause(correct: boolean) {
     if (checking) return;
@@ -47,16 +62,30 @@ export default function TaskRenderer({
     }, 450);
   }
 
-  // Rene undervisningstrin ("teach"/"info") har ikke noget rigtigt/forkert —
+  const footer = (
+    <div className={cn("flex flex-wrap items-center gap-2", showSheet ? "justify-between" : "justify-end")}>
+      {showSheet && (
+        <button
+          onClick={() => setSheetOpen(true)}
+          className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 transition hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+        >
+          <ScrollIcon className="h-3.5 w-3.5" aria-hidden="true" />
+          Oversættelsesark
+        </button>
+      )}
+      <AskAiButton task={task} />
+    </div>
+  );
+
+  // Rene undervisningstrin ("teach"/"info") har ikke noget rigtigt/forkert:
   // eleven læser stoffet og trykker "Forstået, fortsæt" for at gå videre.
   if (isContentTask(task)) {
     return (
       <div className="space-y-4">
         {task.type === "teach" && <TeachTask task={task} onContinue={() => finish(true)} />}
         {task.type === "info" && <InfoTask task={task} onContinue={() => finish(true)} />}
-        <div className="flex justify-end">
-          <AskAiButton task={task} />
-        </div>
+        {footer}
+        <TranslationSheet open={sheetOpen} onClose={() => setSheetOpen(false)} reduceMotion={reduceMotion} />
       </div>
     );
   }
@@ -100,9 +129,8 @@ export default function TaskRenderer({
           <p>{task.explanation}</p>
         </motion.div>
       )}
-      <div className="flex justify-end">
-        <AskAiButton task={task} />
-      </div>
+      {footer}
+      <TranslationSheet open={sheetOpen} onClose={() => setSheetOpen(false)} reduceMotion={reduceMotion} />
     </div>
   );
 }
@@ -581,7 +609,7 @@ function BuildSentenceTask({
         >
           <p className="mb-1 font-semibold">Bemærk: latin har fri ordstilling</p>
           <p>
-            Din sætning er grammatisk korrekt, fordi det er kasusendelserne — ikke pladsen i sætningen — der viser
+            Din sætning er grammatisk korrekt, fordi det er kasusendelserne (ikke pladsen i sætningen), der viser
             ordenes funktion. Den mest almindelige rækkefølge (typisk med verbet sidst) er dog:{" "}
             <span className="font-semibold text-ink">{task.correctOrder.join(" ")}</span>.
           </p>

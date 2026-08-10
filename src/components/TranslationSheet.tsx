@@ -64,8 +64,8 @@ const DECLENSION_TABLES: DeclensionTable[] = [
     ],
   },
   {
-    title: "Esse (at være) — nutid",
-    note: "Det vigtigste verbum — uregelmæssigt, men brug personendelserne",
+    title: "Esse (at være), nutid",
+    note: "Det vigtigste verbum: uregelmæssigt, men brug personendelserne",
     headers: ["Person", "Ental", "Flertal"],
     rows: [
       ["1. person", "sum (jeg er)", "sumus (vi er)"],
@@ -74,7 +74,7 @@ const DECLENSION_TABLES: DeclensionTable[] = [
     ],
   },
   {
-    title: "1. konjugation: amare (at elske) — nutid",
+    title: "1. konjugation: amare (at elske), nutid",
     note: "Mønster for regelmæssige verber på -are",
     headers: ["Person", "Ental", "Flertal"],
     rows: [
@@ -104,8 +104,19 @@ function matches(entry: VocabEntry, query: string): boolean {
   return entry.latin.toLowerCase().includes(q) || entry.danish.toLowerCase().includes(q) || (entry.note ?? "").toLowerCase().includes(q);
 }
 
-export default function TranslationSheet({ reduceMotion = false }: { reduceMotion?: boolean }) {
-  const [open, setOpen] = useState(false);
+// Oversættelsesarket: en modal med ordforråd + bøjningsskemaer. Vises kun,
+// når en latinsk opgave faktisk kræver ordforråd/bøjning, og knappen til at
+// åbne den ligger i selve opgaven (TaskRenderer), ikke som en permanent
+// flydende knap. Arket kan ikke åbnes bagefter, når man har svaret.
+export default function TranslationSheet({
+  open,
+  onClose,
+  reduceMotion = false,
+}: {
+  open: boolean;
+  onClose: () => void;
+  reduceMotion?: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<"ord" | "boejning">("ord");
 
@@ -120,166 +131,156 @@ export default function TranslationSheet({ reduceMotion = false }: { reduceMotio
   const totalMatches = grouped.reduce((sum, g) => sum + g.words.length, 0);
 
   function close() {
-    setOpen(false);
     setQuery("");
+    onClose();
   }
 
   return (
-    <>
-      <motion.button
-        onClick={() => setOpen(true)}
-        initial={false}
-        whileHover={reduceMotion ? undefined : { y: -4 }}
-        whileTap={reduceMotion ? undefined : { scale: 0.96 }}
-        className="fixed bottom-24 right-4 z-30 flex items-center gap-2 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 px-4 py-3 text-sm font-semibold text-white shadow-xl shadow-orange-300/50 ring-2 ring-white sm:bottom-8"
-      >
-        <ScrollIcon className="h-5 w-5" />
-        Oversættelsesark
-      </motion.button>
-
-      <AnimatePresence>
-        {open && (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={close}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Oversættelsesark"
+        >
           <motion.div
-            className="fixed inset-0 z-40 flex items-end justify-center bg-black/40 backdrop-blur-sm sm:items-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={close}
+            onClick={(e) => e.stopPropagation()}
+            initial={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0.5 }}
+            animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
+            exit={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 200, damping: 24 }}
+            className="relative flex h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-[#f5ecd7] shadow-2xl sm:h-[85vh] sm:rounded-2xl"
           >
-            <motion.div
-              onClick={(e) => e.stopPropagation()}
-              initial={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0.5 }}
-              animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
-              exit={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0 }}
-              transition={{ type: "spring", stiffness: 200, damping: 24 }}
-              className="relative flex h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-[#f5ecd7] shadow-2xl sm:h-[85vh] sm:rounded-2xl"
-            >
-              {/* Sticky top: titel, luk, faneblade og søgefelt */}
-              <div className="shrink-0 border-b border-stone-300/60 bg-[#f5ecd7] px-3 pb-2 pt-3">
-                <div className="mb-2 flex items-center justify-between px-1">
-                  <p className="flex items-center gap-1.5 font-serif text-sm font-semibold text-stone-700">
-                    <ScrollIcon className="h-4 w-4" />
-                    Oversættelsesark
-                  </p>
-                  <button onClick={close} className="rounded-full bg-stone-200 p-1.5 text-stone-600 hover:bg-stone-300" aria-label="Luk">
-                    <XIcon className="h-4 w-4" />
-                  </button>
-                </div>
-
-                <div className="mb-2 flex rounded-xl bg-stone-200/70 p-1">
-                  <button
-                    onClick={() => setTab("ord")}
-                    className={cn("flex-1 rounded-lg py-1.5 text-xs font-bold transition", tab === "ord" ? "bg-white text-stone-800 shadow-sm" : "text-stone-500")}
-                  >
-                    Ordforråd
-                  </button>
-                  <button
-                    onClick={() => setTab("boejning")}
-                    className={cn("flex-1 rounded-lg py-1.5 text-xs font-bold transition", tab === "boejning" ? "bg-white text-stone-800 shadow-sm" : "text-stone-500")}
-                  >
-                    Bøjningsskemaer
-                  </button>
-                </div>
-
-                {tab === "ord" && (
-                  <div className="relative">
-                    <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
-                    <input
-                      type="text"
-                      inputMode="search"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Søg efter et ord (latin eller dansk)…"
-                      autoComplete="off"
-                      autoCapitalize="off"
-                      spellCheck={false}
-                      className="w-full rounded-xl border-2 border-stone-300 bg-white py-2 pl-9 pr-8 text-sm text-stone-800 outline-none focus:border-amber-500"
-                    />
-                    {query && (
-                      <button
-                        onClick={() => setQuery("")}
-                        aria-label="Ryd søgning"
-                        className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-stone-400 hover:bg-stone-100"
-                      >
-                        <XIcon className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
-                )}
+            {/* Sticky top: titel, luk, faneblade og søgefelt */}
+            <div className="shrink-0 border-b border-stone-300/60 bg-[#f5ecd7] px-3 pb-2 pt-3">
+              <div className="mb-2 flex items-center justify-between px-1">
+                <p className="flex items-center gap-1.5 font-serif text-sm font-semibold text-stone-700">
+                  <ScrollIcon className="h-4 w-4" />
+                  Oversættelsesark
+                </p>
+                <button onClick={close} className="rounded-full bg-stone-200 p-1.5 text-stone-600 hover:bg-stone-300" aria-label="Luk">
+                  <XIcon className="h-4 w-4" />
+                </button>
               </div>
 
-              {/* Scrollbart indhold */}
-              <div className="flex-1 overflow-y-auto px-3 py-3">
-                {tab === "ord" ? (
-                  <div className="rounded-lg border-4 border-white bg-white/60 p-3 shadow-inner">
-                    {query && (
-                      <p className="mb-2 text-xs font-semibold text-stone-500" aria-live="polite">
-                        {totalMatches === 0 ? "Ingen ord matcher søgningen." : `${totalMatches} ord matcher "${query}"`}
-                      </p>
-                    )}
-                    {grouped.map((g) => (
-                      <div key={g.type} className="mb-3 last:mb-0">
-                        <p className="mb-1 text-xs font-bold uppercase tracking-wide text-stone-500">{g.label}</p>
-                        <ul className="space-y-1">
-                          {g.words.map((w) => (
-                            <li
-                              key={w.latin}
-                              className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-b border-stone-200 pb-1.5 text-sm last:border-0"
-                            >
-                              <span className="font-serif italic text-stone-800">{highlight(w.latin, query)}</span>
-                              <span className="text-right text-stone-600">
-                                {highlight(w.danish, query)}
-                                {w.note && <span className="ml-1.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-[10px] font-semibold text-stone-500">{w.note}</span>}
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
+              <div className="mb-2 flex rounded-xl bg-stone-200/70 p-1">
+                <button
+                  onClick={() => setTab("ord")}
+                  className={cn("flex-1 rounded-lg py-1.5 text-xs font-bold transition", tab === "ord" ? "bg-white text-stone-800 shadow-sm" : "text-stone-500")}
+                >
+                  Ordforråd
+                </button>
+                <button
+                  onClick={() => setTab("boejning")}
+                  className={cn("flex-1 rounded-lg py-1.5 text-xs font-bold transition", tab === "boejning" ? "bg-white text-stone-800 shadow-sm" : "text-stone-500")}
+                >
+                  Bøjningsskemaer
+                </button>
+              </div>
+
+              {tab === "ord" && (
+                <div className="relative">
+                  <SearchIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-stone-400" />
+                  <input
+                    type="text"
+                    inputMode="search"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Søg efter et ord (latin eller dansk)…"
+                    autoComplete="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    className="w-full rounded-xl border-2 border-stone-300 bg-white py-2 pl-9 pr-8 text-sm text-stone-800 outline-none focus:border-amber-500"
+                  />
+                  {query && (
+                    <button
+                      onClick={() => setQuery("")}
+                      aria-label="Ryd søgning"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-stone-400 hover:bg-stone-100"
+                    >
+                      <XIcon className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Scrollbart indhold */}
+            <div className="flex-1 overflow-y-auto px-3 py-3">
+              {tab === "ord" ? (
+                <div className="rounded-lg border-4 border-white bg-white/60 p-3 shadow-inner">
+                  {query && (
+                    <p className="mb-2 text-xs font-semibold text-stone-500" aria-live="polite">
+                      {totalMatches === 0 ? "Ingen ord matcher søgningen." : `${totalMatches} ord matcher "${query}"`}
+                    </p>
+                  )}
+                  {grouped.map((g) => (
+                    <div key={g.type} className="mb-3 last:mb-0">
+                      <p className="mb-1 text-xs font-bold uppercase tracking-wide text-stone-500">{g.label}</p>
+                      <ul className="space-y-1">
+                        {g.words.map((w) => (
+                          <li
+                            key={w.latin}
+                            className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-0.5 border-b border-stone-200 pb-1.5 text-sm last:border-0"
+                          >
+                            <span className="font-serif italic text-stone-800">{highlight(w.latin, query)}</span>
+                            <span className="text-right text-stone-600">
+                              {highlight(w.danish, query)}
+                              {w.note && <span className="ml-1.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-[10px] font-semibold text-stone-500">{w.note}</span>}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {DECLENSION_TABLES.map((t) => (
+                    <div key={t.title} className="overflow-hidden rounded-lg border-4 border-white bg-white/60 shadow-inner">
+                      <div className="border-b border-stone-200 bg-white/70 px-3 py-1.5">
+                        <p className="text-xs font-bold text-stone-700">{t.title}</p>
+                        <p className="text-[11px] text-stone-500">{t.note}</p>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {DECLENSION_TABLES.map((t) => (
-                      <div key={t.title} className="overflow-hidden rounded-lg border-4 border-white bg-white/60 shadow-inner">
-                        <div className="border-b border-stone-200 bg-white/70 px-3 py-1.5">
-                          <p className="text-xs font-bold text-stone-700">{t.title}</p>
-                          <p className="text-[11px] text-stone-500">{t.note}</p>
-                        </div>
-                        <table className="w-full border-collapse text-left text-xs">
-                          <thead>
-                            <tr>
-                              {t.headers.map((h) => (
-                                <th key={h} className="border-b border-stone-200 px-3 py-1.5 font-bold text-stone-600">
-                                  {h}
-                                </th>
+                      <table className="w-full border-collapse text-left text-xs">
+                        <thead>
+                          <tr>
+                            {t.headers.map((h) => (
+                              <th key={h} className="border-b border-stone-200 px-3 py-1.5 font-bold text-stone-600">
+                                {h}
+                              </th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {t.rows.map((row, i) => (
+                            <tr key={i} className="odd:bg-white/40">
+                              {row.map((cell, j) => (
+                                <td key={j} className="border-b border-stone-100 px-3 py-1.5 font-serif italic text-stone-800 first:font-sans first:not-italic first:font-semibold first:text-stone-600">
+                                  {cell}
+                                </td>
                               ))}
                             </tr>
-                          </thead>
-                          <tbody>
-                            {t.rows.map((row, i) => (
-                              <tr key={i} className="odd:bg-white/40">
-                                {row.map((cell, j) => (
-                                  <td key={j} className="border-b border-stone-100 px-3 py-1.5 font-serif italic text-stone-800 first:font-sans first:not-italic first:font-semibold first:text-stone-600">
-                                    {cell}
-                                  </td>
-                                ))}
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
-              <p className="shrink-0 border-t border-stone-300/60 px-3 py-2 text-center text-xs text-stone-500">
-                Ordforrådet passer til opgaverne i oversættelsesdelen — du må altid bruge arket, også til en rigtig prøve.
-              </p>
-            </motion.div>
+            <p className="shrink-0 border-t border-stone-300/60 px-3 py-2 text-center text-xs text-stone-500">
+              Ordforrådet passer til opgaverne i oversættelsesdelen. Du må altid bruge arket, også til en rigtig prøve.
+            </p>
           </motion.div>
-        )}
-      </AnimatePresence>
-    </>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

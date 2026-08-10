@@ -13,9 +13,9 @@ import { cn } from "../utils/cn";
 // vælge igen næste gang. Brugernavnet er valgfrit.
 //
 // To korte trin:
-//  1) Vælg uddannelse — kortet "lyser op" med en glidende skala- og glød-
+//  1) Vælg uddannelse. Kortet "lyser op" med en glidende skala- og glød-
 //     animation, og "Vælg"-knappen glider op, når der er valgt noget.
-//  2) Brugernavn (valgfrit) — tryk "Kom i gang" (eller spring over).
+//  2) Brugernavn (valgfrit). Tryk "Kom i gang" (eller spring over).
 export default function WelcomePage({
   reduceMotion,
   onComplete,
@@ -30,8 +30,8 @@ export default function WelcomePage({
   const anim = reduceMotion ? { initial: false } : {};
 
   function chooseEdu(id: Education) {
-    // Kortet der trykkes på bliver valgt med en glidende animation — de andre
-    // kort forbliver synlige (bare lidt dæmpede), så der ikke er noget
+    // Kortet der trykkes på bliver valgt med en glidende animation, mens de
+    // andre kort forbliver synlige (bare lidt dæmpede), så der ikke er noget
     // mærkeligt "blink".
     setEducation(id);
   }
@@ -45,7 +45,7 @@ export default function WelcomePage({
       <Mascot
         pose={step === 1 ? "welcome" : "explain"}
         size="lg"
-        speech={step === 1 ? "Velkommen! Hvilken uddannelse går du på?" : "Skriv gerne et navn, så jeg kan hilse på dig — eller spring over."}
+        speech={step === 1 ? "Velkommen! Hvilken uddannelse går du på?" : "Skriv gerne et navn, så jeg kan hilse på dig. Du kan også springe over."}
         reduceMotion={reduceMotion}
       />
 
@@ -54,7 +54,7 @@ export default function WelcomePage({
         <p className="mx-auto mt-1 max-w-md text-sm text-ink/50">
           {step === 1
             ? "Vi har øvelser til begge uddannelser. Vælg din, så finder vi det rigtige pensum til dig."
-            : "Det tager kun 5 sekunder — og du kan altid skifte uddannelse senere under Profil → Indstillinger."}
+            : "Det tager kun 5 sekunder. Du kan altid skifte uddannelse senere under Profil → Indstillinger."}
         </p>
       </div>
 
@@ -213,7 +213,7 @@ export default function WelcomePage({
                 education === "stx" ? "border-red-200 bg-red-50 text-red-700" : "border-blue-200 bg-blue-50 text-blue-700"
               )}
             >
-              Du har valgt <span className="font-extrabold">{education ? EDU_THEMES[education].label : ""}</span> —{" "}
+              Du har valgt <span className="font-extrabold">{education ? EDU_THEMES[education].label : ""}</span>:{" "}
               {education ? EDU_THEMES[education].shortName : ""}
             </div>
 
@@ -221,7 +221,7 @@ export default function WelcomePage({
               <label htmlFor="welcome-nickname" className="mb-1.5 block text-sm font-bold text-ink">
                 Hvad skal vi kalde dig? <span className="font-semibold text-ink/40">(valgfrit)</span>
               </label>
-              <p className="mb-3 text-xs text-ink/50">Dit navn gemmes kun på denne enhed — du kan ændre det senere på Profil.</p>
+              <p className="mb-3 text-xs text-ink/50">Dit navn gemmes kun på denne enhed. Du kan ændre det senere på Profil.</p>
               <input
                 id="welcome-nickname"
                 value={nickname}

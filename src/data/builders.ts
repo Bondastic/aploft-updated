@@ -1,5 +1,5 @@
 // Hjælpefunktioner til at bygge opgaver med minimal kedelplade.
-// Brug disse i stedet for at skrive de fulde objekter i hånden — det gør det
+// Brug disse i stedet for at skrive de fulde objekter i hånden. Det gør det
 // nemt at tilføje mange nye spørgsmål (én linje pr. spørgsmål).
 import type {
   AnalysisTaskT,
@@ -64,7 +64,7 @@ export function an(
 
 /** Byg-sætningen-opgave (ordene skal sættes i rigtig rækkefølge).
  *  Sæt `wordOrderFree` til true for latinske sætninger, hvor enhver
- *  rækkefølge af de rigtige ord er grammatisk korrekt (fri ordstilling) —
+ *  rækkefølge af de rigtige ord er grammatisk korrekt (fri ordstilling).
  *  eleven får da en forklarende note, hvis rækkefølgen afviger fra den
  *  mest almindelige, men svaret tælles stadig som rigtigt. */
 export function bs(
@@ -147,7 +147,7 @@ export function tf(
 }
 
 /** Undervisnings-trin: forklarer et begreb, FØR eleven bliver spurgt om det.
- *  Ingen rigtigt/forkert — eleven trykker "Forstået" for at fortsætte.
+ *  Ingen rigtigt/forkert: eleven trykker "Forstået" for at fortsætte.
  *  Brug `sections` til korte, navngivne afsnit (fx "Hvorfor er det vigtigt?",
  *  "Sådan kender du det", "Sådan husker du det"), `examples` til konkrete
  *  eksempelsætninger og `tip` til en enkelt fremhævet huskeregel. */

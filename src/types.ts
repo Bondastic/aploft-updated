@@ -3,7 +3,7 @@
 // Hvilken gymnasial uddannelse brugeren går på. STX = det almene gymnasium
 // (rød farveprofil), HHX = det merkantile gymnasium (blå farveprofil).
 // Valges første gang i velkomstskærmen og kan skiftes under Profil →
-// Indstillinger. Bemærk: HTX har ikke AP — derfor kun STX og HHX.
+// Indstillinger. Bemærk: HTX har ikke AP, derfor kun STX og HHX.
 export type Education = "stx" | "hhx";
 
 // "Spor" i appen: de to STX-spor (almen + latin) og HHX-sporet.
@@ -129,7 +129,7 @@ export interface BuildSentenceTaskT extends TaskBase {
   correctOrder: string[];
   // Latin har fri ordstilling: kasusendelser (ikke pladsen i sætningen) viser
   // ordets funktion. Når dette er sat, tælles enhver rækkefølge med de rigtige
-  // ord som korrekt — men eleven får en forklarende note, hvis rækkefølgen
+  // ord som korrekt, men eleven får en forklarende note, hvis rækkefølgen
   // afviger fra den mest almindelige (typisk verbum sidst).
   wordOrderFree?: boolean;
 }
@@ -146,7 +146,7 @@ export interface WriteTaskT extends TaskBase {
   placeholder?: string;
 }
 
-// Info-/skema-trin: ingen "rigtigt/forkert" — eleven kigger på en
+// Info-/skema-trin: ingen "rigtigt/forkert"; eleven kigger på en
 // bøjningstabel (fx esse i nutid eller datid) og trykker videre, når hun har
 // læst den. Bruges til roligt at introducere et skema, FØR eleven bliver
 // bedt om at svare på spørgsmål om det (fx før eram/eras/erat).
@@ -162,7 +162,7 @@ export interface InfoTaskT extends TaskBase {
 // lærer og ikke kun en quiz. Vises FØR eleven overhovedet bliver bedt om at
 // svare på noget nyt. Besvarer altid: hvad er det? hvorfor er det vigtigt?
 // hvordan kender jeg det? hvornår bruger jeg det? hvordan husker jeg det?
-// Der er ingen rigtigt/forkert her — eleven trykker "Forstået" for at fortsætte.
+// Der er ingen rigtigt/forkert her: eleven trykker "Forstået" for at fortsætte.
 export interface TeachTaskT extends TaskBase {
   type: "teach";
   title: string;
@@ -235,6 +235,10 @@ export interface Progress {
   // Om brugeren har gennemgået velkomstskærmen (uddannelsesvalg). Eksisterende
   // brugere med gemt progress migreres til true, så de ikke møder skærmen igen.
   onboarded: boolean;
+  // Om brugeren har gennemgået (eller sprunget over) spotlight-rundvisningen.
+  // Nye brugere får den lige efter velkomstskærmen; eksisterende brugere
+  // migreres til true, så de ikke får turen.
+  guideDone: boolean;
   xp: number;
   streakDays: number;
   multiplier: number;

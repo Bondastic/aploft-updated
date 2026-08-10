@@ -73,9 +73,12 @@ export function ProfileIcon({ className }: IconProps) {
 
 export function FlameIcon({ className }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M12 2c1 3-2 4-2 7a4 4 0 1 0 8 0c0-1-.5-2-1-2 .5 2-1 3-1 3 .3-2-1-3-1-4.5C15 4 13.5 2.5 12 2z" />
-      <path d="M8.5 13a3.5 3.5 0 1 0 7 0c0-1.2-.6-2-1.3-2.8.2 1.3-.7 2-1.2 2.8.1-1.3-.5-2-1-3-.7 1-1.5 1.7-2 2.2-.5.5-1.5 1-1.5.8z" />
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className={className}>
+      {/* Flammen er inspireret af Lucide-icons "flame" (ISC-licens): den
+          klassiske, genkendelige flamme med en dansende, åben form. Den er
+          stroke-baseret ligesom resten af appens ikoner og forbliver krystalklar
+          selv i lille størrelse (fx i topbaren). */}
+      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
     </svg>
   );
 }
