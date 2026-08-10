@@ -8,14 +8,14 @@ import { cn } from "../utils/cn";
 // Spotlight-rundvisningen: en kort guide for nye brugere, der starter på
 // Profil (hvor man lander efter velkomstskærmen) og går gennem hele appen:
 // Hjem → Øv dig → Prøve → Symboler → Lynkursus → Din udvikling → Hjem.
+// De to sidste trin fremhæver genvejsknapperne på forsiden (som tager en
+// ind på lynkurset hhv. udviklingssiden), ikke selve siderne.
 // Alt andet end det aktuelle element mørklægges (spotlight-hul), scroll
 // låses, og Lingua forklarer kort i en taleboble. Kan springes over.
 //
 // Hvert trin peger på et element via en data-tour-attribut. Trinnet skifter
-// selv side via onNavigate, venter på at siden er rendret, og måler så
-// elementets position for at placere hullet. For "side-trin" (Lynkursus og
-// Din udvikling) sidder attributten på hele sidens indhold, og hullet klippes
-// til skærmen, så det er tydeligt, at det er siden som helhed, der vises frem.
+// selv side via onNavigate, venter på at siden er rendret, ruller målet ind
+// midt på skærmen og måler så elementets position for at placere hullet.
 
 export type TourPage = "profile" | "home" | "practice" | "exam" | "symbols" | "lynkursus" | "udvikling";
 
@@ -58,16 +58,16 @@ const STEPS: TourStep[] = [
     text: "De syv sætningsledssymboler, du skal bruge til syntaktisk analyse. Du kan slå dem op, når du har brug for det.",
   },
   {
-    page: "lynkursus",
-    target: '[data-tour="lynkursus"]',
-    title: "Lynkursus",
-    text: "Hele siden er et hurtigt opslagsværk: her kan du genopfriske en regel eller en bøjning, før du tager en prøve.",
+    page: "home",
+    target: '[data-tour="hjem-lynkursus"]',
+    title: "Lynkursus-knappen",
+    text: "På forsiden finder du knappen \"Lynkursus\" blandt genvejene. Den fører dig ind på lynkurset, hvor du kan slå regler, bøjninger og oversættelsesteknikker op, når du skal genopfriske noget.",
   },
   {
-    page: "udvikling",
-    target: '[data-tour="udvikling"]',
-    title: "Din udvikling",
-    text: "Her samles hele din udvikling: fremskridt kategori for kategori og en standpunktskarakter fra mig, når du har trænet lidt.",
+    page: "home",
+    target: '[data-tour="hjem-udvikling"]',
+    title: "Din udvikling-knappen",
+    text: "Den aflange knap \"Din udvikling\" nederst på forsiden tager dig til siden med dine fremskridt: statistik pr. kategori, anbefalinger og en standpunktskarakter fra Lingua.",
   },
 ];
 
@@ -108,17 +108,21 @@ export default function GuidedTour({
   }, [active]);
 
   // Mål det aktuelle trins målelement og gem dets position (viewport-koordinater).
-  // Højden af bund-navigationen: hullet lukkes over den, så den ikke lyser med.
+  // Først rulles målet ind midt på skærmen, så hullet altid er synligt (fx
+  // genvejsknapperne nederst på forsiden). Scroll-låsen fjernes kortvarigt,
+  // fordi overflow:hidden ellers blokerer programmatisk scroll.
   const NAV_GAP = 72;
   const measure = useCallback(() => {
     const el = document.querySelector<HTMLElement>(STEPS[step].target);
     if (!el) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "";
+    el.scrollIntoView({ block: "center", behavior: "auto" });
+    document.body.style.overflow = prevOverflow;
     const r = el.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    // Hold hullet inden for vinduet. Når målet er en hel side (fx Lynkursus
-    // eller Din udvikling), der er højere end skærmen, lukkes hullet ved
-    // vinduets bund i stedet for at dække hele skærmen og forsvinde.
+    // Hold hullet inden for vinduet og over bund-navigationen.
     const top = Math.max(0, r.top);
     const left = Math.max(0, r.left);
     const right = Math.min(vw, r.right);

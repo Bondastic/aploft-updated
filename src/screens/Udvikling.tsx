@@ -82,7 +82,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   const untouched = rows.filter((r) => r.total === 0);
 
   return (
-    <div data-tour="udvikling" className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Din udvikling</h1>
         <p className="text-sm text-ink/50">Se hvor du står i hver kategori, hvad du bør øve mest, og få en estimeret standpunktskarakter.</p>

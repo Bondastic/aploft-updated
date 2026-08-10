@@ -62,6 +62,7 @@ export default function HomePage({
         </button>
 
         <button
+          data-tour="hjem-lynkursus"
           onClick={() => onNavigate("lynkursus")}
           className="flex flex-col items-start gap-2 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
         >
@@ -84,6 +85,7 @@ export default function HomePage({
         </button>
 
         <button
+          data-tour="hjem-udvikling"
           onClick={() => onNavigate("udvikling")}
           className="col-span-2 flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
         >

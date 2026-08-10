@@ -241,10 +241,11 @@ dev-server kører og svarer ✅ · ingen commits lavet (du commit'er selv).
       mærket kun findes ét sted.
 - [x] **Ny spotlight-guide (GuidedTour):** starter på Profil-siden (hvor nye brugere lander efter
       velkomstskærmen) og går derefter igennem alle dele af appen: Hjem → Øv dig → Prøve → Symboler
-      → Lynkursus → Din udvikling → tilbage til Hjem. Alt andet end det aktuelle element mørklægges
-      med et spotlight-"hul", og Lingua forklarer kort i en taleboble. Kan springes over ("Spring
-      over", luk-knap eller Escape). Gemmes i progress (guideDone) - vises kun for førstegangsbrugere
-      og tager under et minut.
+      → Lynkursus → Din udvikling → tilbage til Hjem. De to sidste trin fremhæver genvejsknapperne
+      på forsiden (som tager en ind på siden), ikke selve siderne. Alt andet end det aktuelle element
+      mørklægges med et spotlight-"hul", og Lingua forklarer kort i en taleboble. Kan springes over
+      ("Spring over", luk-knap eller Escape). Gemmes i progress (guideDone) - vises kun for
+      førstegangsbrugere og tager under et minut.
 - [x] Den gamle OnboardingGuide-fil er slettet.
 
 **Runde 6 (10. aug.):** "em-dash-oprydning + dark-mode-script + ikoner + PWA + zip"
@@ -273,3 +274,14 @@ Tjek topbaren på 375 px: logo + mærke + streak/XP-tal i én lav række uden ov
       genkendelige flamme, stroke-baseret og krystalklar i lille størrelse (FlameIcon i
       components/icons.tsx).
 - [x] Hjem-hero-chippen fra runde 7-forsøget er fjernet igen (mærket findes kun i topbaren).
+
+**Runde 8 (10. aug.):** "rundvisning: sidste to trin peger på knapperne på forsiden"
+- [x] **Lynkursus-trinet:** man sendes til Hjem, siden scroller ned, og spotlyset rammer
+      genvejsknappen "Lynkursus" (ikke selve lynkurset). Boblen forklarer, at knappen
+      fører ind på lynkurset og hvad det bruges til.
+- [x] **Din udvikling-trinet:** samme princip: spotlyset rammer den aflange "Din udvikling"-
+      knap nederst på forsiden, og boblen forklarer, hvor knappen er, hvad den bruges til,
+      og hvor den tager dig hen.
+- [x] GuidedTour ruller nu målet ind midt på skærmen (scrollIntoView med kortvarig
+      ophævelse af scroll-låsen), så hullet altid er synligt, også for knapper langt
+      nede på siden.
