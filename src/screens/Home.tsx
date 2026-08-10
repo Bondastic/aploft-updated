@@ -1,7 +1,8 @@
 import type { Progress } from "../types";
 import Mascot from "../components/Mascot";
 import { getLevelInfo } from "../lib/progress";
-import { BoltIcon, ExamIcon, FlameIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon } from "../components/icons";
+import { getEducation } from "../lib/education";
+import { BoltIcon, CategoryIcon, ExamIcon, FlameIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon } from "../components/icons";
 import { cn } from "../utils/cn";
 
 export default function HomePage({
@@ -13,6 +14,7 @@ export default function HomePage({
 }) {
   const level = getLevelInfo(progress.xp);
   const greeting = progress.nickname ? `Hej, ${progress.nickname}!` : "Hej med dig!";
+  const theme = getEducation(progress.education);
   const isHhx = progress.education === "hhx";
 
   return (
@@ -24,6 +26,13 @@ export default function HomePage({
             <p className="mt-1 text-sm text-white/80">
               {isHhx ? "Klar til at træne HHX Almen Sprogforståelse i dag?" : "Klar til at træne STX Almen Sprogforståelse i dag?"}
             </p>
+            {/* Uddannelsesmærket vises kun på telefoner her i heroen, hvor der er
+                plads. I topbaren findes mærket kun på skærme ≥ 640 px, så nav-baren
+                forbliver én lav række. */}
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-bold sm:hidden">
+              <CategoryIcon name={isHhx ? "hhx" : "stx"} className="h-3.5 w-3.5" />
+              {theme.label} · {theme.shortName}
+            </span>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
               <span className="flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 font-semibold">
                 <FlameIcon className="h-4 w-4" /> {progress.streakDays} dages streak
