@@ -287,3 +287,5 @@ Tjek topbaren på 375 px: logo + mærke + streak/XP-tal i én lav række uden ov
       taleboble lægger sig under knappen med god luft, så den aldrig dækker målet.
       Øvrige trin scroller målet ind midt på skærmen (scrollIntoView med kortvarig
       ophævelse af scroll-låsen).
+- [x] Når rundvisningen afsluttes (eller springes over), rulles forsiden pænt op til
+      toppen, så man starter forfra ved heroen (respecterer reduceMotion).

@@ -63,7 +63,14 @@ export default function AploftApp() {
     setProgress((p) => finishGuide(p));
     setGuideActive(false);
     setPage("home");
-  }, []);
+    // Når rundvisningen slutter (eller springes over), rul forsiden pænt op til
+    // toppen, så man starter forfra ved heroen. Scrollen udsættes kort, så
+    // scroll-låsen (overflow:hidden) er ophævet, ellers blokerer den scroll.
+    const reduceMotion = progress.settings.reduceMotion;
+    window.setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    }, 60);
+  }, [progress.settings.reduceMotion]);
 
   const handleTourNavigate = useCallback((p: TourPage) => setPage(p), []);
 

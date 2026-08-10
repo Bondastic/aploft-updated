@@ -186,7 +186,9 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
   dækker den; øvrige trin centrerer målet. data-tour-attributter skal følge med,
   hvis man flytter/omdøber elementer: profil, hjem, ov-dig, proeve, symboler
   (bund-nav-faner) + hjem-lynkursus og hjem-udvikling (forsidens genvejsknapper,
-  som rundvisningens sidste to trin fremhæver i stedet for selve siderne).
+  som rundvisningens sidste to trin fremhæver i stedet for selve siderne). Når
+  turen slutter/springes over, ruller appen til toppen af forsiden (respekterer
+  reduceMotion).
 
 ---
 
