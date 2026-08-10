@@ -4,12 +4,12 @@ import { ExamIcon, HomeIcon, PracticeIcon, ProfileIcon, SymbolsIcon } from "./ic
 
 export type NavPage = "home" | "practice" | "exam" | "symbols" | "profile";
 
-const ITEMS: { id: NavPage; label: string; icon: (c?: string) => ReactNode }[] = [
-  { id: "home", label: "Hjem", icon: (c) => <HomeIcon className={c} /> },
-  { id: "practice", label: "Øv dig", icon: (c) => <PracticeIcon className={c} /> },
-  { id: "exam", label: "Prøve", icon: (c) => <ExamIcon className={c} /> },
-  { id: "symbols", label: "Symboler", icon: (c) => <SymbolsIcon className={c} /> },
-  { id: "profile", label: "Profil", icon: (c) => <ProfileIcon className={c} /> },
+const ITEMS: { id: NavPage; label: string; tour: string; icon: (c?: string) => ReactNode }[] = [
+  { id: "home", label: "Hjem", tour: "hjem", icon: (c) => <HomeIcon className={c} /> },
+  { id: "practice", label: "Øv dig", tour: "ov-dig", icon: (c) => <PracticeIcon className={c} /> },
+  { id: "exam", label: "Prøve", tour: "proeve", icon: (c) => <ExamIcon className={c} /> },
+  { id: "symbols", label: "Symboler", tour: "symboler", icon: (c) => <SymbolsIcon className={c} /> },
+  { id: "profile", label: "Profil", tour: "profil", icon: (c) => <ProfileIcon className={c} /> },
 ];
 
 export default function BottomNav({ page, onNavigate }: { page: NavPage; onNavigate: (p: NavPage) => void }) {
@@ -21,6 +21,7 @@ export default function BottomNav({ page, onNavigate }: { page: NavPage; onNavig
           return (
             <button
               key={item.id}
+              data-tour={item.tour}
               onClick={() => onNavigate(item.id)}
               aria-current={active ? "page" : undefined}
               className={cn(

@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { CategoryId, CategoryStat, Education, Progress } from "../types";
 import type { ExamTrack } from "../lib/examGenerator";
 import {
   addXp,
   completeOnboarding,
+  finishGuide,
   loadProgress,
   recordAnswer,
   recordExamAttempt,
@@ -18,6 +19,7 @@ import {
 } from "../lib/progress";
 import TopBar from "./TopBar";
 import BottomNav, { type NavPage } from "./BottomNav";
+import GuidedTour, { type TourPage } from "./GuidedTour";
 import WelcomePage from "../screens/Welcome";
 import HomePage from "../screens/Home";
 import PracticePage from "../screens/Practice";
@@ -33,6 +35,9 @@ export default function AploftApp() {
   const [progress, setProgress] = useState<Progress>(() => touchStreak(loadProgress()));
   const [page, setPage] = useState<AppPage>("home");
   const [hydrated, setHydrated] = useState(false);
+  // Spotlight-rundvisningen for nye brugere (starter på Profil lige efter
+  // velkomstskærmen og gennemgår hele appen).
+  const [guideActive, setGuideActive] = useState(false);
 
   // Undgå hydration-mismatch: gen-indlæs progress fra localStorage, når
   // komponenten er monteret i browseren.
@@ -45,8 +50,25 @@ export default function AploftApp() {
     if (hydrated) saveProgress(progress);
   }, [progress, hydrated]);
 
+  // Hvis brugeren har gennemgået velkomstskærmen, men ikke har fået (eller
+  // afsluttet) rundvisningen endnu, så start den på Profil. Det dækker både
+  // første besøg og en bruger, der lukkede fanen midt i turen.
+  useEffect(() => {
+    if (!hydrated || !progress.onboarded || progress.guideDone || guideActive) return;
+    setPage("profile");
+    setGuideActive(true);
+  }, [hydrated, progress.onboarded, progress.guideDone, guideActive]);
+
+  const handleGuideFinish = useCallback(() => {
+    setProgress((p) => finishGuide(p));
+    setGuideActive(false);
+    setPage("home");
+  }, []);
+
+  const handleTourNavigate = useCallback((p: TourPage) => setPage(p), []);
+
   // Før hydration kender vi ikke brugerens rigtige tilstand (uddannelse,
-  // onboarded, XP) — den ligger i localStorage. For at undgå en hydration-
+  // onboarded, XP): den ligger i localStorage. For at undgå en hydration-
   // mismatch mellem server- og klient-rendering viser vi derfor en tom,
   // neutral skal, indtil vi har læst tilstanden i browseren.
   if (!hydrated) {
@@ -54,14 +76,19 @@ export default function AploftApp() {
   }
 
   // Første besøg: vis velkomstskærmen (uddannelsesvalg + valgfrit brugernavn).
-  // Når valget er taget, gemmes det i localStorage — næste besøg starter
-  // direkte i appen med den valgte uddannelse.
+  // Når valget er taget, gemmes det i localStorage, så næste besøg starter
+  // direkte i appen med den valgte uddannelse. Herefter lander man på Profil,
+  // hvor spotlight-rundvisningen starter.
   if (!progress.onboarded) {
     return (
       <div className="min-h-screen bg-[#faf8ff]">
         <WelcomePage
           reduceMotion={progress.settings.reduceMotion}
-          onComplete={(education, nickname) => setProgress((p) => completeOnboarding(p, education, nickname))}
+          onComplete={(education, nickname) => {
+            setProgress((p) => completeOnboarding(p, education, nickname));
+            setPage("profile");
+            setGuideActive(true);
+          }}
         />
       </div>
     );
@@ -92,7 +119,7 @@ export default function AploftApp() {
   }
 
   function handleSetEducation(education: Education) {
-    // XP, streak og resultater beholdes — kun indholdet skifter spor.
+    // XP, streak og resultater beholdes; kun indholdet skifter spor.
     setProgress((p) => setEducation(p, education));
   }
 
@@ -154,6 +181,12 @@ export default function AploftApp() {
       <BottomNav
         page={(["home", "practice", "exam", "symbols", "profile"] as NavPage[]).includes(page as NavPage) ? (page as NavPage) : "home"}
         onNavigate={setPage}
+      />
+      <GuidedTour
+        active={guideActive}
+        onNavigate={handleTourNavigate}
+        onFinish={handleGuideFinish}
+        reduceMotion={progress.settings.reduceMotion}
       />
     </div>
   );

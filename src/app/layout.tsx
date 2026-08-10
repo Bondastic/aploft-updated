@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import Script from "next/script";
 import "./globals.css";
 
 const siteName = "AP Klar";
@@ -8,12 +9,13 @@ const siteUrl = "https://apklar.vercel.app/";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: `${siteName} — Træn Almen Sprogforståelse og latin`,
+    default: `${siteName}: Træn Almen Sprogforståelse og latin`,
     template: `%s | ${siteName}`,
   },
   description:
-    "Gratis øvelsesapp til Almen Sprogforståelse (AP) på STX og HHX: ordklasser, sætningsled, tempus, kasus, syntaks, latin — og på HHX også kommunikation, semantik, pragmatik, genrer og sproghistorie. Din progression gemmes lokalt — ingen login, ingen tredjepartscookies.",
+    "Gratis øvelsesapp til Almen Sprogforståelse (AP) på STX og HHX: ordklasser, sætningsled, tempus, kasus, syntaks og latin; på HHX også kommunikation, semantik, pragmatik, genrer og sproghistorie. Din progression gemmes lokalt. Ingen login, ingen tredjepartscookies.",
   applicationName: siteName,
+  manifest: "/manifest.webmanifest",
   keywords: [
     "almen sprogforståelse",
     "AP",
@@ -39,7 +41,7 @@ export const metadata: Metadata = {
     locale: "da_DK",
     url: siteUrl,
     siteName,
-    title: `${siteName} — Træn Almen Sprogforståelse og latin`,
+    title: `${siteName}: Træn Almen Sprogforståelse og latin`,
     description:
       "Øv ordklasser, sætningsled, tempus, kasus, syntaks og latin. Ingen login, ingen tracking.",
     images: [
@@ -47,13 +49,13 @@ export const metadata: Metadata = {
         url: "/og-image.png", // 1200×630
         width: 1200,
         height: 630,
-        alt: "AP Klar — øvelsesapp til Almen Sprogforståelse",
+        alt: "AP Klar: øvelsesapp til Almen Sprogforståelse",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteName} — Træn Almen Sprogforståelse og latin`,
+    title: `${siteName}: Træn Almen Sprogforståelse og latin`,
     description:
       "Øv ordklasser, sætningsled, tempus, kasus, syntaks og latin. Ingen login, ingen tracking.",
     images: ["/og-image.png"],
@@ -80,7 +82,9 @@ export const viewport = {
 
 // Lille inline-script der sætter "dark"-klassen på <html>, FØR React
 // hydrerer siden. Det undgår et hvidt "flash" ved indlæsning, hvis
-// brugeren allerede har slået nattetilstand til.
+// brugeren allerede har slået nattetilstand til. Injektionen sker via
+// next/script med strategy="beforeInteractive" (aldrig et raw <script>
+// i head, som giver en React-advarsel).
 const DARK_MODE_INIT_SCRIPT = `
 (function () {
   try {
@@ -96,7 +100,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="da" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: DARK_MODE_INIT_SCRIPT }} />
+        <Script
+          id="dark-mode-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: DARK_MODE_INIT_SCRIPT }}
+        />
       </head>
       <body className="bg-[#faf8ff] text-ink antialiased transition-colors dark:bg-[#171225] dark:text-ink-dark" suppressHydrationWarning>
         {children}

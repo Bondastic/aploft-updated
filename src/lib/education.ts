@@ -1,14 +1,14 @@
 // Uddannelses-profil: STX (rød) og HHX (blå).
 //
 // Alle farveklasser er statiske fulde klassenavne, så Tailwinds JIT kan finde
-// dem. Brug temaet herfra i stedet for at hardcode rød/blå rundt omkring —
+// dem. Brug temaet herfra i stedet for at hardcode rød/blå rundt omkring,
 // så holder vi farveprofilen ens i hele appen.
 import type { Education } from "../types";
 
 export interface EducationTheme {
   id: Education;
   label: string; // "STX"
-  fullName: string; // "STX — Almen studentereksamen"
+  fullName: string; // "STX: Almen studentereksamen"
   shortName: string; // "Det almene gymnasium"
   tagline: string;
   mascotLine: string;
@@ -28,7 +28,7 @@ export const EDU_THEMES: Record<Education, EducationTheme> = {
   stx: {
     id: "stx",
     label: "STX",
-    fullName: "STX — Almen studentereksamen",
+    fullName: "STX: Almen studentereksamen",
     shortName: "Det almene gymnasium",
     tagline: "Dansk, fremmedsprog og latin. Bredt og bogligt.",
     mascotLine: "På STX dykker vi ned i grammatik, latin og sproghistorie.",
@@ -45,7 +45,7 @@ export const EDU_THEMES: Record<Education, EducationTheme> = {
   hhx: {
     id: "hhx",
     label: "HHX",
-    fullName: "HHX — Merkantil studentereksamen",
+    fullName: "HHX: Merkantil studentereksamen",
     shortName: "Det merkantile gymnasium",
     tagline: "Kommunikation, erhvervssprog og international handel.",
     mascotLine: "På HHX arbejder vi med kommunikation, erhvervssprog og betydning.",

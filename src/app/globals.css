@@ -67,7 +67,7 @@ body {
    omdefinerer dem under .dark. Derudover overstyrer vi eksplicit de
    "hårdkodede" Tailwind-paletfarver (bg-white, bg-emerald-50, osv.), der
    bruges til kort, baggrunde og status-feedback, så alt bevarer god
-   kontrast og læsbarhed i mørkt tema — inkl. grønt/rødt/gult
+   kontrast og læsbarhed i mørkt tema, inkl. grønt/rødt/gult
    rigtigt/forkert-feedback, som ellers er svært at se i mørkt tema.
    ======================================================================= */
 .dark {
@@ -174,7 +174,7 @@ body {
   --tw-ring-color: rgba(124, 79, 224, 0.45) !important;
 }
 
-/* Status: rigtigt (grønt) / forkert (rødt) / opmærksomhed (gult) —
+/* Status: rigtigt (grønt) / forkert (rødt) / opmærksomhed (gult):
    de lyse pastelbaggrunde fra lys-temaet ombygges til tonede, mørke
    varianter med lys, tydelig tekst ovenpå. */
 .dark .bg-emerald-50 {
@@ -296,6 +296,6 @@ body {
 .dark .border-purple-300 { border-color: rgba(216, 204, 251, 0.6) !important; }
 .dark .ring-purple-300 { --tw-ring-color: rgba(216, 204, 251, 0.5) !important; }
 
-/* Stone/parkament-toner (oversættelsesarket) forbliver bevidst lyse —
+/* Stone/parkament-toner (oversættelsesarket) forbliver bevidst lyse;
    det er et "papirark", som skal ligne rigtigt papir uanset tema. */
 

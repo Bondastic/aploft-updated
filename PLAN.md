@@ -191,7 +191,7 @@ til), og vi laver ca. 10-15 opgaver pr. ny kategori i første udgave.
 - [x] Fase 3: HHX-kategorier (7 nye emner + genbrugt fælles grammatik uden latin) med teach-trin og opgaver — 342 opgaver i HHX-banken
 - [x] Fase 4: Profil → Indstillinger: "Skift uddannelse" (behold XP/resultater)
 - [x] Fase 5: hele appen er uddannelsesbevidst (farveprofil rød/blå, prøver, lynkursus, hjem, udvikling, topbar-chip)
-- [ ] Fase 6: PWA-manifest, ikoner, splash (butiks-klar) — næste omgang
+- [x] Fase 6: PWA-manifest (public/manifest.webmanifest) + app-ikoner (192/512/apple-touch/favicon) + og-image (1200×630). Splash-skærm genereres af browseren ud fra manifest + ikoner; Capacitor-splash kan lægges til, når/hvis appen pakkes.
 - [ ] Fase 7: ekstern test af indhold med en HHX-elev/ven
 
 **Testet:** typecheck ✅ · build ✅ · unikke opgave-ID'er ✅ · alle forløbs-stier bygger ✅ ·
@@ -223,6 +223,43 @@ dev-server kører og svarer ✅ · ingen commits lavet (du commit'er selv).
       bløde sideovergange mellem fanerne, og tryk-feedback (scale) på knapper.
 - [x] **Zip-fil leveret:** `aploft-updated.zip` (uden .git/node_modules/.next).
 
-**Sådan tester du selv:** start med at rydde localStorage for siden (eller brug inkognito) —
-så kommer velkomstskærmen. Vælg HHX, og hop videre. Skift under Profil → Indstillinger,
-hvis du vil prøve STX-siden.
+**Runde 4 (10. aug.):** "responsiv topbar + oversættelsesark + startguide"
+- [x] **Responsiv topbar:** STX/HHX-mærket ligger nu på sin egen række på små skærme (i stedet for
+      at kollidere med streak/XP), og på større skærme sidder det pænt ved siden af logoet.
+      Streak- og XP-teksterne forkortes (skjuler "dages streak"/"XP") på meget smalle skærme.
+- [x] **Oversættelsesark kun når det er relevant:** arket vises nu kun ved latinske opgaver, hvor
+      ordforråd/bøjning faktisk er en del af opgaven (oversættelse, grammatik, sum/esse, ordforråd).
+      Knappen er en diskret, lille knap i opgavens flow i stedet for en stor fast knap nederst på
+      skærmen - og den forsvinder, når man har svaret (man kan ikke "snyde" bagefter).
+- [x] **Latin-opgaver i prøver får også arket:** da visningen nu styres af opgaven (ikke af skærmen),
+      dukker arket op både i Øv dig og i Tag en prøve på alle relevante latinske opgaver.
+
+**Runde 5 (10. aug.):** "fix af topbar + professionel spotlight-guide"
+- [x] **Topbar rettet:** tilbage til den gamle struktur (logo + STX/HHX-mærke venstre, streak/XP/mørk
+      højre) med ÉN badge. På smalle skærme "wrapper" mærket ned under logoet via flex-wrap i stedet
+      for at kollidere med streak. Den ekstra STX/HHX-chip på Hjem-siden (hero-kortet) er fjernet, så
+      mærket kun findes ét sted.
+- [x] **Ny spotlight-guide (GuidedTour):** starter på Profil-siden (hvor nye brugere lander efter
+      velkomstskærmen) og går derefter igennem alle dele af appen: Hjem → Øv dig → Prøve → Symboler
+      → Lynkursus → Din udvikling → tilbage til Hjem. Alt andet end det aktuelle element mørklægges
+      med et spotlight-"hul", og Lingua forklarer kort i en taleboble. Kan springes over ("Spring
+      over", luk-knap eller Escape). Gemmes i progress (guideDone) - vises kun for førstegangsbrugere
+      og tager under et minut.
+- [x] Den gamle OnboardingGuide-fil er slettet.
+
+**Runde 6 (10. aug.):** "em-dash-oprydning + dark-mode-script + ikoner + PWA + zip"
+- [x] **Em dashes helt væk fra src/:** 51 stk. "—" (UI-tekster, metadata og kommentarer) erstattet
+      med kolon, komma, punktum eller parentes. `grep -rn "—" src/` giver nu 0.
+- [x] **Dark-mode-init via next/script:** layout.tsx bruger nu `<Script strategy="beforeInteractive">`
+      i stedet for et raw `<script>` i head (React-advarsel).
+- [x] **Manglende ikon-filer oprettet:** /icon-192.png, /icon-512.png, /apple-touch-icon.png,
+      /og-image.png (1200×630) + favicon.png erstattet (1,3 MB → 5 KB). Genereres med
+      `node scripts/gen-icons.mjs` (sharp, motiv: public/mascot/welcome.png + brandfarver).
+- [x] **PWA-manifest:** public/manifest.webmanifest (standalone, da_DK, ikoner 192/512 + maskable).
+- [x] **Zip-fil genskabt:** public/aploft-updated.zip (uden .git/node_modules/.next/ubrugte
+      billed-duplikater) - og tilføjet til .gitignore, så den aldrig deployes.
+
+**Sådan tester du selv:** start med at rydde localStorage for siden (eller brug inkognito) -
+så kommer velkomstskærmen. Vælg HHX, og hop videre: du lander på Profil med spotlight-rundvisningen.
+Gennemgå turen (eller spring over), og skift under Profil → Indstillinger, hvis du vil prøve STX-siden.
+Tjek topbaren på 375 px: mærket wrapper pænt ned under logoet uden overlap med streak.

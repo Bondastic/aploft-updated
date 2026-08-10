@@ -20,13 +20,15 @@ export function loadProgress(): Progress {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Progress;
-      // Migrering: eksisterende brugere har ikke valgt uddannelse — de får STX
-      // (det indhold, appen altid har haft) og springer velkomstskærmen over.
+      // Migrering: eksisterende brugere har ikke valgt uddannelse, så de får STX
+      // (det indhold, appen altid har haft), springer velkomstskærmen over og
+      // får heller ikke spotlight-rundvisningen.
       const migrated: Progress = {
         ...defaultProgress(),
         ...parsed,
         education: parsed.education ?? "stx",
         onboarded: parsed.onboarded ?? true,
+        guideDone: parsed.guideDone ?? true,
         settings: { ...defaultProgress().settings, ...parsed.settings },
       };
       return migrated;
@@ -40,6 +42,7 @@ export function loadProgress(): Progress {
         ...parsed,
         education: "stx",
         onboarded: true,
+        guideDone: true,
         completedLessons: {},
       };
     }
@@ -55,6 +58,7 @@ function defaultProgress(): Progress {
     nickname: "",
     education: "stx",
     onboarded: false,
+    guideDone: false,
     xp: 0,
     streakDays: 0,
     multiplier: 1,
@@ -72,7 +76,7 @@ export function saveProgress(p: Progress) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
   } catch {
-    // Ignorer — fx hvis localStorage er utilgængelig i en sandboxet iframe.
+    // Ignorer: fx hvis localStorage er utilgængelig i en sandboxet iframe.
   }
 }
 
@@ -84,6 +88,11 @@ export function setEducation(p: Progress, education: Education): Progress {
 /** Marker, at velkomstskærmen er gennemført, og gem uddannelse + evt. kaldenavn. */
 export function completeOnboarding(p: Progress, education: Education, nickname: string): Progress {
   return { ...p, education, nickname, onboarded: true };
+}
+
+/** Marker, at spotlight-rundvisningen er gennemført (eller sprunget over). */
+export function finishGuide(p: Progress): Progress {
+  return { ...p, guideDone: true };
 }
 
 export function resetProgress(): Progress {

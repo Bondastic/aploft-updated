@@ -437,9 +437,9 @@ export default function LynkursusPage({ education, progress }: { education: Educ
  const accent = isHhx ? "text-blue-600" : tab === "almen" ? "text-purple" : "text-orange-600";
 
  return (
- <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
- <div>
- <h1 className="font-display text-2xl font-extrabold text-ink">Lynkursus</h1>
+    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+      <div data-tour="lynkursus">
+        <h1 className="font-display text-2xl font-extrabold text-ink">Lynkursus</h1>
  <p className="text-sm text-ink/50">
  Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i "Øv dig" ; brug siden her til at
  genopfriske, slå skemaer op eller få et hurtigt overblik, før du tager en prøve.

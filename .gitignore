@@ -47,3 +47,7 @@ coverage/
 # Misc
 *.swp
 *.swo
+
+# Leverings-zip: kun til download til brugeren, aldrig commit'et eller
+# deployet (ellers kan alle hente hele kildekoden fra apklar.vercel.app).
+public/aploft-updated.zip
