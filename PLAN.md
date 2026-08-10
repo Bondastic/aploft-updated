@@ -262,12 +262,12 @@ dev-server kører og svarer ✅ · ingen commits lavet (du commit'er selv).
 **Sådan tester du selv:** start med at rydde localStorage for siden (eller brug inkognito) -
 så kommer velkomstskærmen. Vælg HHX, og hop videre: du lander på Profil med spotlight-rundvisningen.
 Gennemgå turen (eller spring over), og skift under Profil → Indstillinger, hvis du vil prøve STX-siden.
-Tjek topbaren på 375 px: kun logo + streak/XP i én lav række, og uddannelsesmærket ligger i Hjem-heroen.
+Tjek topbaren på 375 px: logo + mærke + streak/XP-tal i én lav række uden overlap.
 
-**Runde 7 (10. aug.):** "mobil-indikator rykket ud af topbaren"
-- [x] **STX/HHX-mærket forsvinder fra topbaren på telefoner:** topbaren er nu altid én lav
-      række (logo + streak/XP/mørk-knap). Det tidligere rækkeskift under logoet, som gjorde
-      nav-baren høj på mobil, er væk.
-- [x] **Mærket vises i stedet i Hjem-heroen på telefoner** (sm:hidden-chip med
-      "STX · Det almene gymnasium" / "HHX · Det merkantile gymnasium"). På skærme ≥ 640 px
-      sidder mærket stadig diskret ved siden af logoet i topbaren.
+**Runde 7 (10. aug.):** "mobil-indikator + nyt flamme-ikon"
+- [x] **STX/HHX-mærket er tilbage i topbaren på alle skærme**, men nu uden at ødelægge
+      højden: streak/XP-teksterne ("dages streak"/"XP") og mærke-ikonet skjules på små
+      skærme, og afstande/padding komprimeres, så topbaren altid er én lav række.
+- [x] **Nyt skræddersyet flamme-ikon:** spids top, talje og bred bug med en lys, hvid
+      "glødende" kerne (FlameIcon i components/icons.tsx).
+- [x] Hjem-hero-chippen fra runde 7-forsøget er fjernet igen (mærket findes kun i topbaren).

@@ -20,7 +20,8 @@ derudover udført todo-punkterne (ikoner, PWA-manifest, zip, gitignore).
 
 | Område | Detaljer |
 |---|---|
-| **TopBar** | Én STX/HHX-badge ved siden af logoet på skærme ≥ 640 px. På telefoner er mærket skjult i topbaren (som dermed altid er én lav række: logo + streak/XP/mørk) og vises i stedet i Hjem-heroen (`sm:hidden`-chip med "STX/HHX · Det almene/merkantile gymnasium"). |
+| **TopBar** | Én lav række på alle skærme: logo + STX/HHX-badge (altid synlig) til venstre, streak/XP/mørk til højre. På telefoner skjules "dages streak"/"XP"-teksterne og badge-ikonet, så det hele passer i én række. |
+| **FlameIcon** | Skræddersyet flamme (spids top, talje, bred bug med hvid "glødende" kerne) i stedet for det gamle rudimentære ikon. |
 | **TranslationSheet** | Vises kun ved latinske kategorier (oversaettelse, grammatik, sumesse, ordforraad) eller `task.showSheet`, og kun indtil opgaven er besvaret. Logikken ligger i TaskRenderer (`showSheet`), så arket opfører sig ens i Øv dig og prøver. Knappen er en diskret knap i opgavens flow. Ingen flydende knap mere. |
 | **GuidedTour** (ny) | Spotlight-rundvisning: Profil → Hjem → Øv dig → Prøve → Symboler → Lynkursus → Udvikling → Hjem. Mørklægger alt undtagen målet (box-shadow-hul), låser scroll, mørk "Rundvisning med Lingua"-topbar med trin-/sideindikator, Escape/"Spring over"/X afslutter. Mål findes via `data-tour`-attributter (BottomNav-faner, Home-hero `hjem-kort`, Lynkursus-/Udvikling-overskrifter). |
 | **progress** | Nyt felt `guideDone` (default false; eksisterende brugere migreres til true). `finishGuide()` i lib/progress.ts. Nye brugere lander på Profil med turen; kan ikke genåbnes bagefter (kun via "Nulstil alle data"). |
@@ -158,8 +159,8 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
 3. Prøve → HHX-prøve → ingen latin-opgaver.
 4. Profil → Indstillinger → skift til STX → latindel + oversættelsesark-knap på
    oversættelses-/grammatik-/sum- og ordforråds-opgaver (forsvinder efter svar).
-5. Topbar på 375 px: kun logo + streak/XP i én lav række (mærket ligger i
-   Hjem-heroen på telefoner, ved siden af logoet på ≥ 640 px).
+5. Topbar på 375 px: logo + mærke + streak/XP-tal i én lav række uden overlap
+   (teksterne "dages streak"/"XP" og mærke-ikonet er skjult på små skærme).
 
 ---
 

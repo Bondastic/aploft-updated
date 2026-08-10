@@ -73,9 +73,20 @@ export function ProfileIcon({ className }: IconProps) {
 
 export function FlameIcon({ className }: IconProps) {
   return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M12 2c1 3-2 4-2 7a4 4 0 1 0 8 0c0-1-.5-2-1-2 .5 2-1 3-1 3 .3-2-1-3-1-4.5C15 4 13.5 2.5 12 2z" />
-      <path d="M8.5 13a3.5 3.5 0 1 0 7 0c0-1.2-.6-2-1.3-2.8.2 1.3-.7 2-1.2 2.8.1-1.3-.5-2-1-3-.7 1-1.5 1.7-2 2.2-.5.5-1.5 1-1.5.8z" />
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      {/* Skræddersyet flamme: spids top, talje og bred bug med en lys, hvid
+          kerne i midten. Den hvide kerne fremstår som en "glød" oven på de
+          farvede chip-baggrunde (fx streak-boksen) og falder diskret i
+          baggrunden, hvor ikonet står alene. */}
+      <path
+        fill="currentColor"
+        d="M12 0.9 C13.4 3 14.3 4.7 14.3 6.3 C14.3 7.3 13.9 8.2 13.2 8.9 C12.9 9.2 12.7 9.4 12.7 9.8 C14.8 10.7 16.3 12.6 16.3 14.9 C16.3 18.3 14.1 20.3 11.6 20.3 C10 20.3 8.5 19.4 7.7 18 C7 16.9 6.7 15.7 6.7 14.4 C6.7 12.3 8 10.5 9.6 9.7 C9.5 9.4 9.5 9.1 9.6 8.8 C9.1 8.1 8.8 7.2 8.8 6.3 C8.8 4.7 9.7 3 12 0.9 Z"
+      />
+      <path
+        fill="#ffffff"
+        opacity="0.9"
+        d="M10.9 12.9 C12.1 13.6 12.8 14.4 12.8 15.4 C12.8 16.6 11.9 17.3 11 17.3 C10.1 17.3 9.2 16.6 9.2 15.4 C9.2 14.4 9.9 13.6 10.9 12.9 Z"
+      />
     </svg>
   );
 }
