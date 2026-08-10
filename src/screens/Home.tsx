@@ -1,7 +1,9 @@
 import type { Progress } from "../types";
 import Mascot from "../components/Mascot";
 import { getLevelInfo } from "../lib/progress";
-import { BoltIcon, ExamIcon, FlameIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon } from "../components/icons";
+import { getEducation } from "../lib/education";
+import { BoltIcon, ExamIcon, FlameIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon, CategoryIcon } from "../components/icons";
+import { cn } from "../utils/cn";
 
 export default function HomePage({
   progress,
@@ -12,14 +14,22 @@ export default function HomePage({
 }) {
   const level = getLevelInfo(progress.xp);
   const greeting = progress.nickname ? `Hej, ${progress.nickname}!` : "Hej med dig!";
+  const theme = getEducation(progress.education);
+  const isHhx = progress.education === "hhx";
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
-      <div className="overflow-hidden rounded-3xl bg-gradient-to-br from-purple to-purple-dark p-6 text-white shadow-lg shadow-purple/30">
+      <div className={cn("overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white shadow-lg", isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30")}>
         <div className="flex items-center justify-between gap-4">
           <div>
             <p className="font-display text-xl font-extrabold">{greeting}</p>
-            <p className="mt-1 text-sm text-white/80">Klar til at træne Almen Sprogforståelse i dag?</p>
+            <p className="mt-1 text-sm text-white/80">
+              {isHhx ? "Klar til at træne HHX Almen Sprogforståelse i dag?" : "Klar til at træne STX Almen Sprogforståelse i dag?"}
+            </p>
+            <span className={cn("mt-3 inline-flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-bold")}>
+              <CategoryIcon name={isHhx ? "hhx" : "stx"} className="h-3.5 w-3.5" />
+              {theme.label} · {theme.shortName}
+            </span>
             <div className="mt-3 flex flex-wrap items-center gap-2 text-sm">
               <span className="flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 font-semibold">
                 <FlameIcon className="h-4 w-4" /> {progress.streakDays} dages streak

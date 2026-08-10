@@ -1,4 +1,4 @@
-import type { CategoryStat, ExamAttempt, LessonResult, Progress } from "../types";
+import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress } from "../types";
 
 const STORAGE_KEY = "aploft.progress.v4";
 
@@ -20,13 +20,28 @@ export function loadProgress(): Progress {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Progress;
-      return { ...defaultProgress(), ...parsed, settings: { ...defaultProgress().settings, ...parsed.settings } };
+      // Migrering: eksisterende brugere har ikke valgt uddannelse — de får STX
+      // (det indhold, appen altid har haft) og springer velkomstskærmen over.
+      const migrated: Progress = {
+        ...defaultProgress(),
+        ...parsed,
+        education: parsed.education ?? "stx",
+        onboarded: parsed.onboarded ?? true,
+        settings: { ...defaultProgress().settings, ...parsed.settings },
+      };
+      return migrated;
     }
     // Migrer evt. gammel v3-nøgle, så folk ikke mister XP ved opdateringen.
     const legacy = localStorage.getItem("aploft.progress.v3");
     if (legacy) {
       const parsed = JSON.parse(legacy) as Progress;
-      return { ...defaultProgress(), ...parsed, completedLessons: {} };
+      return {
+        ...defaultProgress(),
+        ...parsed,
+        education: "stx",
+        onboarded: true,
+        completedLessons: {},
+      };
     }
   } catch {
     // ignore corrupted data
@@ -38,6 +53,8 @@ function defaultProgress(): Progress {
   return {
     userId: uid(),
     nickname: "",
+    education: "stx",
+    onboarded: false,
     xp: 0,
     streakDays: 0,
     multiplier: 1,
@@ -52,11 +69,31 @@ function defaultProgress(): Progress {
 
 export function saveProgress(p: Progress) {
   if (typeof window === "undefined") return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  } catch {
+    // Ignorer — fx hvis localStorage er utilgængelig i en sandboxet iframe.
+  }
+}
+
+/** Sætter uddannelsen (bruges ved skift under Profil → Indstillinger). */
+export function setEducation(p: Progress, education: Education): Progress {
+  return { ...p, education };
+}
+
+/** Marker, at velkomstskærmen er gennemført, og gem uddannelse + evt. kaldenavn. */
+export function completeOnboarding(p: Progress, education: Education, nickname: string): Progress {
+  return { ...p, education, nickname, onboarded: true };
 }
 
 export function resetProgress(): Progress {
-  if (typeof window !== "undefined") localStorage.removeItem(STORAGE_KEY);
+  if (typeof window !== "undefined") {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }
   return touchStreak(defaultProgress());
 }
 

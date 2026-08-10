@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { Progress } from "../types";
+import type { Education, Progress } from "../types";
 import { getLevelInfo } from "../lib/progress";
+import { EDU_THEMES, getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
-import { CategoryIcon, FlameIcon, SettingsIcon, TrendUpIcon } from "../components/icons";
+import { CategoryIcon, FlameIcon, SettingsIcon, StxIcon, HhxIcon, TrendUpIcon } from "../components/icons";
 import DarkModeToggle from "../components/DarkModeToggle";
 import { cn } from "../utils/cn";
 
@@ -13,12 +14,14 @@ export default function ProfilePage({
   onNavigate,
   onSetNickname,
   onSetReduceMotion,
+  onSetEducation,
   onReset,
 }: {
   progress: Progress;
   onNavigate: (page: "udvikling") => void;
   onSetNickname: (name: string) => void;
   onSetReduceMotion: (v: boolean) => void;
+  onSetEducation: (education: Education) => void;
   onReset: () => void;
 }) {
   const [nickname, setNicknameLocal] = useState(progress.nickname);
@@ -93,11 +96,29 @@ export default function ProfilePage({
               <div key={a.id} className="flex items-center justify-between text-sm">
                 <span className="inline-flex items-center gap-1.5 text-ink/60">
                   <CategoryIcon
-                    name={a.track === "almen" ? "almen" : a.track === "latin" ? "latin" : a.track === "ultimativ" ? "ultimativ" : "fuld"}
+                    name={
+                      a.track === "almen"
+                        ? "almen"
+                        : a.track === "latin"
+                          ? "latin"
+                          : a.track === "hhx"
+                            ? "hhx"
+                            : a.track === "ultimativ"
+                              ? "ultimativ"
+                              : "fuld"
+                    }
                     className="h-4 w-4"
                   />
-                  {a.track === "almen" ? "Almen" : a.track === "latin" ? "Latin" : a.track === "ultimativ" ? "Ultimativ" : "Fuld"} ·{" "}
-                  {new Date(a.date).toLocaleDateString("da-DK")}
+                  {a.track === "almen"
+                    ? "Almen"
+                    : a.track === "latin"
+                      ? "Latin"
+                      : a.track === "hhx"
+                        ? "HHX"
+                        : a.track === "ultimativ"
+                          ? "Ultimativ"
+                          : "Fuld"}{" "}
+                  · {new Date(a.date).toLocaleDateString("da-DK")}
                 </span>
                 <span className="font-bold text-ink">
                   {a.totalCorrect}/{a.totalQuestions}
@@ -113,6 +134,46 @@ export default function ProfilePage({
           <SettingsIcon className="h-4 w-4 text-ink/50" />
           <p className="font-bold text-ink">Indstillinger</p>
         </div>
+
+        <div className="rounded-2xl border border-ink/10 bg-ink/[0.02] p-4">
+          <p className="mb-1 text-sm font-bold text-ink">Uddannelse</p>
+          <p className="mb-3 text-xs text-ink/50">
+            Valgte du forkert i starten? Skift her — dine XP og resultater bliver bevaret. Du kan altid skifte tilbage.
+          </p>
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => onSetEducation("stx")}
+              aria-pressed={progress.education === "stx"}
+              className={cn(
+                "flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-bold transition",
+                progress.education === "stx"
+                  ? "border-red-500 bg-red-50 text-red-700 shadow-sm"
+                  : "border-ink/10 bg-white text-ink/50 hover:border-red-200"
+              )}
+            >
+              <StxIcon className="h-4 w-4" />
+              STX
+            </button>
+            <button
+              onClick={() => onSetEducation("hhx")}
+              aria-pressed={progress.education === "hhx"}
+              className={cn(
+                "flex items-center justify-center gap-2 rounded-xl border-2 py-2.5 text-sm font-bold transition",
+                progress.education === "hhx"
+                  ? "border-blue-500 bg-blue-50 text-blue-700 shadow-sm"
+                  : "border-ink/10 bg-white text-ink/50 hover:border-blue-200"
+              )}
+            >
+              <HhxIcon className="h-4 w-4" />
+              HHX
+            </button>
+          </div>
+          <p className="mt-2 flex items-center gap-1.5 text-[11px] text-ink/40">
+            <CategoryIcon name={progress.education === "hhx" ? "hhx" : "stx"} className="h-3.5 w-3.5" />
+            Aktiv: {EDU_THEMES[progress.education].fullName}
+          </p>
+        </div>
+
         <DarkModeToggle variant="full" />
         <label className="flex items-center justify-between gap-3 text-sm">
           <span className="text-ink/70">Reducér animationer</span>

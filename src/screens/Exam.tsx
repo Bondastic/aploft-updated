@@ -1,8 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CategoryId, CategoryStat, IconName, MascotPose, Progress, Task } from "../types";
-import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, type ExamTrack } from "../lib/examGenerator";
+import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, Task } from "../types";
+import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, ALL_HHX_TASKS, type ExamTrack } from "../lib/examGenerator";
+import { getEducation } from "../lib/education";
 import { getCategory } from "../data/categories";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
@@ -13,6 +14,11 @@ import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
 const TRACK_INFO: Record<ExamTrack, { label: string; icon: IconName; desc: string }> = {
   almen: { label: "Almen del", icon: "almen", desc: "Ordklasser, sætningsled, morfologi, tempus, kasus, syntaks og sprog." },
   latin: { label: "Latindel", icon: "latin", desc: "Ordforråd, grammatik, oversættelse og romersk kultur." },
+  hhx: {
+    label: "HHX-prøve",
+    icon: "hhx",
+    desc: "Hele HHX-pensum: grammatik, kommunikation, semantik, pragmatik, genrer og sproghistorie.",
+  },
   fuld: { label: "Fuld prøve", icon: "fuld", desc: "Blander spørgsmål fra både den almene del og latindelen." },
   ultimativ: {
     label: "Den ultimative test",
@@ -22,18 +28,20 @@ const TRACK_INFO: Record<ExamTrack, { label: string; icon: IconName; desc: strin
 };
 
 export default function ExamPage({
+  education,
   progress,
   onCorrect,
   onWrong,
   onExamComplete,
 }: {
+  education: Education;
   progress: Progress;
   onCorrect: (category: CategoryId) => void;
   onWrong: (category: CategoryId) => void;
   onExamComplete: (track: ExamTrack, correct: number, total: number, byCategory: Record<string, CategoryStat>) => void;
 }) {
   const [phase, setPhase] = useState<"setup" | "running" | "result">("setup");
-  const [track, setTrack] = useState<ExamTrack>("fuld");
+  const [track, setTrack] = useState<ExamTrack>(education === "hhx" ? "hhx" : "fuld");
   const [count, setCount] = useState(12);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [index, setIndex] = useState(0);
@@ -43,7 +51,12 @@ export default function ExamPage({
   const [pose, setPose] = useState<MascotPose>("explain");
   const reduceMotion = progress.settings.reduceMotion;
 
-  const poolSize = poolForTrack(track).length;
+  const isHhx = education === "hhx";
+  const theme = getEducation(education);
+  // På HHX er der kun én prøve (hele HHX-pensum); på STX kan man vælge spor.
+  const tracks = isHhx ? (["hhx"] as ExamTrack[]) : (Object.keys(TRACK_INFO) as ExamTrack[]);
+
+  const poolSize = poolForTrack(track, education).length;
   const isUltimate = track === "ultimativ";
   const maxCount = isUltimate ? poolSize : Math.min(28, poolSize);
   const minCount = isUltimate ? Math.min(50, poolSize) : Math.min(6, poolSize);
@@ -51,7 +64,7 @@ export default function ExamPage({
   const categoryEntries = useMemo(() => Object.entries(byCategory), [byCategory]);
 
   function startExam() {
-    const generated = generateExam(track, count);
+    const generated = generateExam(track, count, education);
     setTasks(generated);
     setIndex(0);
     setAnswered(false);
@@ -101,28 +114,39 @@ export default function ExamPage({
       <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
         <div>
           <h1 className="font-display text-2xl font-extrabold text-ink">Tag en prøve</h1>
-          <p className="text-sm text-ink/50">Vælg spor og hvor lang prøven skal være, så finder vi de bedste spørgsmål til dig.</p>
+          <p className="text-sm text-ink/50">
+            {isHhx
+              ? `Vælg hvor lang prøven skal være — den trækker fra hele HHX-pensum (${ALL_HHX_TASKS.length} spørgsmål).`
+              : "Vælg spor og hvor lang prøven skal være, så finder vi de bedste spørgsmål til dig."}
+          </p>
         </div>
 
         <Mascot pose="explain" size="md" speech="Vælg selv sværhedsgrad og længde. Jeg samler spørgsmålene til dig!" reduceMotion={reduceMotion} />
 
         <div className="space-y-3">
-          {(Object.keys(TRACK_INFO) as ExamTrack[]).map((t) => (
+          {tracks.map((t) => (
             <button
               key={t}
               onClick={() => {
                 setTrack(t);
-                const newPoolSize = poolForTrack(t).length;
+                const newPoolSize = poolForTrack(t, education).length;
                 const newMax = t === "ultimativ" ? newPoolSize : Math.min(28, newPoolSize);
                 const newMin = t === "ultimativ" ? Math.min(50, newPoolSize) : Math.min(6, newPoolSize);
                 setCount(t === "ultimativ" ? newMin : Math.min(Math.max(count, newMin), newMax));
               }}
               className={cn(
-                "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
-                track === t ? "border-purple bg-purple/5" : "border-ink/10 bg-white hover:border-purple/30"
+                "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+                track === t
+                  ? cn("bg-ink/5", isHhx ? "border-blue-500" : "border-purple")
+                  : "border-ink/10 bg-white hover:border-ink/25"
               )}
             >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple/10 text-purple">
+              <div
+                className={cn(
+                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                  isHhx ? theme.softBg : "bg-purple/10 text-purple"
+                )}
+              >
                 <CategoryIcon name={TRACK_INFO[t].icon} className="h-6 w-6" />
               </div>
               <div className="flex-1">
@@ -132,7 +156,7 @@ export default function ExamPage({
               <div
                 className={cn(
                   "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
-                  track === t ? "border-purple bg-purple" : "border-ink/20"
+                  track === t ? cn(isHhx ? "border-blue-500 bg-blue-500" : "border-purple bg-purple") : "border-ink/20"
                 )}
               >
                 {track === t && <div className="h-2 w-2 rounded-full bg-white" />}
@@ -144,7 +168,9 @@ export default function ExamPage({
         <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
           <div className="mb-3 flex items-center justify-between">
             <p className="font-bold text-ink">Antal spørgsmål</p>
-            <span className="rounded-full bg-purple/10 px-3 py-1 text-sm font-bold text-purple">{count}</span>
+            <span className={cn("rounded-full px-3 py-1 text-sm font-bold", isHhx ? theme.accentChip : "bg-purple/10 text-purple")}>
+              {count}
+            </span>
           </div>
           <label htmlFor="exam-count" className="sr-only">
             Antal spørgsmål
@@ -157,7 +183,7 @@ export default function ExamPage({
             step={step}
             value={count}
             onChange={(e) => setCount(Number(e.target.value))}
-            className="w-full accent-purple"
+            className={cn("w-full", isHhx ? "accent-blue-600" : "accent-purple")}
           />
           <div className="mt-1 flex justify-between text-[11px] text-ink/40">
             <span>{minCount} spørgsmål</span>
@@ -169,6 +195,12 @@ export default function ExamPage({
               &quot;Afslut prøven nu&quot; undervejs for at se dit resultat baseret på de spørgsmål, du nåede.
             </p>
           )}
+          {isHhx && (
+            <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
+              HHX-prøven svarer til delprøve 1 i den interne AP-prøve: interaktive spørgsmål over grammatik, kommunikation,
+              sproghandlinger, semantik, pragmatik og sproghistorie.
+            </p>
+          )}
           <div className="mt-4 flex items-center gap-2 rounded-xl bg-ink/5 px-3 py-2 text-sm font-semibold text-ink/70">
             <ClockIcon className="h-4 w-4" />
             Estimeret tid: ≈ {estimateMinutes(count)} min
@@ -177,7 +209,10 @@ export default function ExamPage({
 
         <button
           onClick={startExam}
-          className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-purple to-purple-dark py-3.5 text-base font-bold text-white shadow-lg shadow-purple/30"
+          className={cn(
+            "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3.5 text-base font-bold text-white shadow-lg",
+            isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30"
+          )}
         >
           <ExamIcon className="h-5 w-5" />
           Start prøve
@@ -200,7 +235,7 @@ export default function ExamPage({
           </p>
         </div>
         <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={tasks.length}>
-          <div className="h-full rounded-full bg-purple transition-all" style={{ width: `${(index / tasks.length) * 100}%` }} />
+          <div className={cn("h-full rounded-full transition-all", isHhx ? theme.bar : "bg-purple")} style={{ width: `${(index / tasks.length) * 100}%` }} />
         </div>
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
@@ -231,7 +266,7 @@ export default function ExamPage({
       <div>
         <h2 className="font-display text-2xl font-extrabold text-ink">Prøven er afsluttet!</h2>
         <p className="mt-1 text-ink/60">
-          Du fik <span className="font-bold text-purple">{correctCount}</span> ud af {totalAnswered} rigtige. Det giver {pct}%.
+          Du fik <span className={cn("font-bold", isHhx ? theme.accentText : "text-purple")}>{correctCount}</span> ud af {totalAnswered} rigtige. Det giver {pct}%.
         </p>
       </div>
 
@@ -247,7 +282,7 @@ export default function ExamPage({
                 <span className="truncate">{cat?.short ?? catId}</span>
               </span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/10">
-                <div className="h-full rounded-full bg-purple" style={{ width: `${p}%` }} />
+                <div className={cn("h-full rounded-full", isHhx ? theme.bar : "bg-purple")} style={{ width: `${p}%` }} />
               </div>
               <span className="w-14 shrink-0 text-right text-xs font-semibold text-ink/50">
                 {stat.correct}/{stat.total}
@@ -263,7 +298,10 @@ export default function ExamPage({
         </button>
         <button
           onClick={startExam}
-          className="rounded-full bg-purple px-5 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30"
+          className={cn(
+            "rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md",
+            isHhx ? "bg-blue-600 shadow-blue-500/30" : "bg-purple shadow-purple/30"
+          )}
         >
           Prøv igen
         </button>
