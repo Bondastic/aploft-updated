@@ -25,7 +25,7 @@ export default function TopBar({ progress }: { progress: Progress }) {
             )}
             title={`Du øver ${isHhx ? "HHX" : "STX"}-pensum. Skift under Profil → Indstillinger`}
           >
-            <CategoryIcon name={isHhx ? "hhx" : "stx"} className="hidden h-3 w-3 sm:block" />
+            <CategoryIcon name={isHhx ? "hhx" : "stx"} className="h-3 w-3 shrink-0" />
             {isHhx ? "HHX" : "STX"}
           </span>
         </div>

@@ -20,8 +20,8 @@ derudover udført todo-punkterne (ikoner, PWA-manifest, zip, gitignore).
 
 | Område | Detaljer |
 |---|---|
-| **TopBar** | Én lav række på alle skærme: logo + STX/HHX-badge (altid synlig) til venstre, streak/XP/mørk til højre. På telefoner skjules "dages streak"/"XP"-teksterne og badge-ikonet, så det hele passer i én række. |
-| **FlameIcon** | Skræddersyet flamme (spids top, talje, bred bug med hvid "glødende" kerne) i stedet for det gamle rudimentære ikon. |
+| **TopBar** | Én lav række på alle skærme: logo + STX/HHX-badge (med henholdsvis studenterhat og koffert-ikon, synlige på alle skærme) til venstre, streak/XP/mørk til højre. På telefoner skjules "dages streak"/"XP"-teksterne, så det hele passer i én række. |
+| **FlameIcon** | Inspireret af Lucide-icons "flame" (ISC-licens): den klassiske, genkendelige flamme, stroke-baseret og krystalklar i lille størrelse. |
 | **TranslationSheet** | Vises kun ved latinske kategorier (oversaettelse, grammatik, sumesse, ordforraad) eller `task.showSheet`, og kun indtil opgaven er besvaret. Logikken ligger i TaskRenderer (`showSheet`), så arket opfører sig ens i Øv dig og prøver. Knappen er en diskret knap i opgavens flow. Ingen flydende knap mere. |
 | **GuidedTour** (ny) | Spotlight-rundvisning: Profil → Hjem → Øv dig → Prøve → Symboler → Lynkursus → Udvikling → Hjem. Mørklægger alt undtagen målet (box-shadow-hul), låser scroll, mørk "Rundvisning med Lingua"-topbar med trin-/sideindikator, Escape/"Spring over"/X afslutter. Mål findes via `data-tour`-attributter (BottomNav-faner, Home-hero `hjem-kort`, Lynkursus-/Udvikling-overskrifter). |
 | **progress** | Nyt felt `guideDone` (default false; eksisterende brugere migreres til true). `finishGuide()` i lib/progress.ts. Nye brugere lander på Profil med turen; kan ikke genåbnes bagefter (kun via "Nulstil alle data"). |
@@ -159,8 +159,8 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
 3. Prøve → HHX-prøve → ingen latin-opgaver.
 4. Profil → Indstillinger → skift til STX → latindel + oversættelsesark-knap på
    oversættelses-/grammatik-/sum- og ordforråds-opgaver (forsvinder efter svar).
-5. Topbar på 375 px: logo + mærke + streak/XP-tal i én lav række uden overlap
-   (teksterne "dages streak"/"XP" og mærke-ikonet er skjult på små skærme).
+5. Topbar på 375 px: logo + mærke (med hat/koffert-ikon) + streak/XP-tal i én lav
+   række uden overlap (teksterne "dages streak"/"XP" er skjult på små skærme).
 
 ---
 

@@ -265,9 +265,11 @@ Gennemgå turen (eller spring over), og skift under Profil → Indstillinger, hv
 Tjek topbaren på 375 px: logo + mærke + streak/XP-tal i én lav række uden overlap.
 
 **Runde 7 (10. aug.):** "mobil-indikator + nyt flamme-ikon"
-- [x] **STX/HHX-mærket er tilbage i topbaren på alle skærme**, men nu uden at ødelægge
-      højden: streak/XP-teksterne ("dages streak"/"XP") og mærke-ikonet skjules på små
-      skærme, og afstande/padding komprimeres, så topbaren altid er én lav række.
-- [x] **Nyt skræddersyet flamme-ikon:** spids top, talje og bred bug med en lys, hvid
-      "glødende" kerne (FlameIcon i components/icons.tsx).
+- [x] **STX/HHX-mærket er tilbage i topbaren på alle skærme**, nu med studenterhat- og
+      koffert-ikonet synligt også på mobil: streak/XP-teksterne ("dages streak"/"XP")
+      skjules på små skærme, og afstande/padding komprimeres, så topbaren altid er
+      én lav række.
+- [x] **Nyt flamme-ikon** inspireret af Lucide-icons "flame" (ISC-licens): den klassiske,
+      genkendelige flamme, stroke-baseret og krystalklar i lille størrelse (FlameIcon i
+      components/icons.tsx).
 - [x] Hjem-hero-chippen fra runde 7-forsøget er fjernet igen (mærket findes kun i topbaren).
