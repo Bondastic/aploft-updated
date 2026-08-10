@@ -24,6 +24,10 @@ interface TourStep {
   target: string; // CSS-selector for det element, der skal fremhæves
   title: string;
   text: string;
+  // Rul målet helt op, så dets top ligger lige under topbaren (kun til
+  // indhold midt på en side, fx forsidens genvejsknapper). Så er der god
+  // plads under målet til Linguas taleboble, og boblen dækker den aldrig.
+  alignTop?: boolean;
 }
 
 const STEPS: TourStep[] = [
@@ -62,12 +66,14 @@ const STEPS: TourStep[] = [
     target: '[data-tour="hjem-lynkursus"]',
     title: "Lynkursus-knappen",
     text: "På forsiden finder du knappen \"Lynkursus\" blandt genvejene. Den fører dig ind på lynkurset, hvor du kan slå regler, bøjninger og oversættelsesteknikker op, når du skal genopfriske noget.",
+    alignTop: true,
   },
   {
     page: "home",
     target: '[data-tour="hjem-udvikling"]',
     title: "Din udvikling-knappen",
     text: "Den aflange knap \"Din udvikling\" nederst på forsiden tager dig til siden med dine fremskridt: statistik pr. kategori, anbefalinger og en standpunktskarakter fra Lingua.",
+    alignTop: true,
   },
 ];
 
@@ -108,8 +114,10 @@ export default function GuidedTour({
   }, [active]);
 
   // Mål det aktuelle trins målelement og gem dets position (viewport-koordinater).
-  // Først rulles målet ind midt på skærmen, så hullet altid er synligt (fx
-  // genvejsknapperne nederst på forsiden). Scroll-låsen fjernes kortvarigt,
+  // Målet rulles først ind på skærmen, så hullet altid er synligt. For trin med
+  // alignTop (forsidens genvejsknapper) rulles knappen helt op, så dens top
+  // ligger lige under topbaren: så er der plads under knappen til Linguas
+  // taleboble, og boblen dækker aldrig målet. Scroll-låsen fjernes kortvarigt,
   // fordi overflow:hidden ellers blokerer programmatisk scroll.
   const NAV_GAP = 72;
   const measure = useCallback(() => {
@@ -117,7 +125,12 @@ export default function GuidedTour({
     if (!el) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "";
-    el.scrollIntoView({ block: "center", behavior: "auto" });
+    if (STEPS[step].alignTop) {
+      const before = el.getBoundingClientRect();
+      window.scrollBy({ top: before.top - 72, behavior: "auto" });
+    } else {
+      el.scrollIntoView({ block: "center", behavior: "auto" });
+    }
     document.body.style.overflow = prevOverflow;
     const r = el.getBoundingClientRect();
     const vw = window.innerWidth;
@@ -266,7 +279,7 @@ export default function GuidedTour({
             style={
               bubbleAbove
                 ? { bottom: 92 }
-                : { top: (rect ? rect.top + rect.height : 0) + 14 }
+                : { top: (rect ? rect.top + rect.height : 0) + 18 }
             }
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

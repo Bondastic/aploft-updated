@@ -282,6 +282,8 @@ Tjek topbaren på 375 px: logo + mærke + streak/XP-tal i én lav række uden ov
 - [x] **Din udvikling-trinet:** samme princip: spotlyset rammer den aflange "Din udvikling"-
       knap nederst på forsiden, og boblen forklarer, hvor knappen er, hvad den bruges til,
       og hvor den tager dig hen.
-- [x] GuidedTour ruller nu målet ind midt på skærmen (scrollIntoView med kortvarig
-      ophævelse af scroll-låsen), så hullet altid er synligt, også for knapper langt
-      nede på siden.
+- [x] GuidedTour ruller nu målet ind på skærmen: forsidens genvejsknapper scroller
+      helt op, så de ligger lige under topbaren (alignTop + scrollBy), og Linguas
+      taleboble lægger sig under knappen med god luft, så den aldrig dækker målet.
+      Øvrige trin scroller målet ind midt på skærmen (scrollIntoView med kortvarig
+      ophævelse af scroll-låsen).

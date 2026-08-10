@@ -180,12 +180,13 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
   bliver størrelserne 1,33× for store (96/72).
 - **src/db/** er ubrugt boilerplate (drizzle/postgres). Rør den ikke.
 - **Guide og AnimatePresence:** GuidedTour navigerer selv via onNavigate (stabil
-  useCallback) og måler med 80/280 ms delays. Målet rulles ind midt på skærmen
-  (scrollIntoView, med kortvarig ophævelse af scroll-låsen), så hullet altid er
-  synligt. data-tour-attributter skal følge med, hvis man flytter/omdøber
-  elementer: profil, hjem, ov-dig, proeve, symboler (bund-nav-faner) +
-  hjem-lynkursus og hjem-udvikling (forsidens genvejsknapper, som rundvisningens
-  sidste to trin fremhæver i stedet for selve siderne).
+  useCallback) og måler med 80/280 ms delays. Målet rulles ind på skærmen (med
+  kortvarig ophævelse af scroll-låsen): forsidens genvejsknapper (alignTop) scroller
+  helt op under topbaren, så Linguas taleboble ligger under knappen og aldrig
+  dækker den; øvrige trin centrerer målet. data-tour-attributter skal følge med,
+  hvis man flytter/omdøber elementer: profil, hjem, ov-dig, proeve, symboler
+  (bund-nav-faner) + hjem-lynkursus og hjem-udvikling (forsidens genvejsknapper,
+  som rundvisningens sidste to trin fremhæver i stedet for selve siderne).
 
 ---
 
