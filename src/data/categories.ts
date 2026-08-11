@@ -1,4 +1,4 @@
-import type { CategoryDef } from "../types";
+import type { CategoryDef, Education } from "../types";
 
 // Rækkefølgen herunder er bevidst: de mest grundlæggende og vigtigste emner
 // (dem alt andet bygger ovenpå) står øverst, mens mere overordnede/abstrakte
@@ -234,10 +234,26 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  },
 ];
 
-export const ALL_CATEGORIES: CategoryDef[] = [...ALMEN_CATEGORIES, ...LATIN_CATEGORIES, ...HHX_CATEGORIES];
+// STX og HHX har nogle fælles kategori-id'er (fx "ordklasser"), men de er
+// forskellige spor i appen. Hold derfor de to lister adskilt i alle visninger,
+// hvor resultater eller karakterer beregnes – ellers ville samme statistik kunne
+// blive vist og vægtet to gange.
+export const STX_CATEGORIES: CategoryDef[] = [...ALMEN_CATEGORIES, ...LATIN_CATEGORIES];
+export const ALL_CATEGORIES: CategoryDef[] = [...STX_CATEGORIES, ...HHX_CATEGORIES];
 
-export function getCategory(id: string): CategoryDef | undefined {
- return ALL_CATEGORIES.find((c) => c.id === id);
+/** Returnerer kun kategorierne for den aktive uddannelse, uden dubletter. */
+export function getCategoriesForEducation(education: Education): CategoryDef[] {
+ return education === "hhx" ? HHX_CATEGORIES : STX_CATEGORIES;
+}
+
+/**
+ * Slår en kategori op i det aktive uddannelsesspor, når det er kendt.
+ * Den valgfri parameter bevarer en sikker fallback for ældre kald, men nye
+ * skærme skal altid sende uddannelse med, når STX/HHX-etiketten betyder noget.
+ */
+export function getCategory(id: string, education?: Education): CategoryDef | undefined {
+ const categories = education ? getCategoriesForEducation(education) : ALL_CATEGORIES;
+ return categories.find((c) => c.id === id);
 }
 
 export const CATEGORY_COLOR_CLASSES: Record<string, { bg: string; text: string; ring: string; solid: string }> = {

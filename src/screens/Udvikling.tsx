@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Education, Progress } from "../types";
-import { ALL_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES } from "../data/categories";
+import type { CategoryDef, Education, Progress } from "../types";
+import { CATEGORY_COLOR_CLASSES, getCategoriesForEducation } from "../data/categories";
 import { getCategoryPath } from "../data/paths";
 import { LESSON_PASS_THRESHOLD } from "../lib/progress";
 import Mascot from "../components/Mascot";
@@ -42,13 +42,23 @@ function gradeFor(pct: number): { grade: string; label: string } {
   return found ?? GRADE_SCALE[GRADE_SCALE.length - 1];
 }
 
+function categoryScopeLabel(category: CategoryDef, education: Education): string {
+  if (education === "hhx") return "HHX";
+  return category.track === "latin" ? "STX · Latin" : "STX · Almen";
+}
+
 export default function UdviklingPage({ education, progress }: { education: Education; progress: Progress }) {
   const [showGrade, setShowGrade] = useState(false);
   const reduceMotion = progress.settings.reduceMotion;
   const isHhx = education === "hhx";
+  const activeEducationLabel = isHhx ? "HHX" : "STX";
+  const activeScopeLabel = isHhx ? "HHX-sprogforståelse" : "STX: Almen sprogforståelse og latin";
 
+  // Kun den aktive uddannelses kategorier indgår her. STX og HHX deler nogle
+  // id'er (fx ordklasser), men de må aldrig stå dobbelt eller tælle dobbelt i
+  // den estimerede karakter.
   const rows = useMemo(() => {
-    const cats = isHhx ? HHX_CATEGORIES : ALL_CATEGORIES;
+    const cats = getCategoriesForEducation(education);
     return cats.map((cat) => {
       const stat = progress.categoryStats[cat.id];
       const total = stat?.total ?? 0;
@@ -58,7 +68,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
       const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
       return { cat, total, correct, pct, lessonsPassed, lessonsTotal: path.nodes.length };
     });
-  }, [progress, education, isHhx]);
+  }, [progress, education]);
 
   const totalAnswered = rows.reduce((s, r) => s + r.total, 0);
   const eligibleRows = rows.filter((r) => r.total >= MIN_ANSWERS_PER_CATEGORY);
@@ -84,14 +94,21 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
       <div>
-        <h1 className="font-display text-2xl font-extrabold text-ink">Din udvikling</h1>
-        <p className="text-sm text-ink/50">Se hvor du står i hver kategori, hvad du bør øve mest, og få en estimeret standpunktskarakter.</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <h1 className="font-display text-2xl font-extrabold text-ink">Din udvikling</h1>
+          <span className={cn("rounded-full px-2.5 py-1 text-xs font-bold", isHhx ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700")}>
+            {activeEducationLabel}
+          </span>
+        </div>
+        <p className="mt-1 text-sm text-ink/50">
+          Viser kun {activeScopeLabel}. Hver kategori tæller højst én gang i din estimerede standpunktskarakter.
+        </p>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
           <p className="text-xl font-extrabold text-ink">{totalAnswered}</p>
-          <p className="text-xs text-ink/50">opgaver besvaret</p>
+          <p className="text-xs text-ink/50">opgaver i dette spor</p>
         </div>
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
           <p className="text-xl font-extrabold text-purple">{progress.xp}</p>
@@ -114,7 +131,8 @@ export default function UdviklingPage({ education, progress }: { education: Educ
                     <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
                   </span>
                   <span className="flex-1 text-ink/70">
-                    <span className="font-semibold text-ink">{r.cat.short}</span>: {r.pct}% rigtige indtil videre
+                    <span className="font-semibold text-ink">{r.cat.short}</span>
+                    <span className="ml-1.5 text-xs font-semibold text-ink/40">{categoryScopeLabel(r.cat, education)}</span>: {r.pct}% rigtige indtil videre
                   </span>
                 </li>
               ))}
@@ -130,18 +148,26 @@ export default function UdviklingPage({ education, progress }: { education: Educ
       )}
 
       <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
-        <p className="mb-3 font-bold text-ink">Resultat pr. kategori</p>
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <p className="font-bold text-ink">Resultat pr. kategori</p>
+          <span className={cn("rounded-full px-2 py-1 text-xs font-bold", isHhx ? "bg-blue-100 text-blue-700" : "bg-red-100 text-red-700")}>
+            {activeEducationLabel}
+          </span>
+        </div>
         <div className="space-y-3">
           {rows.map((r) => (
             <div key={r.cat.id} className="flex items-center gap-3 text-sm">
               <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", CATEGORY_COLOR_CLASSES[r.cat.color].bg, CATEGORY_COLOR_CLASSES[r.cat.color].text)}>
                 <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
               </span>
-              <span className="w-32 shrink-0 truncate text-ink/70">{r.cat.short}</span>
+              <span className="w-32 shrink-0 text-ink/70">
+                <span className="block truncate">{r.cat.short}</span>
+                <span className="block text-xs font-semibold text-ink/40">{categoryScopeLabel(r.cat, education)}</span>
+              </span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/10">
                 <div className={cn("h-full rounded-full", CATEGORY_COLOR_CLASSES[r.cat.color].solid)} style={{ width: `${r.pct ?? 0}%` }} />
               </div>
-              <span className="w-20 shrink-0 text-right text-xs font-semibold text-ink/50">{r.pct !== null ? `${r.pct}%` : "-"}</span>
+              <span className="w-12 shrink-0 text-right text-xs font-semibold text-ink/50">{r.pct !== null ? `${r.pct}%` : "-"}</span>
             </div>
           ))}
         </div>
@@ -153,7 +179,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
           <div className="flex-1">
             <p className="font-display text-lg font-extrabold text-ink">Linguas vurdering</p>
             <p className="mt-1 text-sm text-ink/60">
-              Lingua kan give dig en hardcoded standpunktskarakter ud fra dine resultater i de kategorier, du allerede har trænet.
+              Lingua vurderer kun kategorierne vist ovenfor i {activeScopeLabel}. Hver kategori står én gang og tæller derfor kun én gang.
             </p>
           </div>
         </div>

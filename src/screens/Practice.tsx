@@ -119,7 +119,7 @@ export default function PracticePage({
   // ---------------------------------------------------------------------
   if (view === "session") {
     const task = sessionTasks[index];
-    const cat = getCategory(task.category);
+    const cat = getCategory(task.category, education);
     return (
       <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
         <div className="flex items-center justify-between">
@@ -222,7 +222,7 @@ export default function PracticePage({
   // PATH (forløbsoversigt for én kategori)
   // ---------------------------------------------------------------------
   if (view === "path" && activeCategory) {
-    const cat = getCategory(activeCategory)!;
+    const cat = getCategory(activeCategory, education)!;
     const colors = CATEGORY_COLOR_CLASSES[cat.color];
     const path = getCategoryPath(activeCategory, education);
     const stat = progress.categoryStats[activeCategory];
