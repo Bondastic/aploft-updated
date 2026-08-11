@@ -239,7 +239,16 @@ export const HHX_CATEGORIES: CategoryDef[] = [
 // hvor resultater eller karakterer beregnes – ellers ville samme statistik kunne
 // blive vist og vægtet to gange.
 export const STX_CATEGORIES: CategoryDef[] = [...ALMEN_CATEGORIES, ...LATIN_CATEGORIES];
-export const ALL_CATEGORIES: CategoryDef[] = [...STX_CATEGORIES, ...HHX_CATEGORIES];
+
+// `ALL_CATEGORIES` er kun en sikker, generel opslagspulje. Den skal også være
+// id-unik, så selv ældre skærmkode eller et Fast Refresh aldrig kan rende
+// `ordklasser` to gange med samme React-key. Den aktive uddannelsesliste
+// vælges altid via getCategoriesForEducation nedenfor.
+const STX_CATEGORY_IDS = new Set(STX_CATEGORIES.map((category) => category.id));
+export const ALL_CATEGORIES: CategoryDef[] = [
+  ...STX_CATEGORIES,
+  ...HHX_CATEGORIES.filter((category) => !STX_CATEGORY_IDS.has(category.id)),
+];
 
 /** Returnerer kun kategorierne for den aktive uddannelse, uden dubletter. */
 export function getCategoriesForEducation(education: Education): CategoryDef[] {
