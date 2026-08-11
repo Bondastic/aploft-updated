@@ -1,6 +1,25 @@
-import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress } from "../types";
+import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress, ProgressSettings, TextSize } from "../types";
 
 const STORAGE_KEY = "aploft.progress.v4";
+
+const DEFAULT_SETTINGS: ProgressSettings = {
+  reduceMotion: false,
+  textSize: "normal",
+};
+
+function isTextSize(value: unknown): value is TextSize {
+  return value === "normal" || value === "large" || value === "extra-large";
+}
+
+// Gamle gemte profiler har kun `reduceMotion`. Normaliseringen gør den nye
+// tekststørrelsesindstilling bagudkompatibel – og ignorerer ugyldige værdier
+// fra fx en manuelt redigeret localStorage-post.
+function normaliseSettings(settings?: Partial<ProgressSettings>): ProgressSettings {
+  return {
+    reduceMotion: settings?.reduceMotion === true,
+    textSize: isTextSize(settings?.textSize) ? settings.textSize : DEFAULT_SETTINGS.textSize,
+  };
+}
 
 // Hvor høj en gennemsnitlig procent skal man mindst have i et forløbstrin,
 // for at det næste trin i "path'en" låses op.
@@ -29,7 +48,7 @@ export function loadProgress(): Progress {
         education: parsed.education ?? "stx",
         onboarded: parsed.onboarded ?? true,
         guideDone: parsed.guideDone ?? true,
-        settings: { ...defaultProgress().settings, ...parsed.settings },
+        settings: normaliseSettings(parsed.settings),
       };
       return migrated;
     }
@@ -44,6 +63,7 @@ export function loadProgress(): Progress {
         onboarded: true,
         guideDone: true,
         completedLessons: {},
+        settings: normaliseSettings(parsed.settings),
       };
     }
   } catch {
@@ -67,7 +87,7 @@ function defaultProgress(): Progress {
     completedSteps: [],
     completedLessons: {},
     examAttempts: [],
-    settings: { reduceMotion: false },
+    settings: { ...DEFAULT_SETTINGS },
   };
 }
 

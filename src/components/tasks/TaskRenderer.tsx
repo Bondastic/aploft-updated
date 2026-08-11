@@ -148,7 +148,7 @@ function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }
         {task.sections.map((s, i) => (
           <div key={i}>
             {s.heading && <p className="mb-0.5 text-xs font-bold uppercase tracking-wide text-purple">{s.heading}</p>}
-            <p className="text-[15px] leading-relaxed text-ink/80">{s.body}</p>
+            <p className="text-base leading-relaxed text-ink/80">{s.body}</p>
           </div>
         ))}
       </div>
@@ -180,7 +180,7 @@ function InfoTask({ task, onContinue }: { task: Extract<Task, { type: "info" }>;
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-extrabold text-ink">{task.title}</h3>
-      <p className="text-[15px] leading-relaxed text-ink/80">{task.intro}</p>
+      <p className="text-base leading-relaxed text-ink/80">{task.intro}</p>
       <div className="overflow-x-auto rounded-xl border border-ink/10">
         <table className="w-full min-w-[280px] border-collapse text-left text-sm">
           <tbody>
@@ -250,7 +250,7 @@ function ChoiceTask({
   // Svarmulighedernes rækkefølge blandes tilfældigt hver gang opgaven vises,
   // så det rigtige svar ikke systematisk ligger som første/anden mulighed.
   // `order[displayPosition] = originalIndex`.
-  const order = useMemo(() => shuffle(task.options.map((_, i) => i)), [task.id]);
+  const order = useMemo(() => shuffle(task.options.map((_, i) => i)), [task.options]);
 
   function check() {
     if (selected === null) return;

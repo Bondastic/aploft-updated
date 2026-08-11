@@ -158,7 +158,7 @@ export default function ExamPage({
                   track === t ? cn(isHhx ? "border-blue-500 bg-blue-500" : "border-purple bg-purple") : "border-ink/20"
                 )}
               >
-                {track === t && <div className="h-2 w-2 rounded-full bg-white" />}
+                {track === t && <div className="h-2 w-2 rounded-full bg-[#ffffff]" />}
               </div>
             </button>
           ))}
@@ -184,7 +184,7 @@ export default function ExamPage({
             onChange={(e) => setCount(Number(e.target.value))}
             className={cn("w-full", isHhx ? "accent-blue-600" : "accent-purple")}
           />
-          <div className="mt-1 flex justify-between text-[11px] text-ink/40">
+          <div className="mt-1 flex justify-between text-xs text-ink/40">
             <span>{minCount} spørgsmål</span>
             <span>{maxCount} spørgsmål</span>
           </div>
@@ -241,7 +241,7 @@ export default function ExamPage({
           <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
         </div>
         {answered && (
-          <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
+          <button onClick={next} className="w-full rounded-full bg-purple py-3 text-sm font-bold text-white shadow-md shadow-purple/30">
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}

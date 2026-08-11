@@ -91,15 +91,15 @@ export default function UdviklingPage({ education, progress }: { education: Educ
       <div className="grid grid-cols-3 gap-3">
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
           <p className="text-xl font-extrabold text-ink">{totalAnswered}</p>
-          <p className="text-[11px] text-ink/50">opgaver besvaret</p>
+          <p className="text-xs text-ink/50">opgaver besvaret</p>
         </div>
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
           <p className="text-xl font-extrabold text-purple">{progress.xp}</p>
-          <p className="text-[11px] text-ink/50">XP i alt</p>
+          <p className="text-xs text-ink/50">XP i alt</p>
         </div>
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
           <p className="text-xl font-extrabold text-amber-600">{rows.reduce((s, r) => s + r.lessonsPassed, 0)}</p>
-          <p className="text-[11px] text-ink/50">forløb bestået</p>
+          <p className="text-xs text-ink/50">forløb bestået</p>
         </div>
       </div>
 
@@ -151,7 +151,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
         <div className="flex items-start gap-4">
           <Mascot pose="explain" size="md" speech={null} reduceMotion={reduceMotion} />
           <div className="flex-1">
-            <p className="font-display text-lg font-extrabold text-ink">Lingua's vurdering</p>
+            <p className="font-display text-lg font-extrabold text-ink">Linguas vurdering</p>
             <p className="mt-1 text-sm text-ink/60">
               Lingua kan give dig en hardcoded standpunktskarakter ud fra dine resultater i de kategorier, du allerede har trænet.
             </p>
@@ -182,7 +182,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
           </p>
         )}
 
-        <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-800">
+        <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-xs leading-relaxed text-amber-800">
           Bemærk: opgavebanken i AP Klar er endnu ikke fuldt færdig. Karakteren er derfor kun et estimat baseret på det, du allerede har
           trænet. Den kan blive langt mere præcis, når flere kategorier og forløb er fuldt udbyggede.
         </p>

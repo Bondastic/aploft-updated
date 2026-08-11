@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import type { CategoryId, CategoryStat, Education, Progress } from "../types";
+import type { CategoryId, CategoryStat, Education, Progress, TextSize } from "../types";
 import type { ExamTrack } from "../lib/examGenerator";
 import {
   addXp,
@@ -42,21 +42,40 @@ export default function AploftApp() {
   // Undgå hydration-mismatch: gen-indlæs progress fra localStorage, når
   // komponenten er monteret i browseren.
   useEffect(() => {
-    setProgress(touchStreak(loadProgress()));
-    setHydrated(true);
+    // Kør efter den første paint frem for synkront i effekten. Det bevarer den
+    // neutrale SSR-skal og undgår et ekstra render midt i effect-flushen.
+    const timer = window.setTimeout(() => {
+      setProgress(touchStreak(loadProgress()));
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   useEffect(() => {
     if (hydrated) saveProgress(progress);
   }, [progress, hydrated]);
 
+  // Tekststørrelsen ligger på <html>, så indstillingen også rammer alle
+  // skærme, modaler og Tailwind-størrelser i rem. Layout-scriptet i
+  // app/layout.tsx sætter samme attribut før hydration for at undgå et blink.
+  useEffect(() => {
+    document.documentElement.dataset.textSize = progress.settings.textSize;
+  }, [progress.settings.textSize]);
+
   // Hvis brugeren har gennemgået velkomstskærmen, men ikke har fået (eller
-  // afsluttet) rundvisningen endnu, så start den på Profil. Det dækker både
-  // første besøg og en bruger, der lukkede fanen midt i turen.
+  // afsluttet) rundvisningen endnu, så start den på Profil. Vi venter et kort
+  // øjeblik og fjerner fokus først: på iPhone/iPad når tastaturet da at lukke
+  // efter navnefeltet, før rundvisningen måler skærmen. Det forhindrer en
+  // skæv/forstørret spotlight-tur, hvis man lige har skrevet et navn.
   useEffect(() => {
     if (!hydrated || !progress.onboarded || progress.guideDone || guideActive) return;
-    setPage("profile");
-    setGuideActive(true);
+    const timer = window.setTimeout(() => {
+      const activeElement = document.activeElement;
+      if (activeElement instanceof HTMLElement) activeElement.blur();
+      setPage("profile");
+      setGuideActive(true);
+    }, 360);
+    return () => window.clearTimeout(timer);
   }, [hydrated, progress.onboarded, progress.guideDone, guideActive]);
 
   const handleGuideFinish = useCallback(() => {
@@ -92,9 +111,13 @@ export default function AploftApp() {
         <WelcomePage
           reduceMotion={progress.settings.reduceMotion}
           onComplete={(education, nickname) => {
+            // Et Enter-tryk kan efterlade fokus i inputfeltet på iOS. Slør det
+            // eksplicit, så tastaturet og viewporten kan falde på plads, før
+            // den forsinkede rundvisning starter.
+            const activeElement = document.activeElement;
+            if (activeElement instanceof HTMLElement) activeElement.blur();
             setProgress((p) => completeOnboarding(p, education, nickname));
             setPage("profile");
-            setGuideActive(true);
           }}
         />
       </div>
@@ -178,6 +201,7 @@ export default function AploftApp() {
                 onNavigate={(p) => setPage(p)}
                 onSetNickname={(name) => setProgress((p) => ({ ...p, nickname: name }))}
                 onSetReduceMotion={(v) => setProgress((p) => ({ ...p, settings: { ...p.settings, reduceMotion: v } }))}
+                onSetTextSize={(size: TextSize) => setProgress((p) => ({ ...p, settings: { ...p.settings, textSize: size } }))}
                 onSetEducation={handleSetEducation}
                 onReset={() => setProgress(resetProgress())}
               />

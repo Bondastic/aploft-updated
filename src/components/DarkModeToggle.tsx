@@ -15,8 +15,13 @@ export default function DarkModeToggle({ variant = "compact" }: { variant?: "com
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setOn(isDarkModeOn());
-    setMounted(true);
+    // Vent én task, så knappen synkroniserer med det tidlige layout-script
+    // uden en synkron state-opdatering under Reacts effect-flush.
+    const timer = window.setTimeout(() => {
+      setOn(isDarkModeOn());
+      setMounted(true);
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   function toggle() {
@@ -49,7 +54,7 @@ export default function DarkModeToggle({ variant = "compact" }: { variant?: "com
         >
           <span
             className={cn(
-              "absolute top-0.5 h-6 w-6 rounded-full bg-white shadow-md transition-transform",
+              "theme-toggle-thumb absolute top-0.5 h-6 w-6 rounded-full shadow-md transition-transform",
               on ? "translate-x-5" : "translate-x-0.5"
             )}
           />

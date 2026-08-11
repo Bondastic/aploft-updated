@@ -441,7 +441,7 @@ export default function LynkursusPage({ education, progress }: { education: Educ
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Lynkursus</h1>
  <p className="text-sm text-ink/50">
- Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i "Øv dig" ; brug siden her til at
+ Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i &quot;Øv dig&quot; ; brug siden her til at
  genopfriske, slå skemaer op eller få et hurtigt overblik, før du tager en prøve.
  </p>
  </div>

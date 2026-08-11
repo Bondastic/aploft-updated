@@ -154,7 +154,7 @@ export default function TranslationSheet({
             animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
             exit={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0 }}
             transition={{ type: "spring", stiffness: 200, damping: 24 }}
-            className="relative flex h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-[#f5ecd7] shadow-2xl sm:h-[85vh] sm:rounded-2xl"
+            className="translation-sheet relative flex h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-[#f5ecd7] shadow-2xl sm:h-[85vh] sm:rounded-2xl"
           >
             {/* Sticky top: titel, luk, faneblade og søgefelt */}
             <div className="shrink-0 border-b border-stone-300/60 bg-[#f5ecd7] px-3 pb-2 pt-3">
@@ -195,7 +195,7 @@ export default function TranslationSheet({
                     autoComplete="off"
                     autoCapitalize="off"
                     spellCheck={false}
-                    className="w-full rounded-xl border-2 border-stone-300 bg-white py-2 pl-9 pr-8 text-sm text-stone-800 outline-none focus:border-amber-500"
+                    className="w-full rounded-xl border-2 border-stone-300 bg-white py-2 pl-9 pr-8 text-base text-stone-800 outline-none focus:border-amber-500"
                   />
                   {query && (
                     <button
@@ -231,7 +231,7 @@ export default function TranslationSheet({
                             <span className="font-serif italic text-stone-800">{highlight(w.latin, query)}</span>
                             <span className="text-right text-stone-600">
                               {highlight(w.danish, query)}
-                              {w.note && <span className="ml-1.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-[10px] font-semibold text-stone-500">{w.note}</span>}
+                              {w.note && <span className="ml-1.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-xs font-semibold text-stone-500">{w.note}</span>}
                             </span>
                           </li>
                         ))}
@@ -245,7 +245,7 @@ export default function TranslationSheet({
                     <div key={t.title} className="overflow-hidden rounded-lg border-4 border-white bg-white/60 shadow-inner">
                       <div className="border-b border-stone-200 bg-white/70 px-3 py-1.5">
                         <p className="text-xs font-bold text-stone-700">{t.title}</p>
-                        <p className="text-[11px] text-stone-500">{t.note}</p>
+                        <p className="text-xs text-stone-500">{t.note}</p>
                       </div>
                       <table className="w-full border-collapse text-left text-xs">
                         <thead>

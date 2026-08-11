@@ -97,10 +97,13 @@ export default function GuidedTour({
 }) {
   const [step, setStep] = useState(0);
   const [rect, setRect] = useState<HoleRect | null>(null);
-  const [bubbleAbove, setBubbleAbove] = useState(false);
 
   const current = STEPS[step];
   const isLast = step >= STEPS.length - 1;
+  // Det er afledt direkte af den målte rektangel; ingen ekstra state behøves.
+  // `typeof window` holder server-renderen sikker, før turen er aktiv.
+  const bubbleAbove =
+    rect !== null && typeof window !== "undefined" && window.innerHeight - (rect.top + rect.height) < 260;
 
   // Nulstil turen, hver gang den aktiveres (fx efter et "Nulstil alle data"
   // + nyt velkomstflow), så den altid starter forfra på Profil.
@@ -150,10 +153,11 @@ export default function GuidedTour({
   useEffect(() => {
     if (!active) return;
     onNavigate(STEPS[step].page);
-    setRect(null);
+    const clearRect = window.setTimeout(() => setRect(null), 0);
     const t1 = window.setTimeout(measure, 80);
     const t2 = window.setTimeout(measure, 280);
     return () => {
+      window.clearTimeout(clearRect);
       window.clearTimeout(t1);
       window.clearTimeout(t2);
     };
@@ -185,14 +189,6 @@ export default function GuidedTour({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [active, onFinish]);
-
-  // Taleboblen placeres under målet, hvis der er plads; ellers over det
-  // (fx når målet er en fane i bund-navigationen).
-  useEffect(() => {
-    if (!rect) return;
-    const bottom = rect.top + rect.height;
-    setBubbleAbove(window.innerHeight - bottom < 260);
-  }, [rect]);
 
   function next() {
     if (isLast) {
@@ -254,7 +250,7 @@ export default function GuidedTour({
               <p className="truncate text-sm font-extrabold">Rundvisning med Lingua</p>
             </div>
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white/80">
+              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-white/80">
                 Trin {step + 1} af {STEPS.length}
               </span>
               <button

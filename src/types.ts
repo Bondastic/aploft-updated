@@ -214,8 +214,14 @@ export interface ExamAttempt {
   byCategory: Record<string, CategoryStat>;
 }
 
+// Visningsindstillinger, som gemmes lokalt sammen med progressionen.
+// `textSize` ændrer rodstørrelsen i appen, så både brødtekst og Tailwind-
+// størrelser i rem skalerer samlet og forbliver proportionelle.
+export type TextSize = "normal" | "large" | "extra-large";
+
 export interface ProgressSettings {
   reduceMotion: boolean;
+  textSize: TextSize;
 }
 
 // Resultat for et enkelt forløbs-trin (lesson) i en kategoris "path".

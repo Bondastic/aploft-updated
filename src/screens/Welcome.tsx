@@ -232,7 +232,7 @@ export default function WelcomePage({
                 placeholder="Fx AP-jægeren"
                 maxLength={20}
                 autoComplete="off"
-                className="w-full rounded-xl border-2 border-ink/15 px-3 py-2.5 text-sm outline-none transition focus:border-purple"
+                className="w-full rounded-xl border-2 border-ink/15 px-3 py-2.5 text-base outline-none transition focus:border-purple"
               />
             </div>
 

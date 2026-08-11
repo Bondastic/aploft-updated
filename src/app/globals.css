@@ -15,10 +15,35 @@
   --font-display: "Baloo 2", "Nunito", ui-sans-serif, system-ui, sans-serif;
 }
 
+/* Brugeren kan vælge en større, vedvarende læsestørrelse under Profil →
+   Indstillinger. Rem-baserede tekststørrelser, afstande og komponenter følger
+   med proportionalt, så layoutet stadig hænger sammen på alle skærme. */
+html {
+  font-size: 100%;
+}
+html[data-text-size="large"] {
+  font-size: 112.5%;
+}
+html[data-text-size="extra-large"] {
+  font-size: 125%;
+}
+
 html,
 body {
   font-family: var(--font-sans);
   background-color: #faf8ff;
+}
+
+/* iOS Safari zoomer automatisk ind, når et skrivefelt har en beregnet
+   skriftstørrelse under 16 px. Det er særligt forstyrrende lige før
+   rundvisningen efter velkomsten. Alle felter, hvor man kan skrive/vælge
+   tekst, får derfor mindst 16 px – uden at slå brugerens almindelige zoom
+   eller andre tilgængelighedsfunktioner fra. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+textarea,
+select {
+  font-size: 16px;
+  font-size: max(16px, 1rem);
 }
 
 .font-display {
@@ -296,6 +321,112 @@ body {
 .dark .border-purple-300 { border-color: rgba(216, 204, 251, 0.6) !important; }
 .dark .ring-purple-300 { --tw-ring-color: rgba(216, 204, 251, 0.5) !important; }
 
-/* Stone/parkament-toner (oversættelsesarket) forbliver bevidst lyse;
-   det er et "papirark", som skal ligne rigtigt papir uanset tema. */
+/* Resten af de farver, der forekommer i kort, valgmuligheder og badges.
+   Især de lyse 50/100-overflader skal tones ned i mørkt tema – ellers ender
+   en mørk skærm med enkelte næsten-hvide knapper og dårlig kontrast. */
+.dark .bg-amber-200 { background-color: rgba(245, 158, 11, 0.3) !important; }
+.dark .hover\:bg-amber-100:hover { background-color: rgba(245, 158, 11, 0.3) !important; }
+.dark .border-amber-500 { border-color: #fbbf24 !important; }
+.dark .text-amber-300 { color: #fde68a !important; }
 
+.dark .bg-blue-50 { background-color: rgba(59, 130, 246, 0.14) !important; }
+.dark .bg-blue-500 { background-color: #2563eb !important; }
+.dark .from-blue-500 { --tw-gradient-from: #2563eb !important; }
+.dark .border-blue-200 { border-color: rgba(147, 197, 253, 0.38) !important; }
+.dark .text-blue-300 { color: #bfdbfe !important; }
+.dark .ring-blue-300\/60 { --tw-ring-color: rgba(147, 197, 253, 0.42) !important; }
+
+.dark .bg-cyan-50 { background-color: rgba(6, 182, 212, 0.14) !important; }
+.dark .text-cyan-600,
+.dark .text-cyan-700 { color: #a5f3fc !important; }
+
+.dark .bg-emerald-50 { background-color: rgba(16, 185, 129, 0.16) !important; }
+.dark .text-emerald-600 { color: #6ee7b7 !important; }
+
+.dark .bg-indigo-100 { background-color: rgba(99, 102, 241, 0.22) !important; }
+.dark .text-indigo-300 { color: #c7d2fe !important; }
+.dark .text-indigo-700 { color: #c7d2fe !important; }
+
+.dark .bg-orange-100 { background-color: rgba(249, 115, 22, 0.22) !important; }
+.dark .text-orange-600 { color: #fdba74 !important; }
+.dark .text-orange-700 { color: #fed7aa !important; }
+
+.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.14) !important; }
+.dark .bg-red-100 { background-color: rgba(239, 68, 68, 0.22) !important; }
+.dark .bg-red-500 { background-color: #dc2626 !important; }
+.dark .from-red-500 { --tw-gradient-from: #dc2626 !important; }
+.dark .border-red-200 { border-color: rgba(252, 165, 165, 0.42) !important; }
+.dark .text-red-300 { color: #fca5a5 !important; }
+.dark .text-red-600 { color: #fda4af !important; }
+.dark .text-red-700 { color: #fecdd3 !important; }
+.dark .ring-red-300\/60 { --tw-ring-color: rgba(252, 165, 165, 0.42) !important; }
+
+.dark .bg-teal-100 { background-color: rgba(20, 184, 166, 0.22) !important; }
+.dark .text-teal-700 { color: #99f6e4 !important; }
+
+.dark .bg-violet-100 { background-color: rgba(139, 92, 246, 0.22) !important; }
+.dark .text-violet-700 { color: #ddd6fe !important; }
+
+.dark .bg-fuchsia-100 { background-color: rgba(217, 70, 239, 0.22) !important; }
+.dark .text-fuchsia-700 { color: #f5d0fe !important; }
+
+.dark .border-ink\/25 { border-color: rgba(255, 255, 255, 0.26) !important; }
+.dark .border-ink\/30 { border-color: rgba(255, 255, 255, 0.3) !important; }
+
+/* Native input-baggrunde er ellers hvide på flere browsere, selv når
+   omkringliggende kort er mørke. Undtagelserne er rene kontroller uden
+   skriveflade (range/checkbox/radio), som browseren selv tegner korrekt med
+   color-scheme: dark. */
+.dark input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]):not([type="file"]):not([type="button"]):not([type="submit"]):not([type="reset"]),
+.dark textarea,
+.dark select {
+  background-color: #1d172d !important;
+  color: #f4f0ff !important;
+  border-color: rgba(216, 204, 251, 0.42) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: rgba(236, 231, 249, 0.56) !important;
+}
+
+/* Tabellenes `odd:`/`even:`-klasser er variant-klasser med kolon i navnet,
+   så de rammes ikke af den almindelige `.bg-white`-regel ovenfor. */
+.dark tr.odd\:bg-white:nth-child(odd) {
+  background-color: #2a223f !important;
+}
+.dark tr.even\:bg-ink\/\[0\.02\]:nth-child(even),
+.dark tr.even\:bg-ink\/\[0\.03\]:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.045) !important;
+}
+
+/* Oversættelsesarket følger også mørkt tema. Det var før et permanent lyst
+   "papirark", som både blændede og efterlod lyse knapper i nattetilstand. */
+.dark .translation-sheet,
+.dark .translation-sheet .bg-\[\#f5ecd7\] {
+  background-color: #211a31 !important;
+}
+.dark .translation-sheet .bg-stone-100 { background-color: #2a223e !important; }
+.dark .translation-sheet .bg-stone-200,
+.dark .translation-sheet .bg-stone-200\/70 { background-color: #352b4a !important; }
+.dark .translation-sheet .bg-stone-300 { background-color: #463959 !important; }
+.dark .translation-sheet .hover\:bg-stone-100:hover { background-color: #352b4a !important; }
+.dark .translation-sheet .hover\:bg-stone-300:hover { background-color: #4c3d61 !important; }
+.dark .translation-sheet .border-stone-100,
+.dark .translation-sheet .border-stone-200 { border-color: rgba(236, 231, 249, 0.13) !important; }
+.dark .translation-sheet .border-stone-300,
+.dark .translation-sheet .border-stone-300\/60 { border-color: rgba(216, 204, 251, 0.36) !important; }
+.dark .translation-sheet .text-stone-400 { color: #b7acc9 !important; }
+.dark .translation-sheet .text-stone-500 { color: #c8bfd8 !important; }
+.dark .translation-sheet .text-stone-600 { color: #ddd6e8 !important; }
+.dark .translation-sheet .text-stone-700 { color: #ece7f9 !important; }
+.dark .translation-sheet .text-stone-800,
+.dark .translation-sheet .text-stone-900 { color: #f8f5ff !important; }
+.dark .translation-sheet .bg-white\/40,
+.dark .translation-sheet .bg-white\/60,
+.dark .translation-sheet .bg-white\/70 { background-color: #2a223e !important; }
+.dark .translation-sheet tr.odd\:bg-white\/40:nth-child(odd) { background-color: #2a223e !important; }
+
+/* Den lille skyder-knop skal forblive lys, også når alle andre hvide flader
+   skifter til mørke kort. */
+.theme-toggle-thumb { background-color: #ffffff; }
+.dark .theme-toggle-thumb { background-color: #f8f5ff !important; }

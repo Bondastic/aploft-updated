@@ -151,7 +151,7 @@ export default function PracticePage({
           <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
         </div>
         {answered && (
-          <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
+          <button onClick={next} className="w-full rounded-full bg-purple py-3 text-sm font-bold text-white shadow-md shadow-purple/30">
             {index + 1 >= sessionTasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}
@@ -253,7 +253,7 @@ export default function PracticePage({
             <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10">
               <div className={cn("h-full rounded-full", colors.solid)} style={{ width: `${overallPct}%` }} />
             </div>
-            <p className="mt-1 text-[11px] text-ink/40">
+            <p className="mt-1 text-xs text-ink/40">
               Baseret på {stat!.total} besvarede opgaver i alt · viser den procentdel, du i gennemsnit har svaret rigtigt på
             </p>
           </div>
@@ -298,7 +298,7 @@ export default function PracticePage({
                     <p className={cn("font-bold", unlocked ? "text-ink" : "text-ink/40")}>
                       {node.title}
                       {isReview && (
-                        <span className={cn("ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold uppercase", theme.accentText)}>
+                        <span className={cn("ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-xs font-bold uppercase", theme.accentText)}>
                           Opsamling
                         </span>
                       )}
@@ -384,7 +384,7 @@ export default function PracticePage({
               <div className="min-w-0 flex-1">
                 <p className="font-bold text-ink">{cat.title}</p>
                 <p className="truncate text-xs text-ink/50">{cat.description}</p>
-                <p className="mt-0.5 text-[11px] text-ink/40">
+                <p className="mt-0.5 text-xs text-ink/40">
                   {lessonsPassed}/{path.nodes.length} forløb bestået
                   {pct !== null && <> · {pct}% rigtige i gennemsnit</>}
                 </p>

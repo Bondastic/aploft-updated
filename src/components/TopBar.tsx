@@ -19,7 +19,7 @@ export default function TopBar({ progress }: { progress: Progress }) {
           <img src="/banner.png" alt="AP Klar" className="h-9 w-auto object-contain sm:h-10" />
           <span
             className={cn(
-              "inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-[10px] font-bold sm:px-2 sm:text-[11px]",
+              "inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-xs font-bold sm:px-2 sm:text-xs",
               theme.accentChip,
               theme.darkChip
             )}

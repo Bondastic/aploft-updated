@@ -80,30 +80,41 @@ export const viewport = {
   initialScale: 1,
 };
 
-// Lille inline-script der sætter "dark"-klassen på <html>, FØR React
-// hydrerer siden. Det undgår et hvidt "flash" ved indlæsning, hvis
-// brugeren allerede har slået nattetilstand til. Injektionen sker via
-// next/script med strategy="beforeInteractive" (aldrig et raw <script>
-// i head, som giver en React-advarsel).
-const DARK_MODE_INIT_SCRIPT = `
+// Lille inline-script der læser farvetema og tekststørrelse på <html>, FØR
+// React hydrerer siden. Det undgår et lyst "flash" og et kort hop i
+// tekststørrelsen ved indlæsning. Injektionen sker via next/script med
+// strategy="beforeInteractive" (aldrig et raw <script> i head, som giver en
+// React-advarsel).
+const PREFERENCE_INIT_SCRIPT = `
 (function () {
   try {
+    var root = document.documentElement;
     var stored = localStorage.getItem("aploft.darkmode");
-    var prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-    var isDark = stored === "on" || (stored === null && false);
-    if (isDark) document.documentElement.classList.add("dark");
+    if (stored === "on") root.classList.add("dark");
+
+    // Tekststørrelsen gemmes sammen med progressionen. Sæt den før React
+    // hydrerer, så en stor tekststørrelse ikke kort blinker som normal.
+    var textSize = "normal";
+    var rawProgress = localStorage.getItem("aploft.progress.v4");
+    if (rawProgress) {
+      var settings = JSON.parse(rawProgress).settings;
+      if (settings && (settings.textSize === "large" || settings.textSize === "extra-large" || settings.textSize === "normal")) {
+        textSize = settings.textSize;
+      }
+    }
+    root.dataset.textSize = textSize;
   } catch (e) {}
 })();
 `;
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="da" suppressHydrationWarning>
+    <html lang="da" data-text-size="normal" suppressHydrationWarning>
       <head>
         <Script
-          id="dark-mode-init"
+          id="preference-init"
           strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: DARK_MODE_INIT_SCRIPT }}
+          dangerouslySetInnerHTML={{ __html: PREFERENCE_INIT_SCRIPT }}
         />
       </head>
       <body className="bg-[#faf8ff] text-ink antialiased transition-colors dark:bg-[#171225] dark:text-ink-dark" suppressHydrationWarning>
