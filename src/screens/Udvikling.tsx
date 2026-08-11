@@ -47,6 +47,14 @@ function categoryScopeLabel(category: CategoryDef, education: Education): string
   return category.track === "latin" ? "STX · Latin" : "STX · Almen";
 }
 
+// Et id som "ordklasser" findes i både STX- og HHX-definitionen. Listen
+// filtreres allerede til ét spor ovenfor, men React-nøglen er også bevidst
+// spor-specifik som ekstra sikkerhed ved fx Fast Refresh eller fremtidige
+// sammenligningsvisninger.
+function categoryRowKey(category: CategoryDef, education: Education): string {
+  return `${education}:${category.track}:${category.id}`;
+}
+
 export default function UdviklingPage({ education, progress }: { education: Education; progress: Progress }) {
   const [showGrade, setShowGrade] = useState(false);
   const reduceMotion = progress.settings.reduceMotion;
@@ -126,7 +134,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
           {weakest.length > 0 && (
             <ul className="space-y-2">
               {weakest.map((r) => (
-                <li key={r.cat.id} className="flex items-center gap-3 text-sm">
+                <li key={categoryRowKey(r.cat, education)} className="flex items-center gap-3 text-sm">
                   <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", CATEGORY_COLOR_CLASSES[r.cat.color].bg, CATEGORY_COLOR_CLASSES[r.cat.color].text)}>
                     <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
                   </span>
@@ -156,7 +164,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
         </div>
         <div className="space-y-3">
           {rows.map((r) => (
-            <div key={r.cat.id} className="flex items-center gap-3 text-sm">
+            <div key={categoryRowKey(r.cat, education)} className="flex items-center gap-3 text-sm">
               <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", CATEGORY_COLOR_CLASSES[r.cat.color].bg, CATEGORY_COLOR_CLASSES[r.cat.color].text)}>
                 <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
               </span>

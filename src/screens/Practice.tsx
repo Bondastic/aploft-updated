@@ -374,7 +374,7 @@ export default function PracticePage({
           const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
           return (
             <button
-              key={cat.id}
+              key={`${education}:${cat.track}:${cat.id}`}
               onClick={() => openCategory(cat.id)}
               className="flex w-full items-center gap-4 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
             >
