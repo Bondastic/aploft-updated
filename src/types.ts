@@ -249,8 +249,12 @@ export interface Progress {
   streakDays: number;
   multiplier: number;
   lastActiveDate: string;
+  // Nøgler er uddannelsesafgrænsede (`stx:ordklasser`, `hhx:ordklasser`),
+  // så fælles kategori-id'er aldrig blandes mellem de to spor.
   categoryStats: Record<string, CategoryStat>;
   completedSteps: string[];
+  // Nøgler er uddannelsesafgrænsede (`stx:ordklasser__lesson-1`), så et
+  // bestået STX-forløb ikke låser den tilsvarende HHX-sti op.
   completedLessons: Record<string, LessonResult>;
   examAttempts: ExamAttempt[];
   settings: ProgressSettings;

@@ -2,9 +2,11 @@
 
 import { useMemo, useState } from "react";
 import type { CategoryDef, Education, Progress } from "../types";
-import { CATEGORY_COLOR_CLASSES, getCategoriesForEducation } from "../data/categories";
+import { CATEGORY_COLOR_CLASSES } from "../data/categories";
+import { STX_CATEGORIES } from "../data/categories/stx";
+import { HHX_CATEGORIES } from "../data/categories/hhx";
 import { getCategoryPath } from "../data/paths";
-import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { getCategoryStat, getLessonResult, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import Mascot from "../components/Mascot";
 import { CategoryIcon } from "../components/icons";
 import { cn } from "../utils/cn";
@@ -66,14 +68,14 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   // id'er (fx ordklasser), men de må aldrig stå dobbelt eller tælle dobbelt i
   // den estimerede karakter.
   const rows = useMemo(() => {
-    const cats = getCategoriesForEducation(education);
+    const cats = education === "hhx" ? HHX_CATEGORIES : STX_CATEGORIES;
     return cats.map((cat) => {
-      const stat = progress.categoryStats[cat.id];
+      const stat = getCategoryStat(progress, education, cat.id);
       const total = stat?.total ?? 0;
       const correct = stat?.correct ?? 0;
       const pct = total > 0 ? Math.round((correct / total) * 100) : null;
       const path = getCategoryPath(cat.id, education);
-      const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
+      const lessonsPassed = path.nodes.filter((n) => (getLessonResult(progress, education, n.id)?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
       return { cat, total, correct, pct, lessonsPassed, lessonsTotal: path.nodes.length };
     });
   }, [progress, education]);

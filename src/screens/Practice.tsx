@@ -5,7 +5,7 @@ import type { CategoryId, Education, MascotPose, Progress, Task, Track } from ".
 import { isContentTask } from "../types";
 import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
 import { getCategoryPath, getLessonTasks, type LessonNode } from "../data/paths";
-import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { getCategoryStat, getLessonResult, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
@@ -63,7 +63,7 @@ export default function PracticePage({
   const gradableCount = sessionTasks.filter((t) => !isContentTask(t)).length;
 
   function startLesson(node: LessonNode) {
-    const alreadyPassed = (progress.completedLessons[node.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
+    const alreadyPassed = (getLessonResult(progress, education, node.id)?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
     const authored = getLessonTasks(node, education);
     // FØRSTE gennemgang: fast, gennemtænkt rækkefølge med undervisning før
     // opgaver, aldrig tilfældig. Kun EFTER beståelse må træningen randomiseres,
@@ -103,7 +103,7 @@ export default function PracticePage({
       const pct = gradableCount > 0 ? Math.round((correctCount / gradableCount) * 100) : 100;
       // Gem den tidligere bedste score FØR vi opdaterer den, så resultatskærmen
       // kan vise en tydelig sammenligning ("ny rekord" / "bedste er stadig X%").
-      setPrevBestPct(activeNode ? progress.completedLessons[activeNode.id]?.bestPct ?? null : null);
+      setPrevBestPct(activeNode ? getLessonResult(progress, education, activeNode.id)?.bestPct ?? null : null);
       if (activeNode) onLessonComplete(activeNode.id, pct);
       setPose("celebrate");
       setView("result");
@@ -225,7 +225,7 @@ export default function PracticePage({
     const cat = getCategory(activeCategory, education)!;
     const colors = CATEGORY_COLOR_CLASSES[cat.color];
     const path = getCategoryPath(activeCategory, education);
-    const stat = progress.categoryStats[activeCategory];
+    const stat = getCategoryStat(progress, education, activeCategory);
     const overallPct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
 
     return (
@@ -270,8 +270,9 @@ export default function PracticePage({
         <ol className="space-y-3">
           {path.nodes.map((node, i) => {
             const prevNode = path.nodes[i - 1];
-            const unlocked = i === 0 || (prevNode && progress.completedLessons[prevNode.id]?.bestPct !== undefined && progress.completedLessons[prevNode.id]!.bestPct >= LESSON_PASS_THRESHOLD);
-            const result = progress.completedLessons[node.id];
+            const previousResult = prevNode ? getLessonResult(progress, education, prevNode.id) : undefined;
+            const unlocked = i === 0 || (previousResult?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
+            const result = getLessonResult(progress, education, node.id);
             const passed = !!result && result.bestPct >= LESSON_PASS_THRESHOLD;
             const isReview = node.kind === "review";
 
@@ -367,11 +368,11 @@ export default function PracticePage({
 
       <div className="space-y-3">
         {categories.map((cat) => {
-          const stat = progress.categoryStats[cat.id];
+          const stat = getCategoryStat(progress, education, cat.id);
           const colors = CATEGORY_COLOR_CLASSES[cat.color];
           const pct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
           const path = getCategoryPath(cat.id, education);
-          const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
+          const lessonsPassed = path.nodes.filter((n) => (getLessonResult(progress, education, n.id)?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
           return (
             <button
               key={`${education}:${cat.track}:${cat.id}`}

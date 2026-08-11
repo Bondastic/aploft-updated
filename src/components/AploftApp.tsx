@@ -125,15 +125,15 @@ export default function AploftApp() {
   }
 
   function handleCorrect(category: CategoryId) {
-    setProgress((p) => addXp(recordAnswer(p, category, true), 10));
+    setProgress((p) => addXp(recordAnswer(p, p.education, category, true), 10));
   }
 
   function handleWrong(category: CategoryId) {
-    setProgress((p) => addXp(recordAnswer(p, category, false), 2));
+    setProgress((p) => addXp(recordAnswer(p, p.education, category, false), 2));
   }
 
   function handleLessonComplete(lessonId: string, pct: number) {
-    setProgress((p) => recordLessonResult(p, lessonId, pct));
+    setProgress((p) => recordLessonResult(p, p.education, lessonId, pct));
   }
 
   function handleExamComplete(

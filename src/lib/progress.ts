@@ -21,6 +21,77 @@ function normaliseSettings(settings?: Partial<ProgressSettings>): ProgressSettin
   };
 }
 
+// Samme faglige kategori (fx ordklasser) findes både på STX og HHX. Statistik
+// skal derfor altid gemmes med uddannelsen som præfiks; ellers kan et skift
+// mellem spor blande resultaterne og få dem til at tælle i den forkerte
+// standpunktsvurdering.
+export function categoryStatKey(education: Education, category: string): string {
+  return `${education}:${category}`;
+}
+
+function isScopedCategoryStatKey(key: string): boolean {
+  return key.startsWith("stx:") || key.startsWith("hhx:");
+}
+
+function normaliseCategoryStats(
+  stats: Record<string, CategoryStat> | undefined,
+  fallbackEducation: Education
+): Record<string, CategoryStat> {
+  if (!stats) return {};
+
+  const normalised: Record<string, CategoryStat> = {};
+  for (const [key, stat] of Object.entries(stats)) {
+    const scopedKey = isScopedCategoryStatKey(key) ? key : categoryStatKey(fallbackEducation, key);
+    const previous = normalised[scopedKey] ?? { correct: 0, total: 0 };
+    normalised[scopedKey] = {
+      correct: previous.correct + (stat?.correct ?? 0),
+      total: previous.total + (stat?.total ?? 0),
+    };
+  }
+  return normalised;
+}
+
+/** Henter en kategori-score i det aktive uddannelsesspor. */
+export function getCategoryStat(p: Progress, education: Education, category: string): CategoryStat | undefined {
+  return p.categoryStats[categoryStatKey(education, category)];
+}
+
+// Forløb har også ens id'er på tværs af spor (fx `ordklasser__lesson-1`).
+// Låse og bedste scores skal følge samme afgrænsning som kategori-statistik.
+export function lessonProgressKey(education: Education, lessonId: string): string {
+  return `${education}:${lessonId}`;
+}
+
+function isScopedLessonProgressKey(key: string): boolean {
+  return key.startsWith("stx:") || key.startsWith("hhx:");
+}
+
+function normaliseCompletedLessons(
+  lessons: Record<string, LessonResult> | undefined,
+  fallbackEducation: Education
+): Record<string, LessonResult> {
+  if (!lessons) return {};
+
+  const normalised: Record<string, LessonResult> = {};
+  for (const [key, result] of Object.entries(lessons)) {
+    const scopedKey = isScopedLessonProgressKey(key) ? key : lessonProgressKey(fallbackEducation, key);
+    const previous = normalised[scopedKey];
+    normalised[scopedKey] = previous
+      ? {
+          bestPct: Math.max(previous.bestPct, result.bestPct),
+          lastPct: result.lastPct,
+          timesPlayed: previous.timesPlayed + result.timesPlayed,
+        }
+      : result;
+  }
+  return normalised;
+}
+
+/** Henter resultatet af et forløb i det aktive uddannelsesspor. */
+export function getLessonResult(p: Progress, education: Education, lessonId: string): LessonResult | undefined {
+  return p.completedLessons[lessonProgressKey(education, lessonId)];
+}
+
 // Hvor høj en gennemsnitlig procent skal man mindst have i et forløbstrin,
 // for at det næste trin i "path'en" låses op.
 export const LESSON_PASS_THRESHOLD = 60;
@@ -42,12 +113,15 @@ export function loadProgress(): Progress {
       // Migrering: eksisterende brugere har ikke valgt uddannelse, så de får STX
       // (det indhold, appen altid har haft), springer velkomstskærmen over og
       // får heller ikke spotlight-rundvisningen.
+      const education = parsed.education ?? "stx";
       const migrated: Progress = {
         ...defaultProgress(),
         ...parsed,
-        education: parsed.education ?? "stx",
+        education,
         onboarded: parsed.onboarded ?? true,
         guideDone: parsed.guideDone ?? true,
+        categoryStats: normaliseCategoryStats(parsed.categoryStats, education),
+        completedLessons: normaliseCompletedLessons(parsed.completedLessons, education),
         settings: normaliseSettings(parsed.settings),
       };
       return migrated;
@@ -63,6 +137,7 @@ export function loadProgress(): Progress {
         onboarded: true,
         guideDone: true,
         completedLessons: {},
+        categoryStats: normaliseCategoryStats(parsed.categoryStats, "stx"),
         settings: normaliseSettings(parsed.settings),
       };
     }
@@ -140,10 +215,11 @@ export function addXp(p: Progress, amount: number): Progress {
   return { ...p, xp: p.xp + boosted };
 }
 
-export function recordAnswer(p: Progress, category: string, correct: boolean): Progress {
-  const prev: CategoryStat = p.categoryStats[category] ?? { correct: 0, total: 0 };
+export function recordAnswer(p: Progress, education: Education, category: string, correct: boolean): Progress {
+  const key = categoryStatKey(education, category);
+  const prev: CategoryStat = p.categoryStats[key] ?? { correct: 0, total: 0 };
   const next: CategoryStat = { correct: prev.correct + (correct ? 1 : 0), total: prev.total + 1 };
-  return { ...p, categoryStats: { ...p.categoryStats, [category]: next } };
+  return { ...p, categoryStats: { ...p.categoryStats, [key]: next } };
 }
 
 export function recordExamAttempt(p: Progress, attempt: Omit<ExamAttempt, "id" | "date">): Progress {
@@ -151,20 +227,21 @@ export function recordExamAttempt(p: Progress, attempt: Omit<ExamAttempt, "id" |
   return { ...p, examAttempts: [full, ...p.examAttempts].slice(0, 30) };
 }
 
-/** Gemmer resultatet af et gennemført forløbstrin (lesson) og opdaterer bedste score. */
-export function recordLessonResult(p: Progress, lessonId: string, pct: number): Progress {
-  const prev: LessonResult | undefined = p.completedLessons[lessonId];
+/** Gemmer resultatet af et gennemført forløbstrin i det aktive spor. */
+export function recordLessonResult(p: Progress, education: Education, lessonId: string, pct: number): Progress {
+  const key = lessonProgressKey(education, lessonId);
+  const prev: LessonResult | undefined = p.completedLessons[key];
   const next: LessonResult = {
     bestPct: Math.max(prev?.bestPct ?? 0, pct),
     lastPct: pct,
     timesPlayed: (prev?.timesPlayed ?? 0) + 1,
   };
-  return { ...p, completedLessons: { ...p.completedLessons, [lessonId]: next } };
+  return { ...p, completedLessons: { ...p.completedLessons, [key]: next } };
 }
 
-export function isLessonPassed(p: Progress, lessonId: string): boolean {
-  const r = p.completedLessons[lessonId];
-  return !!r && r.bestPct >= LESSON_PASS_THRESHOLD;
+export function isLessonPassed(p: Progress, education: Education, lessonId: string): boolean {
+  const result = getLessonResult(p, education, lessonId);
+  return !!result && result.bestPct >= LESSON_PASS_THRESHOLD;
 }
 
 export function getLevelInfo(xp: number): { level: number; title: string; intoLevel: number; forNext: number } {
