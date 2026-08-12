@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { CategoryId, Education, MascotPose, Progress, Task, Track } from "../types";
+import type { CategoryId, Education, MascotPose, Progress, SavedAnswer, Task, Track } from "../types";
 import { isContentTask } from "../types";
 import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
 import { buildSessionTasks, getCategoryPath, isContentOnlyLesson, type LessonNode } from "../data/paths";
@@ -13,7 +13,7 @@ import SessionNav from "../components/SessionNav";
 import { cn } from "../utils/cn";
 import { CategoryIcon, CheckIcon, ChevronRightIcon, LockIcon } from "../components/icons";
 
-type Outcome = boolean | "content" | null;
+type Outcome = { ok: boolean | "content"; answer?: SavedAnswer } | null;
 
 type View = "categories" | "path" | "session" | "result";
 
@@ -58,7 +58,7 @@ export default function PracticePage({
   // Antal opgaver i den aktive session, der reelt bedømmes (dvs. ikke rene
   // undervisningstrin uden rigtigt/forkert). Bruges til procent-udregning.
   const gradableCount = sessionTasks.filter((t) => !isContentTask(t)).length;
-  const correctCount = results.filter((r) => r === true).length;
+  const correctCount = results.filter((r) => r?.ok === true).length;
   const outcome = results[index] ?? null;
   const answered = outcome !== null;
   const isReview = index < reached;
@@ -96,11 +96,11 @@ export default function PracticePage({
     });
   }
 
-  function handleSubmit(correct: boolean) {
+  function handleSubmit(correct: boolean, answer?: SavedAnswer) {
     const task = sessionTasks[index];
-    if (!task || isReview) return;
+    if (!task || answered) return;
     if (isContentTask(task)) {
-      markOutcome("content");
+      markOutcome({ ok: "content", answer: answer ?? { kind: "content" } });
       setPose("explain");
       if (index + 1 >= sessionTasks.length) {
         finishSession();
@@ -112,7 +112,7 @@ export default function PracticePage({
       }
       return;
     }
-    markOutcome(correct);
+    markOutcome({ ok: correct, answer });
     const category = task.category;
     if (correct) {
       onCorrect(category);
@@ -192,12 +192,13 @@ export default function PracticePage({
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
           <TaskRenderer
-            key={`${task.id}-${isReview ? "r" : "l"}`}
+            key={task.id}
             task={task}
             onSubmit={handleSubmit}
             reduceMotion={reduceMotion}
-            review={isReview}
-            reviewCorrect={outcome === true || outcome === "content"}
+            review={answered}
+            reviewCorrect={outcome?.ok === true || outcome?.ok === "content"}
+            savedAnswer={outcome?.answer}
           />
         </div>
         {answered && !isReview && (

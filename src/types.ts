@@ -195,6 +195,16 @@ export type Task =
   | TableFillTaskT
   | TeachTaskT;
 
+/** Gemt elevsvar, så tilbage/frem kan vise præcis det, der blev afleveret. */
+export type SavedAnswer =
+  | { kind: "choice"; selected: number | null }
+  | { kind: "click-word"; selected: number[] }
+  | { kind: "analysis"; assignments: Partial<Record<number, LedSymbol>> }
+  | { kind: "build-sentence"; words: string[]; orderDiffers?: boolean }
+  | { kind: "write"; value: string }
+  | { kind: "table-fill"; assignments: Record<number, string> }
+  | { kind: "content" };
+
 /** Rene undervisnings-/gennemgangstrin uden rigtigt/forkert-bedømmelse. */
 export function isContentTask(task: Task): task is TeachTaskT | InfoTaskT {
   return task.type === "teach" || task.type === "info";

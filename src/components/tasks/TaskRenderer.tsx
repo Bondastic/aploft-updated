@@ -2,7 +2,7 @@
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { motion } from "framer-motion";
-import type { LedSymbol, Task } from "../../types";
+import type { LedSymbol, SavedAnswer, Task } from "../../types";
 import { isContentTask } from "../../types";
 import { SYMBOLS, getSymbolDef } from "../../data/symbols";
 import { isWriteAnswerCorrect } from "../../data/builders";
@@ -31,12 +31,14 @@ export default function TaskRenderer({
   reduceMotion = false,
   review = false,
   reviewCorrect = true,
+  savedAnswer,
 }: {
   task: Task;
-  onSubmit: (correct: boolean) => void;
+  onSubmit: (correct: boolean, answer?: SavedAnswer) => void;
   reduceMotion?: boolean;
   review?: boolean;
   reviewCorrect?: boolean;
+  savedAnswer?: SavedAnswer;
 }) {
   const [answered, setAnswered] = useState(review);
   const [wasCorrect, setWasCorrect] = useState(review ? reviewCorrect : false);
@@ -51,21 +53,21 @@ export default function TaskRenderer({
   // bagefter.
   const showSheet = !answered && (task.showSheet === true || SHEET_CATEGORIES.has(task.category));
 
-  function finish(correct: boolean) {
+  function finish(correct: boolean, answer?: SavedAnswer) {
     if (review) return;
     setAnswered(true);
     setWasCorrect(correct);
-    onSubmit(correct);
+    onSubmit(correct, answer);
   }
 
   // Lille "Lingua tænker…"-pause, før svaret afsløres. Det gør oplevelsen
   // lidt mere levende, som om maskotten lige skal vurdere svaret.
-  function finishWithPause(correct: boolean) {
+  function finishWithPause(correct: boolean, answer?: SavedAnswer) {
     if (checking) return;
     setChecking(true);
     window.setTimeout(() => {
       setChecking(false);
-      finish(correct);
+      finish(correct, answer);
     }, 450);
   }
 
@@ -89,8 +91,8 @@ export default function TaskRenderer({
   if (isContentTask(task)) {
     return (
       <div className="space-y-4">
-        {task.type === "teach" && <TeachTask task={task} onContinue={review ? undefined : () => finish(true)} />}
-        {task.type === "info" && <InfoTask task={task} onContinue={review ? undefined : () => finish(true)} />}
+        {task.type === "teach" && <TeachTask task={task} onContinue={review ? undefined : () => finish(true, { kind: "content" })} />}
+        {task.type === "info" && <InfoTask task={task} onContinue={review ? undefined : () => finish(true, { kind: "content" })} />}
         {footer}
         <TranslationSheet open={sheetOpen} onClose={() => setSheetOpen(false)} reduceMotion={reduceMotion} />
       </div>
@@ -99,12 +101,12 @@ export default function TaskRenderer({
 
   return (
     <div className="relative space-y-4">
-      {task.type === "choice" && <ChoiceTask task={task} answered={answered} onFinish={finishWithPause} />}
-      {task.type === "click-word" && <ClickWordTask task={task} answered={answered} onFinish={finishWithPause} />}
-      {task.type === "analysis" && <AnalysisTask task={task} answered={answered} onFinish={finishWithPause} />}
-      {task.type === "build-sentence" && <BuildSentenceTask task={task} answered={answered} onFinish={finishWithPause} />}
-      {task.type === "write" && <WriteTask task={task} answered={answered} onFinish={finishWithPause} />}
-      {task.type === "table-fill" && <TableFillTask task={task} answered={answered} onFinish={finishWithPause} />}
+      {task.type === "choice" && <ChoiceTask task={task} answered={answered} onFinish={finishWithPause} saved={savedAnswer} />}
+      {task.type === "click-word" && <ClickWordTask task={task} answered={answered} onFinish={finishWithPause} saved={savedAnswer} />}
+      {task.type === "analysis" && <AnalysisTask task={task} answered={answered} onFinish={finishWithPause} saved={savedAnswer} />}
+      {task.type === "build-sentence" && <BuildSentenceTask task={task} answered={answered} onFinish={finishWithPause} saved={savedAnswer} />}
+      {task.type === "write" && <WriteTask task={task} answered={answered} onFinish={finishWithPause} saved={savedAnswer} />}
+      {task.type === "table-fill" && <TableFillTask task={task} answered={answered} onFinish={finishWithPause} saved={savedAnswer} />}
 
       {checking && (
         <div
@@ -249,12 +251,14 @@ function ChoiceTask({
   task,
   answered,
   onFinish,
+  saved,
 }: {
   task: Extract<Task, { type: "choice" }>;
   answered: boolean;
-  onFinish: (correct: boolean) => void;
+  onFinish: (correct: boolean, answer?: SavedAnswer) => void;
+  saved?: SavedAnswer;
 }) {
-  const [selected, setSelected] = useState<number | null>(null);
+  const [selected, setSelected] = useState<number | null>(saved?.kind === "choice" ? saved.selected : null);
 
   // Svarmulighedernes rækkefølge blandes tilfældigt hver gang opgaven vises,
   // så det rigtige svar ikke systematisk ligger som første/anden mulighed.
@@ -263,7 +267,7 @@ function ChoiceTask({
 
   function check() {
     if (selected === null) return;
-    onFinish(selected === task.correctIndex);
+    onFinish(selected === task.correctIndex, { kind: "choice", selected });
   }
 
   return (
@@ -302,12 +306,16 @@ function ClickWordTask({
   task,
   answered,
   onFinish,
+  saved,
 }: {
   task: Extract<Task, { type: "click-word" }>;
   answered: boolean;
-  onFinish: (correct: boolean) => void;
+  onFinish: (correct: boolean, answer?: SavedAnswer) => void;
+  saved?: SavedAnswer;
 }) {
-  const [selected, setSelected] = useState<Set<number>>(new Set());
+  const [selected, setSelected] = useState<Set<number>>(
+    () => new Set(saved?.kind === "click-word" ? saved.selected : [])
+  );
 
   function toggle(i: number) {
     if (answered) return;
@@ -323,7 +331,7 @@ function ClickWordTask({
     const correctSet = new Set(task.correctIndexes);
     const isCorrect =
       selected.size === correctSet.size && [...selected].every((i) => correctSet.has(i));
-    onFinish(isCorrect);
+    onFinish(isCorrect, { kind: "click-word", selected: [...selected] });
   }
 
   return (
@@ -370,12 +378,16 @@ function AnalysisTask({
   task,
   answered,
   onFinish,
+  saved,
 }: {
   task: Extract<Task, { type: "analysis" }>;
   answered: boolean;
-  onFinish: (correct: boolean) => void;
+  onFinish: (correct: boolean, answer?: SavedAnswer) => void;
+  saved?: SavedAnswer;
 }) {
-  const [assignments, setAssignments] = useState<Record<number, LedSymbol>>({});
+  const [assignments, setAssignments] = useState<Record<number, LedSymbol>>(
+    () => (saved?.kind === "analysis" ? { ...(saved.assignments as Record<number, LedSymbol>) } : {})
+  );
   const [activeChunk, setActiveChunk] = useState<number | null>(null);
 
   const chunkRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -390,7 +402,7 @@ function AnalysisTask({
 
   function check() {
     const isCorrect = task.chunks.every((_, i) => assignments[i] === task.correctMap[i]);
-    onFinish(isCorrect);
+    onFinish(isCorrect, { kind: "analysis", assignments });
   }
 
   const allAssigned = task.chunks.every((_, i) => assignments[i]);
@@ -545,14 +557,18 @@ function BuildSentenceTask({
   task,
   answered,
   onFinish,
+  saved,
 }: {
   task: Extract<Task, { type: "build-sentence" }>;
   answered: boolean;
-  onFinish: (correct: boolean) => void;
+  onFinish: (correct: boolean, answer?: SavedAnswer) => void;
+  saved?: SavedAnswer;
 }) {
   const shuffledWords = useMemo(() => shuffle(task.words), [task]);
+  const savedWords = saved?.kind === "build-sentence" ? saved.words : null;
   const [chosen, setChosen] = useState<number[]>([]);
-  const [orderDiffers, setOrderDiffers] = useState(false);
+  const [orderDiffers, setOrderDiffers] = useState(saved?.kind === "build-sentence" ? !!saved.orderDiffers : false);
+  const builtDisplay = savedWords ?? chosen.map((i) => shuffledWords[i]);
 
   function addWord(idx: number) {
     if (answered || chosen.includes(idx)) return;
@@ -573,11 +589,12 @@ function BuildSentenceTask({
       // Latin har fri ordstilling: alle ord i den rigtige rækkefølge ELLER en
       // anden rækkefølge med præcis de samme ord tæller som korrekt.
       const isCorrect = sameMultiset(built, task.correctOrder);
-      setOrderDiffers(isCorrect && !exactOrder);
-      onFinish(isCorrect);
+      const differs = isCorrect && !exactOrder;
+      setOrderDiffers(differs);
+      onFinish(isCorrect, { kind: "build-sentence", words: built, orderDiffers: differs });
     } else {
       setOrderDiffers(false);
-      onFinish(exactOrder);
+      onFinish(exactOrder, { kind: "build-sentence", words: built });
     }
   }
 
@@ -586,15 +603,15 @@ function BuildSentenceTask({
       <p className="text-lg font-semibold text-ink">{task.instruction}</p>
       <div className="min-h-14 rounded-xl border-2 border-dashed border-ink/20 bg-white p-3">
         <div className="flex flex-wrap gap-2">
-          {chosen.length === 0 && <span className="text-sm text-ink/30">Klik på ordene nedenfor for at bygge sætningen</span>}
-          {chosen.map((idx, pos) => (
+          {builtDisplay.length === 0 && <span className="text-sm text-ink/30">Klik på ordene nedenfor for at bygge sætningen</span>}
+          {builtDisplay.map((word, pos) => (
             <button
               key={pos}
               onClick={() => removeWord(pos)}
               disabled={answered}
               className="rounded-lg bg-purple/10 px-3 py-1.5 text-sm font-medium text-purple ring-1 ring-purple/30"
             >
-              {shuffledWords[idx]}
+              {word}
             </button>
           ))}
         </div>
@@ -646,13 +663,17 @@ function TableFillTask({
   task,
   answered,
   onFinish,
+  saved,
 }: {
   task: Extract<Task, { type: "table-fill" }>;
   answered: boolean;
-  onFinish: (correct: boolean) => void;
+  onFinish: (correct: boolean, answer?: SavedAnswer) => void;
+  saved?: SavedAnswer;
 }) {
   const blankSet = useMemo(() => new Set(task.blankIndexes), [task.blankIndexes]);
-  const [assignments, setAssignments] = useState<Record<number, string>>({});
+  const [assignments, setAssignments] = useState<Record<number, string>>(
+    () => (saved?.kind === "table-fill" ? { ...saved.assignments } : {})
+  );
   const [activeBlank, setActiveBlank] = useState<number | null>(null);
 
   // Ordbank: de rigtige svar til de tomme felter + evt. distraktorer, blandet.
@@ -670,7 +691,7 @@ function TableFillTask({
 
   function check() {
     const isCorrect = task.blankIndexes.every((i) => assignments[i] === task.rows[i].value);
-    onFinish(isCorrect);
+    onFinish(isCorrect, { kind: "table-fill", assignments });
   }
 
   const allFilled = task.blankIndexes.every((i) => assignments[i]);
@@ -764,16 +785,18 @@ function WriteTask({
   task,
   answered,
   onFinish,
+  saved,
 }: {
   task: Extract<Task, { type: "write" }>;
   answered: boolean;
-  onFinish: (correct: boolean) => void;
+  onFinish: (correct: boolean, answer?: SavedAnswer) => void;
+  saved?: SavedAnswer;
 }) {
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState(saved?.kind === "write" ? saved.value : "");
 
   function check() {
     if (value.trim().length === 0) return;
-    onFinish(isWriteAnswerCorrect(task, value));
+    onFinish(isWriteAnswerCorrect(task, value), { kind: "write", value });
   }
 
   return (

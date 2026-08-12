@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, Task } from "../types";
+import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, SavedAnswer, Task } from "../types";
 import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, ALL_HHX_TASKS, type ExamTrack } from "../lib/examGenerator";
 import { getEducation } from "../lib/education";
 import { getCategory } from "../data/categories";
@@ -11,7 +11,7 @@ import { cn } from "../utils/cn";
 import SessionNav from "../components/SessionNav";
 import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
 
-type Outcome = boolean | null;
+type Outcome = { ok: boolean; answer?: SavedAnswer } | null;
 
 const TRACK_INFO: Record<ExamTrack, { label: string; icon: IconName; desc: string }> = {
   almen: { label: "Almen del", icon: "almen", desc: "Ordklasser, sætningsled, morfologi, tempus, kasus, syntaks og sprog." },
@@ -52,6 +52,7 @@ export default function ExamPage({
   const [correctCount, setCorrectCount] = useState(0);
   const [byCategory, setByCategory] = useState<Record<string, CategoryStat>>({});
   const [pose, setPose] = useState<MascotPose>("explain");
+  const [confirmAbort, setConfirmAbort] = useState(false);
   const reduceMotion = progress.settings.reduceMotion;
 
   const isHhx = education === "hhx";
@@ -76,6 +77,7 @@ export default function ExamPage({
     setCorrectCount(0);
     setByCategory({});
     setPose("explain");
+    setConfirmAbort(false);
     setPhase("running");
   }
 
@@ -90,13 +92,13 @@ export default function ExamPage({
     setPhase("result");
   }
 
-  function handleSubmit(correct: boolean) {
+  function handleSubmit(correct: boolean, answer?: SavedAnswer) {
     const current = tasks[index];
-    if (!current || isReview) return;
+    if (!current || answered) return;
     const category = current.category;
     setResults((prev) => {
       const next = [...prev];
-      next[index] = correct;
+      next[index] = { ok: correct, answer };
       return next;
     });
     setByCategory((prev) => {
@@ -255,8 +257,11 @@ export default function ExamPage({
     return (
       <div className="app-page-narrow space-y-5">
         <div className="flex items-center justify-between gap-2">
+          <button onClick={() => setConfirmAbort(true)} className="text-sm font-semibold text-ink/50 hover:text-ink">
+            ← Afbryd
+          </button>
           <p className="text-sm font-semibold text-ink/50" aria-live="polite">
-            Spørgsmål {index + 1} / {tasks.length}
+            {index + 1} / {tasks.length}
           </p>
           <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink/50">
             <CategoryIcon name={TRACK_INFO[track].icon} className="h-4 w-4" />
@@ -278,12 +283,13 @@ export default function ExamPage({
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
           <TaskRenderer
-            key={`${task.id}-${isReview ? "r" : "l"}`}
+            key={task.id}
             task={task}
             onSubmit={handleSubmit}
             reduceMotion={reduceMotion}
-            review={isReview}
-            reviewCorrect={outcome === true}
+            review={answered}
+            reviewCorrect={outcome?.ok === true}
+            savedAnswer={outcome?.answer}
           />
         </div>
         {answered && !isReview && (
@@ -291,10 +297,33 @@ export default function ExamPage({
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}
-        {isUltimate && (
-          <button onClick={finishNow} className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/60 hover:border-rose-300 hover:text-rose-600">
-            Afslut prøven nu og se resultat
-          </button>
+        <button
+          onClick={finishNow}
+          className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/60 hover:border-rose-300 hover:text-rose-600"
+        >
+          Afslut prøven nu og se resultat
+        </button>
+        {confirmAbort && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4">
+            <div className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-5 shadow-2xl" role="dialog" aria-modal="true">
+              <h3 className="font-display text-lg font-extrabold text-ink">Afbryd prøven?</h3>
+              <p className="text-sm text-ink/70">Du kan gå tilbage til opsætningen. Det, du har svaret indtil nu, bliver ikke gemt som et prøveresultat.</p>
+              <div className="flex gap-2">
+                <button onClick={() => setConfirmAbort(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                  Fortsæt
+                </button>
+                <button
+                  onClick={() => {
+                    setConfirmAbort(false);
+                    setPhase("setup");
+                  }}
+                  className="flex-1 rounded-full bg-ink py-2.5 text-sm font-bold text-white"
+                >
+                  Afbryd
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
