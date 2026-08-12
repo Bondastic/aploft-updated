@@ -1,0 +1,28 @@
+import { strict as assert } from "node:assert";
+import { categoriesForEducation, scopedId, tasksForEducation } from "../src/lib/curriculum";
+import { generateExam, poolForTrack } from "../src/lib/examGenerator";
+import { getCategoryPath, getLessonTasks } from "../src/data/paths";
+import { addXp, categoryStat, educationState, recordAnswer, recordLessonResult, lessonResult } from "../src/lib/progress";
+import type { Progress } from "../src/types";
+
+const stxTasks = tasksForEducation("stx"), hhxTasks = tasksForEducation("hhx");
+assert(stxTasks.every(t => t.id.startsWith("stx:")) && hhxTasks.every(t => t.id.startsWith("hhx:")));
+assert.equal(new Set([...stxTasks.map(t => t.id), ...hhxTasks.map(t => t.id)]).size, stxTasks.length + hhxTasks.length);
+assert.deepEqual(poolForTrack("hhx", "stx"), []);
+assert.deepEqual(poolForTrack("almen", "hhx"), []);
+assert(generateExam("fuld", 20, "stx").every(t => t.id.startsWith("stx:")));
+assert(generateExam("fuld", 20, "hhx").every(t => t.id.startsWith("hhx:")));
+assert(categoriesForEducation("stx").every(c => c.track !== "hhx"));
+assert(categoriesForEducation("hhx").every(c => c.track === "hhx"));
+const hhxIntro = getCategoryPath("kommunikation", "hhx").nodes[0];
+assert(getLessonTasks(hhxIntro, "hhx").length > 0, "a completed HHX introduction must still have replayable tasks");
+assert.throws(() => getCategoryPath("kommunikation", "stx"), /not part of stx/);
+const base: Progress = { userId:"test", nickname:"", education:"stx", onboarded:true, guideDone:true, streakDays:0, multiplier:1, lastActiveDate:"", settings:{reduceMotion:false}, educationProgress:{stx:{xp:0,categoryStats:{},completedLessons:{},examAttempts:[]},hhx:{xp:0,categoryStats:{},completedLessons:{},examAttempts:[]}} };
+const updated = recordLessonResult(addXp(recordAnswer(base,"stx","ordklasser",true),10,"stx"),"stx","ordklasser__intro",100);
+assert.equal(categoryStat(updated,"stx","ordklasser")?.total, 1);
+assert.equal(categoryStat(updated,"hhx","ordklasser"), undefined);
+assert.equal(lessonResult(updated,"stx","ordklasser__intro")?.timesPlayed, 1);
+assert.equal(lessonResult(updated,"hhx","ordklasser__intro"), undefined);
+assert.equal(educationState(updated,"hhx").xp, 0);
+assert.equal(scopedId("stx","ordklasser"), "stx:ordklasser");
+console.log("Education isolation checks passed.");

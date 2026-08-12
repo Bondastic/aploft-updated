@@ -3,9 +3,10 @@
 import { useState } from "react";
 import type { CategoryId, Education, MascotPose, Progress, Task, Track } from "../types";
 import { isContentTask } from "../types";
-import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
+import { CATEGORY_COLOR_CLASSES } from "../data/categories";
+import { categoriesForTrack, categoryForEducation } from "../lib/curriculum";
 import { getCategoryPath, getLessonTasks, type LessonNode } from "../data/paths";
-import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { categoryStat, lessonResult, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
@@ -50,7 +51,7 @@ export default function PracticePage({
 
   const isHhx = education === "hhx";
   const theme = getEducation(education);
-  const categories = isHhx ? HHX_CATEGORIES : tab === "almen" ? ALMEN_CATEGORIES : LATIN_CATEGORIES;
+  const categories = categoriesForTrack(education, tab);
   const reduceMotion = progress.settings.reduceMotion;
 
   function openCategory(catId: CategoryId) {
@@ -63,13 +64,17 @@ export default function PracticePage({
   const gradableCount = sessionTasks.filter((t) => !isContentTask(t)).length;
 
   function startLesson(node: LessonNode) {
-    const alreadyPassed = (progress.completedLessons[node.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
+    const alreadyPassed = (lessonResult(progress, education, node.id)?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
     const authored = getLessonTasks(node, education);
     // FØRSTE gennemgang: fast, gennemtænkt rækkefølge med undervisning før
     // opgaver, aldrig tilfældig. Kun EFTER beståelse må træningen randomiseres,
     // og så er det kun opgaverne (ikke undervisningstrinene), der blandes,
     // så eleven ikke skal læse forklaringer igen, hun allerede har set.
-    const tasks = alreadyPassed ? shuffle(authored.filter((t) => !isContentTask(t))) : authored;
+    // An introduction can consist solely of teaching steps. Such a lesson must
+    // remain replayable after passing; filtering it to an empty session was the
+    // root cause of the HHX error page on a second attempt.
+    const practiceTasks = authored.filter((t) => !isContentTask(t));
+    const tasks = alreadyPassed && practiceTasks.length > 0 ? shuffle(practiceTasks) : authored;
     setActiveNode(node);
     setSessionTasks(tasks);
     setIndex(0);
@@ -103,7 +108,7 @@ export default function PracticePage({
       const pct = gradableCount > 0 ? Math.round((correctCount / gradableCount) * 100) : 100;
       // Gem den tidligere bedste score FØR vi opdaterer den, så resultatskærmen
       // kan vise en tydelig sammenligning ("ny rekord" / "bedste er stadig X%").
-      setPrevBestPct(activeNode ? progress.completedLessons[activeNode.id]?.bestPct ?? null : null);
+      setPrevBestPct(activeNode ? lessonResult(progress, education, activeNode.id)?.bestPct ?? null : null);
       if (activeNode) onLessonComplete(activeNode.id, pct);
       setPose("celebrate");
       setView("result");
@@ -119,7 +124,7 @@ export default function PracticePage({
   // ---------------------------------------------------------------------
   if (view === "session") {
     const task = sessionTasks[index];
-    const cat = getCategory(task.category);
+    const cat = categoryForEducation(education, task.category);
     return (
       <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
         <div className="flex items-center justify-between">
@@ -222,10 +227,10 @@ export default function PracticePage({
   // PATH (forløbsoversigt for én kategori)
   // ---------------------------------------------------------------------
   if (view === "path" && activeCategory) {
-    const cat = getCategory(activeCategory)!;
+    const cat = categoryForEducation(education, activeCategory)!;
     const colors = CATEGORY_COLOR_CLASSES[cat.color];
     const path = getCategoryPath(activeCategory, education);
-    const stat = progress.categoryStats[activeCategory];
+    const stat = categoryStat(progress, education, activeCategory);
     const overallPct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
 
     return (
@@ -270,8 +275,8 @@ export default function PracticePage({
         <ol className="space-y-3">
           {path.nodes.map((node, i) => {
             const prevNode = path.nodes[i - 1];
-            const unlocked = i === 0 || (prevNode && progress.completedLessons[prevNode.id]?.bestPct !== undefined && progress.completedLessons[prevNode.id]!.bestPct >= LESSON_PASS_THRESHOLD);
-            const result = progress.completedLessons[node.id];
+            const unlocked = i === 0 || (prevNode && lessonResult(progress, education, prevNode.id)?.bestPct !== undefined && lessonResult(progress, education, prevNode.id)!.bestPct >= LESSON_PASS_THRESHOLD);
+            const result = lessonResult(progress, education, node.id);
             const passed = !!result && result.bestPct >= LESSON_PASS_THRESHOLD;
             const isReview = node.kind === "review";
 
@@ -367,11 +372,11 @@ export default function PracticePage({
 
       <div className="space-y-3">
         {categories.map((cat) => {
-          const stat = progress.categoryStats[cat.id];
+          const stat = categoryStat(progress, education, cat.id);
           const colors = CATEGORY_COLOR_CLASSES[cat.color];
           const pct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
           const path = getCategoryPath(cat.id, education);
-          const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
+          const lessonsPassed = path.nodes.filter((n) => (lessonResult(progress, education, n.id)?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
           return (
             <button
               key={cat.id}

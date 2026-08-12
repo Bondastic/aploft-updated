@@ -102,15 +102,15 @@ export default function AploftApp() {
   }
 
   function handleCorrect(category: CategoryId) {
-    setProgress((p) => addXp(recordAnswer(p, category, true), 10));
+    setProgress((p) => addXp(recordAnswer(p, p.education, category, true), 10, p.education));
   }
 
   function handleWrong(category: CategoryId) {
-    setProgress((p) => addXp(recordAnswer(p, category, false), 2));
+    setProgress((p) => addXp(recordAnswer(p, p.education, category, false), 2, p.education));
   }
 
   function handleLessonComplete(lessonId: string, pct: number) {
-    setProgress((p) => recordLessonResult(p, lessonId, pct));
+    setProgress((p) => recordLessonResult(p, p.education, lessonId, pct));
   }
 
   function handleExamComplete(
@@ -120,8 +120,8 @@ export default function AploftApp() {
     byCategory: Record<string, CategoryStat>
   ) {
     setProgress((p) => {
-      const withXp = addXp(p, correct * 15);
-      return recordExamAttempt(withXp, { track, totalCorrect: correct, totalQuestions: total, byCategory });
+      const withXp = addXp(p, correct * 15, p.education);
+      return recordExamAttempt(withXp, p.education, { track, totalCorrect: correct, totalQuestions: total, byCategory });
     });
   }
 

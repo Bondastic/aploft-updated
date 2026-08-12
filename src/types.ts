@@ -218,6 +218,14 @@ export interface ProgressSettings {
   reduceMotion: boolean;
 }
 
+/** All learning state that belongs to exactly one education universe. */
+export interface EducationProgress {
+  xp: number;
+  categoryStats: Record<string, CategoryStat>;
+  completedLessons: Record<string, LessonResult>;
+  examAttempts: ExamAttempt[];
+}
+
 // Resultat for et enkelt forløbs-trin (lesson) i en kategoris "path".
 // bestPct bruges til at afgøre, om næste trin er låst op (>= PASS_THRESHOLD).
 export interface LessonResult {
@@ -239,14 +247,13 @@ export interface Progress {
   // Nye brugere får den lige efter velkomstskærmen; eksisterende brugere
   // migreres til true, så de ikke får turen.
   guideDone: boolean;
-  xp: number;
+  // Learning data is physically partitioned by education. Keys inside each
+  // partition are also scoped ids (`stx:...` / `hhx:...`), so equal labels
+  // cannot collide even if content is added later.
+  educationProgress: Record<Education, EducationProgress>;
   streakDays: number;
   multiplier: number;
   lastActiveDate: string;
-  categoryStats: Record<string, CategoryStat>;
-  completedSteps: string[];
-  completedLessons: Record<string, LessonResult>;
-  examAttempts: ExamAttempt[];
   settings: ProgressSettings;
 }
 

@@ -11,6 +11,7 @@ import { LATIN_TASKS } from "./latinQuestions";
 import { HHX_TASKS } from "./hhxQuestions";
 import { CATEGORY_INTRO } from "./teaching";
 import { HHX_CATEGORY_INTRO } from "./hhx/teaching";
+import { isCategoryAllowed, scopedId } from "../lib/curriculum";
 
 const INTRO_TASKS: Task[] = Object.values(CATEGORY_INTRO).flat();
 const INTRO_ID_SET = new Set(INTRO_TASKS.map((t) => t.id));
@@ -159,13 +160,18 @@ export function getCategoryPath(categoryId: CategoryId, education: Education = "
   const cached = pathCache.get(cacheKey);
   if (cached) return cached;
 
+  if (!isCategoryAllowed(education, categoryId)) {
+    throw new Error(`Category ${categoryId} is not part of ${education}`);
+  }
   const isHhx = education === "hhx";
-  const pool = isHhx ? ALL_HHX_PATH_TASKS : ALL_PATH_TASKS;
-  const introIdSet = isHhx ? HHX_INTRO_ID_SET : INTRO_ID_SET;
+  const sourcePool = isHhx ? ALL_HHX_PATH_TASKS : ALL_PATH_TASKS;
+  // All ids that leave the content boundary are education-scoped.
+  const pool = sourcePool.map((task) => ({ ...task, id: scopedId(education, task.id) }));
+  const introIdSet = new Set((isHhx ? HHX_INTRO_ID_SET : INTRO_ID_SET).values());
   const introMap = isHhx ? HHX_CATEGORY_INTRO : CATEGORY_INTRO;
 
   // Rene quiz-opgaver til kategorien (den gamle spørgsmålsbank).
-  const tasks = pool.filter((t) => t.category === categoryId && !introIdSet.has(t.id));
+  const tasks = pool.filter((t) => t.category === categoryId && !introIdSet.has(t.id.slice(4)));
   const titles = CATEGORY_LESSON_TITLES[categoryId] ?? ["Forløb 1"];
   const chunks = chunkEvenly(tasks, titles.length);
 
@@ -189,7 +195,7 @@ export function getCategoryPath(categoryId: CategoryId, education: Education = "
       title: "Introduktion: fra bunden",
       order: -1,
       kind: "lesson",
-      taskIds: introTasks.map((t) => t.id),
+      taskIds: introTasks.map((t) => scopedId(education, t.id)),
     });
     nodes.forEach((n, i) => {
       n.order = i;
@@ -211,10 +217,12 @@ export function getCategoryPath(categoryId: CategoryId, education: Education = "
 }
 
 export function getLessonTasks(node: LessonNode, education: Education = "stx"): Task[] {
+  if (!isCategoryAllowed(education, node.categoryId)) return [];
   const isHhx = education === "hhx";
-  const pool = isHhx ? ALL_HHX_PATH_TASKS : ALL_PATH_TASKS;
+  const sourcePool = isHhx ? ALL_HHX_PATH_TASKS : ALL_PATH_TASKS;
+  const pool: Task[] = sourcePool.map((task) => ({ ...task, id: scopedId(education, task.id) }));
   if (node.kind === "lesson" && node.taskIds) {
-    const byId = new Map(pool.map((t) => [t.id, t] as const));
+    const byId = new Map<string, Task>(pool.map((t) => [t.id, t]));
     return node.taskIds.map((id) => byId.get(id)).filter((t): t is Task => !!t);
   }
   // Opsamlingstest: bland alle opgaver i kategorien og træk et tilfældigt udsnit.

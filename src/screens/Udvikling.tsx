@@ -2,9 +2,10 @@
 
 import { useMemo, useState } from "react";
 import type { Education, Progress } from "../types";
-import { ALL_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES } from "../data/categories";
+import { CATEGORY_COLOR_CLASSES } from "../data/categories";
+import { categoriesForEducation } from "../lib/curriculum";
 import { getCategoryPath } from "../data/paths";
-import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { categoryStat, educationState, lessonResult, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import Mascot from "../components/Mascot";
 import { CategoryIcon } from "../components/icons";
 import { cn } from "../utils/cn";
@@ -48,14 +49,14 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   const isHhx = education === "hhx";
 
   const rows = useMemo(() => {
-    const cats = isHhx ? HHX_CATEGORIES : ALL_CATEGORIES;
+    const cats = categoriesForEducation(education);
     return cats.map((cat) => {
-      const stat = progress.categoryStats[cat.id];
+      const stat = categoryStat(progress, education, cat.id);
       const total = stat?.total ?? 0;
       const correct = stat?.correct ?? 0;
       const pct = total > 0 ? Math.round((correct / total) * 100) : null;
       const path = getCategoryPath(cat.id, education);
-      const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
+      const lessonsPassed = path.nodes.filter((n) => (lessonResult(progress, education, n.id)?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
       return { cat, total, correct, pct, lessonsPassed, lessonsTotal: path.nodes.length };
     });
   }, [progress, education, isHhx]);
@@ -94,7 +95,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
           <p className="text-[11px] text-ink/50">opgaver besvaret</p>
         </div>
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
-          <p className="text-xl font-extrabold text-purple">{progress.xp}</p>
+          <p className="text-xl font-extrabold text-purple">{educationState(progress).xp}</p>
           <p className="text-[11px] text-ink/50">XP i alt</p>
         </div>
         <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">

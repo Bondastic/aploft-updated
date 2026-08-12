@@ -2,6 +2,7 @@ import { FlameIcon, SparklesIcon, CategoryIcon } from "./icons";
 import DarkModeToggle from "./DarkModeToggle";
 import type { Progress } from "../types";
 import { getEducation } from "../lib/education";
+import { educationState } from "../lib/progress";
 import { cn } from "../utils/cn";
 
 export default function TopBar({ progress }: { progress: Progress }) {
@@ -46,7 +47,7 @@ export default function TopBar({ progress }: { progress: Progress }) {
           >
             <SparklesIcon className="h-3.5 w-3.5 shrink-0" aria-hidden="true" />
             <span>
-              {progress.xp} <span className="hidden font-semibold opacity-80 sm:inline">XP</span>
+              {educationState(progress).xp} <span className="hidden font-semibold opacity-80 sm:inline">XP</span>
             </span>
           </div>
           <DarkModeToggle />

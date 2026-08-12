@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, Task } from "../types";
 import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, ALL_HHX_TASKS, type ExamTrack } from "../lib/examGenerator";
 import { getEducation } from "../lib/education";
-import { getCategory } from "../data/categories";
+import { categoryForEducation } from "../lib/curriculum";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import { cn } from "../utils/cn";
@@ -271,7 +271,7 @@ export default function ExamPage({
       <div className="space-y-2 rounded-2xl border border-ink/10 bg-white p-5 text-left shadow-sm">
         <p className="mb-2 text-sm font-bold text-ink">Resultat pr. kategori</p>
         {categoryEntries.map(([catId, stat]) => {
-          const cat = getCategory(catId);
+          const cat = categoryForEducation(education, catId);
           const p = Math.round((stat.correct / stat.total) * 100);
           return (
             <div key={catId} className="flex items-center gap-3 text-sm">

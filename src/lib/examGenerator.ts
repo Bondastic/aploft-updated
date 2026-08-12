@@ -1,64 +1,15 @@
-import { ALMEN_TASKS } from "../data/questions";
-import { LATIN_TASKS } from "../data/latinQuestions";
-import { HHX_TASKS } from "../data/hhxQuestions";
 import type { Education, Task, Track } from "../types";
-
+import { tasksForEducation, tasksForTrack } from "./curriculum";
 export type ExamTrack = Track | "fuld" | "ultimativ";
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
+function shuffle<T>(arr:T[]):T[]{const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+// Exports are scoped task identities; retained only for UI copy/counts.
+export const ALL_TASKS = tasksForEducation("stx");
+export const ALL_HHX_TASKS = tasksForEducation("hhx");
+/** Fails closed: a track outside the selected education has an empty pool. */
+export function poolForTrack(track:ExamTrack,education:Education="stx"):Task[]{
+ if(track==="almen"||track==="latin"||track==="hhx") return tasksForTrack(education,track);
+ return tasksForEducation(education);
 }
-
-// STX-banken: almen del + latindel.
-export const ALL_TASKS: Task[] = [...ALMEN_TASKS, ...LATIN_TASKS];
-// HHX-banken: fælles grammatik + HHX-emnerne.
-export const ALL_HHX_TASKS: Task[] = HHX_TASKS;
-
-export function poolForTrack(track: ExamTrack, education: Education = "stx"): Task[] {
-  if (track === "almen") return ALMEN_TASKS;
-  if (track === "latin") return LATIN_TASKS;
-  if (track === "hhx") return HHX_TASKS;
-  // "fuld" og "ultimativ" trækker fra hele puljen for den valgte uddannelse.
-  return education === "hhx" ? HHX_TASKS : ALL_TASKS;
-}
-
-// Vælger `count` opgaver, spreder på tværs af kategorier og undgår gentagelser,
-// så vidt puljen tillader det.
-export function generateExam(track: ExamTrack, count: number, education: Education = "stx"): Task[] {
-  const pool = poolForTrack(track, education);
-  const shuffled = shuffle(pool);
-
-  if (count >= shuffled.length) return shuffled;
-
-  // Prøv at fordele jævnt hen over kategorier ved round-robin
-  const byCategory = new Map<string, Task[]>();
-  for (const t of shuffled) {
-    const list = byCategory.get(t.category) ?? [];
-    list.push(t);
-    byCategory.set(t.category, list);
-  }
-  const categories = shuffle([...byCategory.keys()]);
-  const result: Task[] = [];
-  let idx = 0;
-  while (result.length < count) {
-    const cat = categories[idx % categories.length];
-    const list = byCategory.get(cat)!;
-    if (list.length > 0) {
-      result.push(list.shift()!);
-    }
-    idx++;
-    if (idx > 20000) break; // safety
-  }
-  return shuffle(result).slice(0, count);
-}
-
-export const AVG_SECONDS_PER_QUESTION = 40;
-
-export function estimateMinutes(count: number): number {
-  return Math.max(1, Math.round((count * AVG_SECONDS_PER_QUESTION) / 60));
-}
+export function generateExam(track:ExamTrack,count:number,education:Education="stx"):Task[]{const shuffled=shuffle(poolForTrack(track,education));if(count>=shuffled.length)return shuffled;const byCategory=new Map<string,Task[]>();for(const t of shuffled){const list=byCategory.get(t.category)??[];list.push(t);byCategory.set(t.category,list);}const categories=shuffle([...byCategory.keys()]);const result:Task[]=[];let idx=0;while(result.length<count&&categories.length){const list=byCategory.get(categories[idx%categories.length])!;if(list.length)result.push(list.shift()!);idx++;}return shuffle(result);}
+export const AVG_SECONDS_PER_QUESTION=40;
+export function estimateMinutes(count:number){return Math.max(1,Math.round(count*AVG_SECONDS_PER_QUESTION/60));}

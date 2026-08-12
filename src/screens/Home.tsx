@@ -1,6 +1,6 @@
 import type { Progress } from "../types";
 import Mascot from "../components/Mascot";
-import { getLevelInfo } from "../lib/progress";
+import { educationState, getLevelInfo } from "../lib/progress";
 import { BoltIcon, ExamIcon, FlameIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon } from "../components/icons";
 import { cn } from "../utils/cn";
 
@@ -11,7 +11,7 @@ export default function HomePage({
   progress: Progress;
   onNavigate: (page: "practice" | "exam" | "symbols" | "lynkursus" | "udvikling") => void;
 }) {
-  const level = getLevelInfo(progress.xp);
+  const level = getLevelInfo(educationState(progress).xp);
   const greeting = progress.nickname ? `Hej, ${progress.nickname}!` : "Hej med dig!";
   const isHhx = progress.education === "hhx";
 
@@ -29,7 +29,7 @@ export default function HomePage({
                 <FlameIcon className="h-4 w-4" /> {progress.streakDays} dages streak
               </span>
               <span className="flex items-center gap-1 rounded-full bg-white/15 px-2.5 py-1 font-semibold">
-                <SparklesIcon className="h-4 w-4" /> {progress.xp} XP
+                <SparklesIcon className="h-4 w-4" /> {educationState(progress).xp} XP
               </span>
               <span className="rounded-full bg-white/15 px-2.5 py-1 font-semibold">Niveau {level.level}</span>
             </div>
