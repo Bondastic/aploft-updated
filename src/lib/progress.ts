@@ -29,6 +29,7 @@ export function loadProgress(): Progress {
         education: parsed.education ?? "stx",
         onboarded: parsed.onboarded ?? true,
         guideDone: parsed.guideDone ?? true,
+        unlockedLessons: parsed.unlockedLessons ?? [],
         settings: { ...defaultProgress().settings, ...parsed.settings },
       };
       return migrated;
@@ -44,6 +45,7 @@ export function loadProgress(): Progress {
         onboarded: true,
         guideDone: true,
         completedLessons: {},
+        unlockedLessons: [],
       };
     }
   } catch {
@@ -66,6 +68,7 @@ function defaultProgress(): Progress {
     categoryStats: {},
     completedSteps: [],
     completedLessons: {},
+    unlockedLessons: [],
     examAttempts: [],
     settings: { reduceMotion: false },
   };
@@ -103,7 +106,7 @@ export function resetProgress(): Progress {
       // ignore
     }
   }
-  return touchStreak(defaultProgress());
+  return defaultProgress();
 }
 
 export function touchStreak(p: Progress): Progress {
@@ -121,9 +124,22 @@ export function addXp(p: Progress, amount: number): Progress {
 }
 
 export function recordAnswer(p: Progress, category: string, correct: boolean): Progress {
-  const prev: CategoryStat = p.categoryStats[category] ?? { correct: 0, total: 0 };
+  // Streak tæller kun, når man faktisk har svaret på en opgave (ikke bare åbnet appen).
+  const active = touchStreak(p);
+  const prev: CategoryStat = active.categoryStats[category] ?? { correct: 0, total: 0 };
   const next: CategoryStat = { correct: prev.correct + (correct ? 1 : 0), total: prev.total + 1 };
-  return { ...p, categoryStats: { ...p.categoryStats, [category]: next } };
+  return { ...active, categoryStats: { ...active.categoryStats, [category]: next } };
+}
+
+/** Lås en række forløb op uden at markere dem som gennemført. */
+export function unlockLessonsThrough(p: Progress, lessonIds: string[]): Progress {
+  const set = new Set(p.unlockedLessons ?? []);
+  for (const id of lessonIds) set.add(id);
+  return { ...p, unlockedLessons: [...set] };
+}
+
+export function isManuallyUnlocked(p: Progress, lessonId: string): boolean {
+  return (p.unlockedLessons ?? []).includes(lessonId);
 }
 
 export function recordExamAttempt(p: Progress, attempt: Omit<ExamAttempt, "id" | "date">): Progress {

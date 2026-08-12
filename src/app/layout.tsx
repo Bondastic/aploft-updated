@@ -78,6 +78,9 @@ export const metadata: Metadata = {
 export const viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  viewportFit: "cover" as const,
 };
 
 // Lille inline-script der sætter "dark"-klassen på <html>, FØR React

@@ -5,12 +5,15 @@ import type { CategoryId, Education, MascotPose, Progress, Task, Track } from ".
 import { isContentTask } from "../types";
 import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
 import { buildSessionTasks, getCategoryPath, isContentOnlyLesson, type LessonNode } from "../data/paths";
-import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { isManuallyUnlocked, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
+import SessionNav from "../components/SessionNav";
 import { cn } from "../utils/cn";
 import { CategoryIcon, CheckIcon, ChevronRightIcon, LockIcon } from "../components/icons";
+
+type Outcome = boolean | "content" | null;
 
 type View = "categories" | "path" | "session" | "result";
 
@@ -20,12 +23,14 @@ export default function PracticePage({
   onCorrect,
   onWrong,
   onLessonComplete,
+  onUnlockLessons,
 }: {
   education: Education;
   progress: Progress;
   onCorrect: (category: CategoryId) => void;
   onWrong: (category: CategoryId) => void;
   onLessonComplete: (lessonId: string, pct: number) => void;
+  onUnlockLessons: (lessonIds: string[]) => void;
 }) {
   const [tab, setTab] = useState<Track>(education === "hhx" ? "hhx" : "almen");
   const [view, setView] = useState<View>("categories");
@@ -34,10 +39,11 @@ export default function PracticePage({
 
   const [sessionTasks, setSessionTasks] = useState<Task[]>([]);
   const [index, setIndex] = useState(0);
-  const [answered, setAnswered] = useState(false);
-  const [correctCount, setCorrectCount] = useState(0);
+  const [reached, setReached] = useState(0);
+  const [results, setResults] = useState<Outcome[]>([]);
   const [pose, setPose] = useState<MascotPose>("explain");
   const [prevBestPct, setPrevBestPct] = useState<number | null>(null);
+  const [unlockTarget, setUnlockTarget] = useState<{ node: LessonNode; throughIds: string[] } | null>(null);
 
   const isHhx = education === "hhx";
   const theme = getEducation(education);
@@ -52,6 +58,10 @@ export default function PracticePage({
   // Antal opgaver i den aktive session, der reelt bedømmes (dvs. ikke rene
   // undervisningstrin uden rigtigt/forkert). Bruges til procent-udregning.
   const gradableCount = sessionTasks.filter((t) => !isContentTask(t)).length;
+  const correctCount = results.filter((r) => r === true).length;
+  const outcome = results[index] ?? null;
+  const answered = outcome !== null;
+  const isReview = index < reached;
 
   function startLesson(node: LessonNode) {
     const alreadyPassed = (progress.completedLessons[node.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
@@ -62,8 +72,8 @@ export default function PracticePage({
     setActiveNode(node);
     setSessionTasks(tasks);
     setIndex(0);
-    setAnswered(false);
-    setCorrectCount(0);
+    setReached(0);
+    setResults(Array.from({ length: tasks.length }, () => null));
     setPose("explain");
     setView("session");
   }
@@ -78,27 +88,34 @@ export default function PracticePage({
     setView("result");
   }
 
+  function markOutcome(value: Outcome) {
+    setResults((prev) => {
+      const next = [...prev];
+      next[index] = value;
+      return next;
+    });
+  }
+
   function handleSubmit(correct: boolean) {
     const task = sessionTasks[index];
-    if (!task) return;
+    if (!task || isReview) return;
     if (isContentTask(task)) {
-      // Undervisningstrin: ingen rigtigt/forkert. Gå videre med det samme,
-      // så eleven ikke skal trykke både "Forstået" og "Næste".
+      markOutcome("content");
       setPose("explain");
       if (index + 1 >= sessionTasks.length) {
         finishSession();
       } else {
-        setIndex((i) => i + 1);
-        setAnswered(false);
+        const nextI = index + 1;
+        setIndex(nextI);
+        setReached(nextI);
         setPose("thinking");
       }
       return;
     }
-    setAnswered(true);
+    markOutcome(correct);
     const category = task.category;
     if (correct) {
       onCorrect(category);
-      setCorrectCount((c) => c + 1);
       setPose(Math.random() > 0.5 ? "celebrate" : "thumbsup");
     } else {
       onWrong(category);
@@ -110,8 +127,9 @@ export default function PracticePage({
     if (index + 1 >= sessionTasks.length) {
       finishSession();
     } else {
-      setIndex((i) => i + 1);
-      setAnswered(false);
+      const nextI = index + 1;
+      setIndex(nextI);
+      setReached((r) => Math.max(r, nextI));
       setPose("thinking");
     }
   }
@@ -123,7 +141,7 @@ export default function PracticePage({
     const task = sessionTasks[index];
     if (!task) {
       return (
-        <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-10 text-center">
+        <div className="app-page-narrow space-y-5 pt-10 text-center">
           <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
           <h2 className="font-display text-2xl font-extrabold text-ink">Ingen opgaver her</h2>
           <p className="text-sm text-ink/60">
@@ -137,7 +155,7 @@ export default function PracticePage({
     }
     const cat = getCategory(task.category, education);
     return (
-      <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
+      <div className="app-page-narrow space-y-5">
         <div className="flex items-center justify-between">
           <button onClick={() => setView("path")} className="text-sm font-semibold text-ink/50 hover:text-ink">
             ← Afbryd
@@ -146,6 +164,15 @@ export default function PracticePage({
             {index + 1} / {sessionTasks.length} · {activeNode?.title ?? cat?.title}
           </p>
         </div>
+        <SessionNav
+          canBack={index > 0}
+          canForward={index < reached}
+          onBack={() => setIndex((i) => Math.max(0, i - 1))}
+          onForward={() => setIndex((i) => Math.min(reached, i + 1))}
+        />
+        {isReview && (
+          <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere trin. Gå frem for at fortsætte, hvor du slap.</p>
+        )}
         <div
           className="h-2 w-full overflow-hidden rounded-full bg-ink/10"
           role="progressbar"
@@ -164,9 +191,16 @@ export default function PracticePage({
         )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
-          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
+          <TaskRenderer
+            key={`${task.id}-${isReview ? "r" : "l"}`}
+            task={task}
+            onSubmit={handleSubmit}
+            reduceMotion={reduceMotion}
+            review={isReview}
+            reviewCorrect={outcome === true || outcome === "content"}
+          />
         </div>
-        {answered && (
+        {answered && !isReview && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= sessionTasks.length ? "Se resultat →" : "Næste →"}
           </button>
@@ -187,7 +221,7 @@ export default function PracticePage({
     const isSameAsBest = !isFirstAttempt && pct === prevBestPct;
     const contentOnly = gradableCount === 0;
     return (
-      <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-10 text-center">
+      <div className="app-page-narrow space-y-6 pt-10 text-center">
         <Mascot pose={pct >= 70 ? "celebrate" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
         <h2 className="font-display text-2xl font-extrabold text-ink">{activeNode?.title ?? "Forløb"} klaret!</h2>
         {contentOnly ? (
@@ -246,7 +280,7 @@ export default function PracticePage({
     const cat = getCategory(activeCategory, education);
     if (!cat) {
       return (
-        <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-10 text-center">
+        <div className="app-page-narrow space-y-5 pt-10 text-center">
           <h2 className="font-display text-2xl font-extrabold text-ink">Kategorien findes ikke</h2>
           <button onClick={() => setView("categories")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
             Tilbage til kategorier
@@ -260,7 +294,7 @@ export default function PracticePage({
     const overallPct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
 
     return (
-      <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+      <div className="app-page space-y-6">
         <button onClick={() => setView("categories")} className="text-sm font-semibold text-ink/50 hover:text-ink">
           ← Alle kategorier
         </button>
@@ -293,28 +327,32 @@ export default function PracticePage({
         <div>
           <h2 className="font-display text-lg font-extrabold text-ink">Forløb du kan vælge</h2>
           <p className="text-sm text-ink/50">
-            Følg stien nedefra: hvert forløb låser det næste op, når du består med mindst {LESSON_PASS_THRESHOLD}% rigtige. Til sidst venter
-            en opsamlingstest med spørgsmål fra hele kategorien.
+            Følg stien: hvert forløb låser det næste op, når du består med mindst {LESSON_PASS_THRESHOLD}% rigtige. Er du øvet i forvejen,
+            kan du låse et forløb op og springe hen til det. De oplåste forløb tæller som ikke forsøgt.
           </p>
         </div>
 
         <ol className="space-y-3">
           {path.nodes.map((node, i) => {
             const prevNode = path.nodes[i - 1];
-            const unlocked = i === 0 || (prevNode && progress.completedLessons[prevNode.id]?.bestPct !== undefined && progress.completedLessons[prevNode.id]!.bestPct >= LESSON_PASS_THRESHOLD);
+            const passedPrev =
+              !!prevNode &&
+              progress.completedLessons[prevNode.id]?.bestPct !== undefined &&
+              progress.completedLessons[prevNode.id]!.bestPct >= LESSON_PASS_THRESHOLD;
+            const unlocked = i === 0 || passedPrev || isManuallyUnlocked(progress, node.id);
             const result = progress.completedLessons[node.id];
             const passed = !!result && result.bestPct >= LESSON_PASS_THRESHOLD;
             const isReview = node.kind === "review";
             const contentOnly = isContentOnlyLesson(node, education);
 
             return (
-              <li key={node.id}>
+              <li key={node.id} className="flex items-stretch gap-2">
                 <button
                   onClick={() => unlocked && startLesson(node)}
                   disabled={!unlocked}
                   className={cn(
-                    "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
-                    unlocked ? "border-ink/10 bg-white hover:-translate-y-0.5 hover:shadow-md" : "cursor-not-allowed border-ink/5 bg-ink/5 opacity-60",
+                    "flex min-w-0 flex-1 items-center gap-4 rounded-2xl border-2 p-4 text-left shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
+                    unlocked ? "border-ink/10 bg-white hover:-translate-y-0.5 hover:shadow-md" : "cursor-not-allowed border-ink/5 bg-ink/5 opacity-70",
                     isReview && unlocked && cn("border-ink/10 bg-ink/5")
                   )}
                 >
@@ -354,10 +392,53 @@ export default function PracticePage({
                   </div>
                   {unlocked && <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink/30" />}
                 </button>
+                {!unlocked && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setUnlockTarget({
+                        node,
+                        throughIds: path.nodes.slice(0, i + 1).map((n) => n.id),
+                      })
+                    }
+                    className="shrink-0 self-center rounded-full border-2 border-ink/15 px-3 py-2 text-[11px] font-bold text-ink/70 hover:border-ink/30"
+                  >
+                    Lås op
+                  </button>
+                )}
               </li>
             );
           })}
         </ol>
+
+        {unlockTarget && (
+          <div className="fixed inset-0 z-40 flex items-end justify-center bg-[#171225]/50 p-4 sm:items-center">
+            <div className="w-full max-w-md space-y-3 rounded-3xl bg-white p-5 shadow-2xl">
+              <h3 className="font-display text-lg font-extrabold text-ink">Lås forløb op?</h3>
+              <p className="text-sm text-ink/70">
+                Alle forløb frem til og med <span className="font-bold text-ink">{unlockTarget.node.title}</span> bliver låst op.
+                De markeres som &quot;ikke forsøgt endnu&quot; og tæller ikke som gennemført.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setUnlockTarget(null)}
+                  className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink"
+                >
+                  Fortryd
+                </button>
+                <button
+                  onClick={() => {
+                    onUnlockLessons(unlockTarget.throughIds);
+                    setUnlockTarget(null);
+                  }}
+                  className={cn("flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-md", theme.solidBg)}
+                >
+                  Lås op
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -366,7 +447,7 @@ export default function PracticePage({
   // KATEGORIER (forside for Øv dig)
   // ---------------------------------------------------------------------
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+    <div className="app-page space-y-6">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Øv dig</h1>
         <p className="text-sm text-ink/50">

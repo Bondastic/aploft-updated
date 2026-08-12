@@ -13,7 +13,7 @@ export default function TopBar({ progress }: { progress: Progress }) {
           streak/XP/mørk til højre. På telefoner er streak/XP-teksterne
           ("dages streak"/"XP") skjult, så der er plads til mærket, og
           mærke-ikonet skjules, så rækken aldrig bliver høj eller bred. */}
-      <div className="mx-auto flex max-w-3xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3 lg:pl-60">
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/banner.png" alt="AP Klar" className="h-9 w-auto object-contain sm:h-10" />

@@ -246,6 +246,10 @@ export interface Progress {
   categoryStats: Record<string, CategoryStat>;
   completedSteps: string[];
   completedLessons: Record<string, LessonResult>;
+  // Forløb man har låst op manuelt (uden at have bestået de forrige).
+  // Bruges så øvede elever kan springe hen til sværere opgaver. De
+  // manuelt oplåste forløb tæller IKKE som gennemført.
+  unlockedLessons: string[];
   examAttempts: ExamAttempt[];
   settings: ProgressSettings;
 }

@@ -29,13 +29,17 @@ export default function TaskRenderer({
   task,
   onSubmit,
   reduceMotion = false,
+  review = false,
+  reviewCorrect = true,
 }: {
   task: Task;
   onSubmit: (correct: boolean) => void;
   reduceMotion?: boolean;
+  review?: boolean;
+  reviewCorrect?: boolean;
 }) {
-  const [answered, setAnswered] = useState(false);
-  const [wasCorrect, setWasCorrect] = useState(false);
+  const [answered, setAnswered] = useState(review);
+  const [wasCorrect, setWasCorrect] = useState(review ? reviewCorrect : false);
   const [checking, setChecking] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -48,6 +52,7 @@ export default function TaskRenderer({
   const showSheet = !answered && (task.showSheet === true || SHEET_CATEGORIES.has(task.category));
 
   function finish(correct: boolean) {
+    if (review) return;
     setAnswered(true);
     setWasCorrect(correct);
     onSubmit(correct);
@@ -84,8 +89,8 @@ export default function TaskRenderer({
   if (isContentTask(task)) {
     return (
       <div className="space-y-4">
-        {task.type === "teach" && <TeachTask task={task} onContinue={() => finish(true)} />}
-        {task.type === "info" && <InfoTask task={task} onContinue={() => finish(true)} />}
+        {task.type === "teach" && <TeachTask task={task} onContinue={review ? undefined : () => finish(true)} />}
+        {task.type === "info" && <InfoTask task={task} onContinue={review ? undefined : () => finish(true)} />}
         {footer}
         <TranslationSheet open={sheetOpen} onClose={() => setSheetOpen(false)} reduceMotion={reduceMotion} />
       </div>
@@ -137,7 +142,7 @@ export default function TaskRenderer({
   );
 }
 
-function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }>; onContinue: () => void }) {
+function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }>; onContinue?: () => void }) {
   return (
     <div className="space-y-4">
       <div className="flex items-start gap-2">
@@ -168,17 +173,19 @@ function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }
           💡 {task.tip}
         </div>
       )}
-      <button
-        onClick={onContinue}
-        className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
-      >
-        {task.continueLabel ?? "Forstået, fortsæt →"}
-      </button>
+      {onContinue && (
+        <button
+          onClick={onContinue}
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
+        >
+          {task.continueLabel ?? "Forstået, fortsæt →"}
+        </button>
+      )}
     </div>
   );
 }
 
-function InfoTask({ task, onContinue }: { task: Extract<Task, { type: "info" }>; onContinue: () => void }) {
+function InfoTask({ task, onContinue }: { task: Extract<Task, { type: "info" }>; onContinue?: () => void }) {
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-extrabold text-ink">{task.title}</h3>

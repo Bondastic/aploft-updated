@@ -8,7 +8,10 @@ import { getCategory } from "../data/categories";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import { cn } from "../utils/cn";
+import SessionNav from "../components/SessionNav";
 import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
+
+type Outcome = boolean | null;
 
 const TRACK_INFO: Record<ExamTrack, { label: string; icon: IconName; desc: string }> = {
   almen: { label: "Almen del", icon: "almen", desc: "Ordklasser, sætningsled, morfologi, tempus, kasus, syntaks og sprog." },
@@ -44,7 +47,8 @@ export default function ExamPage({
   const [count, setCount] = useState(12);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [index, setIndex] = useState(0);
-  const [answered, setAnswered] = useState(false);
+  const [reached, setReached] = useState(0);
+  const [results, setResults] = useState<Outcome[]>([]);
   const [correctCount, setCorrectCount] = useState(0);
   const [byCategory, setByCategory] = useState<Record<string, CategoryStat>>({});
   const [pose, setPose] = useState<MascotPose>("explain");
@@ -67,24 +71,34 @@ export default function ExamPage({
     if (generated.length === 0) return;
     setTasks(generated);
     setIndex(0);
-    setAnswered(false);
+    setReached(0);
+    setResults(Array.from({ length: generated.length }, () => null));
     setCorrectCount(0);
     setByCategory({});
     setPose("explain");
     setPhase("running");
   }
 
+  const outcome = results[index] ?? null;
+  const answered = outcome !== null;
+  const isReview = index < reached;
+
   function finishNow() {
-    onExamComplete(track, correctCount, index + (answered ? 1 : 0), byCategory);
+    const answeredCount = results.filter((r) => r !== null).length;
+    onExamComplete(track, correctCount, answeredCount || index + (answered ? 1 : 0), byCategory);
     setPose("celebrate");
     setPhase("result");
   }
 
   function handleSubmit(correct: boolean) {
     const current = tasks[index];
-    if (!current) return;
+    if (!current || isReview) return;
     const category = current.category;
-    setAnswered(true);
+    setResults((prev) => {
+      const next = [...prev];
+      next[index] = correct;
+      return next;
+    });
     setByCategory((prev) => {
       const stat: CategoryStat = prev[category] ?? { correct: 0, total: 0 };
       return { ...prev, [category]: { correct: stat.correct + (correct ? 1 : 0), total: stat.total + 1 } };
@@ -105,15 +119,16 @@ export default function ExamPage({
       setPose("celebrate");
       setPhase("result");
     } else {
-      setIndex((i) => i + 1);
-      setAnswered(false);
+      const nextI = index + 1;
+      setIndex(nextI);
+      setReached((r) => Math.max(r, nextI));
       setPose("thinking");
     }
   }
 
   if (phase === "setup") {
     return (
-      <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+      <div className="app-page space-y-6">
         <div>
           <h1 className="font-display text-2xl font-extrabold text-ink">Tag en prøve</h1>
           <p className="text-sm text-ink/50">
@@ -227,7 +242,7 @@ export default function ExamPage({
     const task = tasks[index];
     if (!task) {
       return (
-        <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-10 text-center">
+        <div className="app-page-narrow space-y-5 pt-10 text-center">
           <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
           <h2 className="font-display text-2xl font-extrabold text-ink">Prøven kunne ikke startes</h2>
           <p className="text-sm text-ink/60">Der var ingen spørgsmål at trække. Prøv en anden længde eller et andet spor.</p>
@@ -238,7 +253,7 @@ export default function ExamPage({
       );
     }
     return (
-      <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
+      <div className="app-page-narrow space-y-5">
         <div className="flex items-center justify-between gap-2">
           <p className="text-sm font-semibold text-ink/50" aria-live="polite">
             Spørgsmål {index + 1} / {tasks.length}
@@ -251,11 +266,27 @@ export default function ExamPage({
         <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={tasks.length}>
           <div className={cn("h-full rounded-full transition-all", isHhx ? theme.bar : "bg-purple")} style={{ width: `${(index / tasks.length) * 100}%` }} />
         </div>
+        <SessionNav
+          canBack={index > 0}
+          canForward={index < reached}
+          onBack={() => setIndex((i) => Math.max(0, i - 1))}
+          onForward={() => setIndex((i) => Math.min(reached, i + 1))}
+        />
+        {isReview && (
+          <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere spørgsmål. Gå frem for at fortsætte, hvor du slap.</p>
+        )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
-          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
+          <TaskRenderer
+            key={`${task.id}-${isReview ? "r" : "l"}`}
+            task={task}
+            onSubmit={handleSubmit}
+            reduceMotion={reduceMotion}
+            review={isReview}
+            reviewCorrect={outcome === true}
+          />
         </div>
-        {answered && (
+        {answered && !isReview && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}
           </button>
@@ -274,7 +305,7 @@ export default function ExamPage({
   const totalAnswered = categoryEntries.reduce((s, [, v]) => s + v.total, 0) || tasks.length;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-8 text-center">
+    <div className="app-page-narrow space-y-6 pt-8 text-center">
       <Mascot pose={pct >= 70 ? "celebrate" : pct >= 40 ? "thumbsup" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
       <div>
         <h2 className="font-display text-2xl font-extrabold text-ink">Prøven er afsluttet!</h2>
