@@ -256,18 +256,22 @@ export default function ExamPage({
     }
     return (
       <div className="app-page-narrow space-y-5">
-        <div className="flex items-center justify-between gap-2">
-          <button onClick={() => setConfirmAbort(true)} className="text-sm font-semibold text-ink/50 hover:text-ink">
-            ← Afbryd
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setConfirmAbort(true)}
+            className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink hover:border-rose-300 hover:text-rose-600"
+          >
+            Afbryd prøve
           </button>
-          <p className="text-sm font-semibold text-ink/50" aria-live="polite">
-            {index + 1} / {tasks.length}
-          </p>
-          <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink/50">
+          <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink/50">
             <CategoryIcon name={TRACK_INFO[track].icon} className="h-4 w-4" />
             {TRACK_INFO[track].label}
           </p>
         </div>
+        <p className="text-center text-sm font-semibold text-ink/50" aria-live="polite">
+          Spørgsmål {index + 1} af {tasks.length}
+        </p>
         <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={tasks.length}>
           <div className={cn("h-full rounded-full transition-all", isHhx ? theme.bar : "bg-purple")} style={{ width: `${(index / tasks.length) * 100}%` }} />
         </div>
@@ -278,12 +282,12 @@ export default function ExamPage({
           onForward={() => setIndex((i) => Math.min(reached, i + 1))}
         />
         {isReview && (
-          <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere spørgsmål. Gå frem for at fortsætte, hvor du slap.</p>
+          <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere spørgsmål. Dine valg vises stadig. Gå frem for at fortsætte, hvor du slap.</p>
         )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
           <TaskRenderer
-            key={task.id}
+            key={`exam-${index}-${task.id}`}
             task={task}
             onSubmit={handleSubmit}
             reduceMotion={reduceMotion}
@@ -298,8 +302,9 @@ export default function ExamPage({
           </button>
         )}
         <button
+          type="button"
           onClick={finishNow}
-          className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/60 hover:border-rose-300 hover:text-rose-600"
+          className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/70 hover:border-rose-300 hover:text-rose-600"
         >
           Afslut prøven nu og se resultat
         </button>

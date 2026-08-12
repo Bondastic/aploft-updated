@@ -157,8 +157,12 @@ export default function PracticePage({
     return (
       <div className="app-page-narrow space-y-5">
         <div className="flex items-center justify-between">
-          <button onClick={() => setView("path")} className="text-sm font-semibold text-ink/50 hover:text-ink">
-            ← Afbryd
+          <button
+            type="button"
+            onClick={() => setView("path")}
+            className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink hover:border-rose-300 hover:text-rose-600"
+          >
+            Afbryd
           </button>
           <p className="text-sm font-semibold text-ink/50" aria-live="polite">
             {index + 1} / {sessionTasks.length} · {activeNode?.title ?? cat?.title}
@@ -415,7 +419,7 @@ export default function PracticePage({
         </ol>
 
         {unlockTarget && (
-          <div className="fixed inset-0 z-40 flex items-end justify-center bg-[#171225]/50 p-4 sm:items-center">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4">
             <div className="w-full max-w-md space-y-3 rounded-3xl bg-white p-5 shadow-2xl">
               <h3 className="font-display text-lg font-extrabold text-ink">Lås forløb op?</h3>
               <p className="text-sm text-ink/70">

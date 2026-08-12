@@ -204,12 +204,14 @@ function InfoTask({ task, onContinue }: { task: Extract<Task, { type: "info" }>;
           </tbody>
         </table>
       </div>
-      <button
-        onClick={onContinue}
-        className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
-      >
-        {task.continueLabel ?? "Videre →"}
-      </button>
+      {onContinue && (
+        <button
+          onClick={onContinue}
+          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
+        >
+          {task.continueLabel ?? "Videre →"}
+        </button>
+      )}
     </div>
   );
 }
@@ -385,9 +387,7 @@ function AnalysisTask({
   onFinish: (correct: boolean, answer?: SavedAnswer) => void;
   saved?: SavedAnswer;
 }) {
-  const [assignments, setAssignments] = useState<Record<number, LedSymbol>>(
-    () => (saved?.kind === "analysis" ? { ...(saved.assignments as Record<number, LedSymbol>) } : {})
-  );
+  const [assignments, setAssignments] = useState<Record<number, LedSymbol>>(() => restoreAnalysis(saved));
   const [activeChunk, setActiveChunk] = useState<number | null>(null);
 
   const chunkRefs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -402,7 +402,11 @@ function AnalysisTask({
 
   function check() {
     const isCorrect = task.chunks.every((_, i) => assignments[i] === task.correctMap[i]);
-    onFinish(isCorrect, { kind: "analysis", assignments });
+    onFinish(isCorrect, {
+      kind: "analysis",
+      assignments: { ...assignments },
+      symbols: task.chunks.map((_, i) => assignments[i] ?? null),
+    });
   }
 
   const allAssigned = task.chunks.every((_, i) => assignments[i]);
@@ -464,8 +468,8 @@ function AnalysisTask({
       <div className="flex flex-wrap gap-2">
         {task.chunks.map((chunk, i) => {
           const assigned = assignments[i];
-          const isCorrect = answered && assigned === task.correctMap[i];
-          const isWrong = answered && assigned !== task.correctMap[i];
+          const isCorrect = answered && !!assigned && assigned === task.correctMap[i];
+          const isWrong = answered && !!assigned && assigned !== task.correctMap[i];
           return (
             <div key={i} className="relative">
               <button
@@ -551,6 +555,36 @@ function sameMultiset(a: string[], b: string[]): boolean {
   const sortedA = [...a].sort();
   const sortedB = [...b].sort();
   return sortedA.every((w, i) => w === sortedB[i]);
+}
+
+function restoreAnalysis(saved?: SavedAnswer): Record<number, LedSymbol> {
+  if (!saved || saved.kind !== "analysis") return {};
+  const out: Record<number, LedSymbol> = {};
+  if (saved.symbols && saved.symbols.length > 0) {
+    saved.symbols.forEach((symbol, i) => {
+      if (symbol) out[i] = symbol;
+    });
+    return out;
+  }
+  for (const [key, value] of Object.entries(saved.assignments ?? {})) {
+    const i = Number(key);
+    if (Number.isFinite(i) && value) out[i] = value;
+  }
+  return out;
+}
+
+function chosenFromSavedWords(savedWords: string[] | null, bank: string[]): number[] {
+  if (!savedWords || savedWords.length === 0) return [];
+  const used = new Set<number>();
+  const chosen: number[] = [];
+  for (const word of savedWords) {
+    const idx = bank.findIndex((item, i) => item === word && !used.has(i));
+    if (idx >= 0) {
+      used.add(idx);
+      chosen.push(idx);
+    }
+  }
+  return chosen;
 }
 
 function BuildSentenceTask({

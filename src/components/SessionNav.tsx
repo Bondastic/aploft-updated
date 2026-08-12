@@ -29,7 +29,7 @@ export default function SessionNav({
         )}
       >
         <ChevronRightIcon className="h-3.5 w-3.5 rotate-180" />
-        Forrige
+        Forrige svar
       </button>
       <button
         type="button"
@@ -42,7 +42,7 @@ export default function SessionNav({
             : "cursor-not-allowed border-ink/10 text-ink/30"
         )}
       >
-        Frem
+        Næste svar
         <ChevronRightIcon className="h-3.5 w-3.5" />
       </button>
     </div>

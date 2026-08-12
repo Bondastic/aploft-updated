@@ -199,7 +199,12 @@ export type Task =
 export type SavedAnswer =
   | { kind: "choice"; selected: number | null }
   | { kind: "click-word"; selected: number[] }
-  | { kind: "analysis"; assignments: Partial<Record<number, LedSymbol>> }
+  | {
+      kind: "analysis";
+      assignments: Partial<Record<number, LedSymbol>>;
+      // Liste i chunk-rækkefølge, så genskabelse ikke afhænger af objektnøgler.
+      symbols?: (LedSymbol | null)[];
+    }
   | { kind: "build-sentence"; words: string[]; orderDiffers?: boolean }
   | { kind: "write"; value: string }
   | { kind: "table-fill"; assignments: Record<number, string> }
