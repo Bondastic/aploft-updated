@@ -6,8 +6,8 @@ import { ChevronRightIcon, XIcon } from "./icons";
 import { cn } from "../utils/cn";
 import { resetViewportZoom, viewportBox } from "../utils/viewport";
 
-// Spotlight-rundvisningen. Måling og hul bruger fire overlay-paneler i stedet
-// for en kæmpe box-shadow: det virker ens på iOS, Android Chrome og desktop.
+// Spotlight-rundvisningen. Hullet følger målets egne afrundede hjørner
+// (box-shadow), så der ikke sidder en firkant uden om runde knapper.
 // Zoom nulstilles, når turen starter, så spotlightet rammer det rigtige.
 
 export type TourPage = "profile" | "home" | "practice" | "exam" | "symbols" | "lynkursus" | "udvikling";
@@ -72,6 +72,7 @@ interface HoleRect {
   left: number;
   width: number;
   height: number;
+  radius: number;
 }
 
 export default function GuidedTour({
@@ -105,9 +106,6 @@ export default function GuidedTour({
   const measure = useCallback(() => {
     const el = document.querySelector<HTMLElement>(STEPS[step].target);
     if (!el) return;
-    // Brug layout-viewport (innerWidth/innerHeight), ikke visualViewport.
-    // Android Chrome's visualViewport er ofte lavere end skærmen (adresselinje),
-    // så bund-fanerne blev klippet væk og spotlightet forsvandt.
     const vw = window.innerWidth;
     const vh = window.innerHeight;
     if (STEPS[step].alignTop) {
@@ -122,7 +120,9 @@ export default function GuidedTour({
     const width = Math.min(vw - left, r.width);
     const height = Math.min(vh - top, r.height);
     if (width < 4 || height < 4) return;
-    setRect({ top, left, width, height });
+    const rawRadius = parseFloat(window.getComputedStyle(el).borderRadius);
+    const radius = Number.isFinite(rawRadius) ? rawRadius : 16;
+    setRect({ top, left, width, height, radius });
   }, [step]);
 
   useEffect(() => {
@@ -175,12 +175,14 @@ export default function GuidedTour({
     }
   }
 
+  const PAD = 4;
   const hole = rect
     ? {
-        top: Math.max(0, rect.top - 6),
-        left: Math.max(0, rect.left - 6),
-        width: rect.width + 12,
-        height: rect.height + 12,
+        top: Math.max(0, rect.top - PAD),
+        left: Math.max(0, rect.left - PAD),
+        width: rect.width + PAD * 2,
+        height: rect.height + PAD * 2,
+        borderRadius: Math.max(rect.radius + PAD, 8),
       }
     : null;
 
@@ -198,21 +200,32 @@ export default function GuidedTour({
           aria-label="Rundvisning med Lingua"
         >
           <div className="fixed inset-0 z-40" aria-hidden="true" />
-          {!hole && <div className="pointer-events-none fixed inset-0 z-40" style={{ background: "rgba(23, 18, 37, 0.8)" }} aria-hidden="true" />}
+          {!hole && (
+            <div className="pointer-events-none fixed inset-0 z-40" style={{ background: "rgba(23, 18, 37, 0.8)" }} aria-hidden="true" />
+          )}
           {hole && (
             <>
-              <div className="pointer-events-none fixed z-40" style={{ top: 0, left: 0, right: 0, height: hole.top, background: "rgba(23, 18, 37, 0.8)" }} />
-              <div className="pointer-events-none fixed z-40" style={{ top: hole.top, left: 0, width: hole.left, height: hole.height, background: "rgba(23, 18, 37, 0.8)" }} />
               <div
                 className="pointer-events-none fixed z-40"
-                style={{ top: hole.top, left: hole.left + hole.width, right: 0, height: hole.height, background: "rgba(23, 18, 37, 0.8)" }}
+                style={{
+                  top: hole.top,
+                  left: hole.left,
+                  width: hole.width,
+                  height: hole.height,
+                  borderRadius: hole.borderRadius,
+                  boxShadow: "0 0 0 9999px rgba(23, 18, 37, 0.8)",
+                }}
               />
-              <div className="pointer-events-none fixed z-40" style={{ top: hole.top + hole.height, left: 0, right: 0, bottom: 0, background: "rgba(23, 18, 37, 0.8)" }} />
               <div
-                className="pointer-events-none fixed z-40 rounded-2xl"
-                style={{ ...hole, boxShadow: "0 0 0 9999px rgba(23, 18, 37, 0.45)" }}
+                className="pointer-events-none fixed z-40 ring-2 ring-white/80"
+                style={{
+                  top: hole.top,
+                  left: hole.left,
+                  width: hole.width,
+                  height: hole.height,
+                  borderRadius: hole.borderRadius,
+                }}
               />
-              <div className="pointer-events-none fixed z-40 rounded-2xl ring-2 ring-white/85" style={hole} />
             </>
           )}
 

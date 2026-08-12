@@ -108,7 +108,7 @@ export default function TaskRenderer({
 
       {checking && (
         <div
-          className="absolute inset-0 z-10 flex items-center justify-center rounded-3xl bg-white/70 backdrop-blur-[2px]"
+          className="absolute -inset-5 z-10 flex items-center justify-center rounded-3xl bg-white/90 backdrop-blur-sm dark:bg-[#241d38]/92"
           aria-live="polite"
         >
           <div className="flex items-center gap-2.5 rounded-full border border-ink/10 bg-white px-4 py-2.5 shadow-md">
