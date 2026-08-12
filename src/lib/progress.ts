@@ -1,17 +1,47 @@
-import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress } from "../types";
+import type { CategoryStat, Education, EducationProgress, ExamAttempt, LessonResult, Progress } from "../types";
+import { scopedId } from "./curriculum";
 
-const STORAGE_KEY = "aploft.progress.v4";
-
-// Hvor høj en gennemsnitlig procent skal man mindst have i et forløbstrin,
-// for at det næste trin i "path'en" låses op.
+const STORAGE_KEY = "aploft.progress.v5";
+const LEGACY_KEYS = ["aploft.progress.v4", "aploft.progress.v3"];
 export const LESSON_PASS_THRESHOLD = 60;
 
-function uid(): string {
-  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+function uid(): string { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+function todayStr(): string { return new Date().toISOString().slice(0, 10); }
+function emptyEducationProgress(): EducationProgress { return { xp: 0, categoryStats: {}, completedLessons: {}, examAttempts: [] }; }
+
+function defaultProgress(): Progress {
+  return { userId: uid(), nickname: "", education: "stx", onboarded: false, guideDone: false,
+    educationProgress: { stx: emptyEducationProgress(), hhx: emptyEducationProgress() },
+    streakDays: 0, multiplier: 1, lastActiveDate: "", settings: { reduceMotion: false } };
 }
 
-function todayStr(): string {
-  return new Date().toISOString().slice(0, 10);
+/** Active partition only. Consumers must use this instead of raw state fields. */
+export function educationState(progress: Progress, education: Education = progress.education): EducationProgress {
+  return progress.educationProgress[education];
+}
+export function categoryProgressKey(education: Education, categoryId: string): string { return scopedId(education, categoryId); }
+export function lessonProgressKey(education: Education, lessonId: string): string { return scopedId(education, lessonId); }
+
+function migrateLegacy(parsed: Record<string, unknown>): Progress {
+  const base = defaultProgress();
+  const education: Education = parsed.education === "hhx" ? "hhx" : "stx";
+  // Old records had no reliable education namespace. Put them in the user's
+  // then-active universe only; never copy potentially ambiguous data to both.
+  const scopeRecord = <T,>(record: Record<string, T> | undefined): Record<string, T> =>
+    Object.fromEntries(Object.entries(record ?? {}).map(([key, value]) => [scopedId(education, key), value]));
+  const legacyState: EducationProgress = {
+    xp: typeof parsed.xp === "number" ? parsed.xp : 0,
+    categoryStats: scopeRecord(parsed.categoryStats as Record<string, CategoryStat> | undefined),
+    completedLessons: scopeRecord(parsed.completedLessons as Record<string, LessonResult> | undefined),
+    examAttempts: ((parsed.examAttempts as ExamAttempt[] | undefined) ?? []).map((attempt) => ({
+      ...attempt,
+      byCategory: scopeRecord(attempt.byCategory),
+    })),
+  };
+  return { ...base, ...parsed, education, onboarded: (parsed.onboarded as boolean | undefined) ?? true,
+    guideDone: (parsed.guideDone as boolean | undefined) ?? true,
+    educationProgress: { ...base.educationProgress, [education]: legacyState },
+    settings: { ...base.settings, ...(parsed.settings as Partial<Progress["settings"]> | undefined) } };
 }
 
 export function loadProgress(): Progress {
@@ -19,152 +49,36 @@ export function loadProgress(): Progress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as Progress;
-      // Migrering: eksisterende brugere har ikke valgt uddannelse, så de får STX
-      // (det indhold, appen altid har haft), springer velkomstskærmen over og
-      // får heller ikke spotlight-rundvisningen.
-      const migrated: Progress = {
-        ...defaultProgress(),
-        ...parsed,
-        education: parsed.education ?? "stx",
-        onboarded: parsed.onboarded ?? true,
-        guideDone: parsed.guideDone ?? true,
-        settings: { ...defaultProgress().settings, ...parsed.settings },
-      };
-      return migrated;
+      const parsed = JSON.parse(raw) as Partial<Progress>;
+      if (parsed.educationProgress?.stx && parsed.educationProgress?.hhx) {
+        const base = defaultProgress();
+        return { ...base, ...parsed, educationProgress: { ...base.educationProgress, ...parsed.educationProgress }, settings: { ...base.settings, ...parsed.settings } } as Progress;
+      }
     }
-    // Migrer evt. gammel v3-nøgle, så folk ikke mister XP ved opdateringen.
-    const legacy = localStorage.getItem("aploft.progress.v3");
-    if (legacy) {
-      const parsed = JSON.parse(legacy) as Progress;
-      return {
-        ...defaultProgress(),
-        ...parsed,
-        education: "stx",
-        onboarded: true,
-        guideDone: true,
-        completedLessons: {},
-      };
+    for (const key of LEGACY_KEYS) {
+      const legacy = localStorage.getItem(key);
+      if (legacy) return migrateLegacy(JSON.parse(legacy) as Record<string, unknown>);
     }
-  } catch {
-    // ignore corrupted data
-  }
+  } catch { /* corrupt local state starts safely */ }
   return defaultProgress();
 }
+export function saveProgress(p: Progress) { if (typeof window !== "undefined") try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch { /* unavailable storage */ } }
 
-function defaultProgress(): Progress {
-  return {
-    userId: uid(),
-    nickname: "",
-    education: "stx",
-    onboarded: false,
-    guideDone: false,
-    xp: 0,
-    streakDays: 0,
-    multiplier: 1,
-    lastActiveDate: "",
-    categoryStats: {},
-    completedSteps: [],
-    completedLessons: {},
-    examAttempts: [],
-    settings: { reduceMotion: false },
-  };
-}
+export function setEducation(p: Progress, education: Education): Progress { return { ...p, education }; }
+export function completeOnboarding(p: Progress, education: Education, nickname: string): Progress { return { ...p, education, nickname, onboarded: true }; }
+export function finishGuide(p: Progress): Progress { return { ...p, guideDone: true }; }
+export function resetProgress(): Progress { if (typeof window !== "undefined") try { localStorage.removeItem(STORAGE_KEY); } catch {} return touchStreak(defaultProgress()); }
+export function touchStreak(p: Progress): Progress { const today=todayStr(); if(p.lastActiveDate===today)return p; const yesterday=new Date(Date.now()-86400000).toISOString().slice(0,10); const streakDays=p.lastActiveDate===yesterday?p.streakDays+1:1; return {...p,lastActiveDate:today,streakDays,multiplier:Math.min(2,1+Math.floor(streakDays/3)*.1)}; }
 
-export function saveProgress(p: Progress) {
-  if (typeof window === "undefined") return;
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
-  } catch {
-    // Ignorer: fx hvis localStorage er utilgængelig i en sandboxet iframe.
-  }
+function updateEducation(p: Progress, education: Education, updater: (state: EducationProgress) => EducationProgress): Progress { return { ...p, educationProgress: { ...p.educationProgress, [education]: updater(p.educationProgress[education]) } }; }
+export function addXp(p: Progress, amount: number, education: Education = p.education): Progress { return updateEducation(p, education, (state) => ({ ...state, xp: state.xp + Math.round(amount * p.multiplier) })); }
+export function recordAnswer(p: Progress, education: Education, categoryId: string, correct: boolean): Progress {
+  const key = categoryProgressKey(education, categoryId);
+  return updateEducation(p, education, (state) => { const prev=state.categoryStats[key] ?? {correct:0,total:0}; return {...state,categoryStats:{...state.categoryStats,[key]:{correct:prev.correct+(correct?1:0),total:prev.total+1}}}; });
 }
-
-/** Sætter uddannelsen (bruges ved skift under Profil → Indstillinger). */
-export function setEducation(p: Progress, education: Education): Progress {
-  return { ...p, education };
-}
-
-/** Marker, at velkomstskærmen er gennemført, og gem uddannelse + evt. kaldenavn. */
-export function completeOnboarding(p: Progress, education: Education, nickname: string): Progress {
-  return { ...p, education, nickname, onboarded: true };
-}
-
-/** Marker, at spotlight-rundvisningen er gennemført (eller sprunget over). */
-export function finishGuide(p: Progress): Progress {
-  return { ...p, guideDone: true };
-}
-
-export function resetProgress(): Progress {
-  if (typeof window !== "undefined") {
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {
-      // ignore
-    }
-  }
-  return touchStreak(defaultProgress());
-}
-
-export function touchStreak(p: Progress): Progress {
-  const today = todayStr();
-  if (p.lastActiveDate === today) return p;
-  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-  const streakDays = p.lastActiveDate === yesterday ? p.streakDays + 1 : 1;
-  const multiplier = Math.min(2, 1 + Math.floor(streakDays / 3) * 0.1);
-  return { ...p, lastActiveDate: today, streakDays, multiplier };
-}
-
-export function addXp(p: Progress, amount: number): Progress {
-  const boosted = Math.round(amount * p.multiplier);
-  return { ...p, xp: p.xp + boosted };
-}
-
-export function recordAnswer(p: Progress, category: string, correct: boolean): Progress {
-  const prev: CategoryStat = p.categoryStats[category] ?? { correct: 0, total: 0 };
-  const next: CategoryStat = { correct: prev.correct + (correct ? 1 : 0), total: prev.total + 1 };
-  return { ...p, categoryStats: { ...p.categoryStats, [category]: next } };
-}
-
-export function recordExamAttempt(p: Progress, attempt: Omit<ExamAttempt, "id" | "date">): Progress {
-  const full: ExamAttempt = { ...attempt, id: uid(), date: new Date().toISOString() };
-  return { ...p, examAttempts: [full, ...p.examAttempts].slice(0, 30) };
-}
-
-/** Gemmer resultatet af et gennemført forløbstrin (lesson) og opdaterer bedste score. */
-export function recordLessonResult(p: Progress, lessonId: string, pct: number): Progress {
-  const prev: LessonResult | undefined = p.completedLessons[lessonId];
-  const next: LessonResult = {
-    bestPct: Math.max(prev?.bestPct ?? 0, pct),
-    lastPct: pct,
-    timesPlayed: (prev?.timesPlayed ?? 0) + 1,
-  };
-  return { ...p, completedLessons: { ...p.completedLessons, [lessonId]: next } };
-}
-
-export function isLessonPassed(p: Progress, lessonId: string): boolean {
-  const r = p.completedLessons[lessonId];
-  return !!r && r.bestPct >= LESSON_PASS_THRESHOLD;
-}
-
-export function getLevelInfo(xp: number): { level: number; title: string; intoLevel: number; forNext: number } {
-  const levels = [
-    { threshold: 0, title: "Sprognovice" },
-    { threshold: 100, title: "Ordklasse-lærling" },
-    { threshold: 250, title: "Sætningsanalytiker" },
-    { threshold: 500, title: "Morfem-mester" },
-    { threshold: 900, title: "Syntaks-kender" },
-    { threshold: 1400, title: "Latin-kandidat" },
-    { threshold: 2000, title: "AP-ekspert" },
-    { threshold: 3000, title: "🐐AP-GED🐐" },
-  ];
-  let level = 0;
-  for (let i = 0; i < levels.length; i++) {
-    if (xp >= levels[i].threshold) level = i;
-  }
-  const current = levels[level];
-  const next = levels[level + 1];
-  const intoLevel = xp - current.threshold;
-  const forNext = next ? next.threshold - current.threshold : intoLevel;
-  return { level: level + 1, title: current.title, intoLevel, forNext };
-}
+export function recordExamAttempt(p: Progress, education: Education, attempt: Omit<ExamAttempt,"id"|"date">): Progress { const full={...attempt,id:uid(),date:new Date().toISOString()}; return updateEducation(p,education,(state)=>({...state,examAttempts:[full,...state.examAttempts].slice(0,30)})); }
+export function recordLessonResult(p: Progress, education: Education, lessonId: string, pct: number): Progress { const key=lessonProgressKey(education,lessonId); return updateEducation(p,education,(state)=>{const prev=state.completedLessons[key]; return {...state,completedLessons:{...state.completedLessons,[key]:{bestPct:Math.max(prev?.bestPct??0,pct),lastPct:pct,timesPlayed:(prev?.timesPlayed??0)+1}}};}); }
+export function lessonResult(p: Progress, education: Education, lessonId: string): LessonResult | undefined { return educationState(p,education).completedLessons[lessonProgressKey(education,lessonId)]; }
+export function categoryStat(p: Progress, education: Education, categoryId: string): CategoryStat | undefined { return educationState(p,education).categoryStats[categoryProgressKey(education,categoryId)]; }
+export function isLessonPassed(p: Progress, education: Education, lessonId: string): boolean { const r=lessonResult(p,education,lessonId); return !!r && r.bestPct>=LESSON_PASS_THRESHOLD; }
+export function getLevelInfo(xp:number){const levels=[{threshold:0,title:"Sprognovice"},{threshold:100,title:"Ordklasse-lærling"},{threshold:250,title:"Sætningsanalytiker"},{threshold:500,title:"Morfem-mester"},{threshold:900,title:"Syntaks-kender"},{threshold:1400,title:"Latin-kandidat"},{threshold:2000,title:"AP-ekspert"},{threshold:3000,title:"🐐AP-GED🐐"}];let level=0;for(let i=0;i<levels.length;i++)if(xp>=levels[i].threshold)level=i;const current=levels[level],next=levels[level+1],intoLevel=xp-current.threshold;return{level:level+1,title:current.title,intoLevel,forNext:next?next.threshold-current.threshold:intoLevel};}

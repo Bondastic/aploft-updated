@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Education, Progress } from "../types";
-import { getLevelInfo } from "../lib/progress";
+import { educationState, getLevelInfo } from "../lib/progress";
 import { EDU_THEMES, getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import { CategoryIcon, FlameIcon, SettingsIcon, StxIcon, HhxIcon, TrendUpIcon } from "../components/icons";
@@ -26,7 +26,7 @@ export default function ProfilePage({
 }) {
   const [nickname, setNicknameLocal] = useState(progress.nickname);
   const [confirmReset, setConfirmReset] = useState(false);
-  const level = getLevelInfo(progress.xp);
+  const level = getLevelInfo(educationState(progress).xp);
 
   return (
     <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
@@ -37,7 +37,7 @@ export default function ProfilePage({
             {progress.nickname || "Din profil"} · Niveau {level.level}
           </p>
           <p className="text-sm text-ink/50">{level.title}</p>
-          <p className="text-xs text-ink/40">{progress.xp} XP i alt</p>
+          <p className="text-xs text-ink/40">{educationState(progress).xp} XP i alt</p>
         </div>
       </div>
 
@@ -88,11 +88,11 @@ export default function ProfilePage({
         </span>
       </button>
 
-      {progress.examAttempts.length > 0 && (
+      {educationState(progress).examAttempts.length > 0 && (
         <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
           <p className="mb-3 font-bold text-ink">Seneste prøver</p>
           <div className="space-y-2">
-            {progress.examAttempts.slice(0, 5).map((a) => (
+            {educationState(progress).examAttempts.slice(0, 5).map((a) => (
               <div key={a.id} className="flex items-center justify-between text-sm">
                 <span className="inline-flex items-center gap-1.5 text-ink/60">
                   <CategoryIcon
