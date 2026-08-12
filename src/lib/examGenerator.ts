@@ -2,6 +2,7 @@ import { ALMEN_TASKS } from "../data/questions";
 import { LATIN_TASKS } from "../data/latinQuestions";
 import { HHX_TASKS } from "../data/hhxQuestions";
 import type { Education, Task, Track } from "../types";
+import { isContentTask } from "../types";
 
 export type ExamTrack = Track | "fuld" | "ultimativ";
 
@@ -20,11 +21,14 @@ export const ALL_TASKS: Task[] = [...ALMEN_TASKS, ...LATIN_TASKS];
 export const ALL_HHX_TASKS: Task[] = HHX_TASKS;
 
 export function poolForTrack(track: ExamTrack, education: Education = "stx"): Task[] {
-  if (track === "almen") return ALMEN_TASKS;
-  if (track === "latin") return LATIN_TASKS;
-  if (track === "hhx") return HHX_TASKS;
+  let pool: Task[];
+  if (track === "almen") pool = ALMEN_TASKS;
+  else if (track === "latin") pool = LATIN_TASKS;
+  else if (track === "hhx") pool = HHX_TASKS;
   // "fuld" og "ultimativ" trækker fra hele puljen for den valgte uddannelse.
-  return education === "hhx" ? HHX_TASKS : ALL_TASKS;
+  else pool = education === "hhx" ? HHX_TASKS : ALL_TASKS;
+  // Prøver skal aldrig indeholde rene undervisningstrin.
+  return pool.filter((t) => !isContentTask(t));
 }
 
 // Vælger `count` opgaver, spreder på tværs af kategorier og undgår gentagelser,

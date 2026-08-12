@@ -15,11 +15,13 @@ import {
   resetProgress,
   saveProgress,
   setEducation,
-  touchStreak,
+  unlockLessonsThrough,
 } from "../lib/progress";
+import { lockViewportZoom } from "../utils/viewport";
 import TopBar from "./TopBar";
 import BottomNav, { type NavPage } from "./BottomNav";
 import GuidedTour, { type TourPage } from "./GuidedTour";
+import ErrorBoundary from "./ErrorBoundary";
 import WelcomePage from "../screens/Welcome";
 import HomePage from "../screens/Home";
 import PracticePage from "../screens/Practice";
@@ -32,7 +34,7 @@ import UdviklingPage from "../screens/Udvikling";
 type AppPage = NavPage | "lynkursus" | "udvikling";
 
 export default function AploftApp() {
-  const [progress, setProgress] = useState<Progress>(() => touchStreak(loadProgress()));
+  const [progress, setProgress] = useState<Progress>(() => loadProgress());
   const [page, setPage] = useState<AppPage>("home");
   const [hydrated, setHydrated] = useState(false);
   // Spotlight-rundvisningen for nye brugere (starter på Profil lige efter
@@ -42,7 +44,8 @@ export default function AploftApp() {
   // Undgå hydration-mismatch: gen-indlæs progress fra localStorage, når
   // komponenten er monteret i browseren.
   useEffect(() => {
-    setProgress(touchStreak(loadProgress()));
+    lockViewportZoom();
+    setProgress(loadProgress());
     setHydrated(true);
   }, []);
 
@@ -88,16 +91,18 @@ export default function AploftApp() {
   // hvor spotlight-rundvisningen starter.
   if (!progress.onboarded) {
     return (
-      <div className="min-h-screen bg-[#faf8ff]">
-        <WelcomePage
-          reduceMotion={progress.settings.reduceMotion}
-          onComplete={(education, nickname) => {
-            setProgress((p) => completeOnboarding(p, education, nickname));
-            setPage("profile");
-            setGuideActive(true);
-          }}
-        />
-      </div>
+      <ErrorBoundary>
+        <div className="min-h-screen bg-[#faf8ff]">
+          <WelcomePage
+            reduceMotion={progress.settings.reduceMotion}
+            onComplete={(education, nickname) => {
+              setProgress((p) => completeOnboarding(p, education, nickname));
+              setPage("profile");
+              setGuideActive(true);
+            }}
+          />
+        </div>
+      </ErrorBoundary>
     );
   }
 
@@ -133,6 +138,7 @@ export default function AploftApp() {
   const education = progress.education;
 
   return (
+    <ErrorBoundary onReset={() => setPage("home")}>
     <div className="min-h-screen bg-[#faf8ff]">
       <a
         href="#main-content"
@@ -141,7 +147,7 @@ export default function AploftApp() {
         Spring til indhold
       </a>
       <TopBar progress={progress} />
-      <main id="main-content">
+      <main id="main-content" className="lg:pl-56">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={page}
@@ -158,6 +164,7 @@ export default function AploftApp() {
                 onCorrect={handleCorrect}
                 onWrong={handleWrong}
                 onLessonComplete={handleLessonComplete}
+                onUnlockLessons={(ids) => setProgress((p) => unlockLessonsThrough(p, ids))}
               />
             )}
             {page === "exam" && (
@@ -196,5 +203,6 @@ export default function AploftApp() {
         reduceMotion={progress.settings.reduceMotion}
       />
     </div>
+    </ErrorBoundary>
   );
 }

@@ -4,7 +4,7 @@
 udviklingen af AP Klar uden at lave de samme fejl. Den afløser den tidligere
 overlevering (som beskrev en arbejdskopi, der ikke længere findes).
 
-**Dato:** 10. august 2026 · **Branch:** arena/019fecdf-aploft-updated · **Remote:** github.com/Bondastic/aploft-updated
+**Dato:** 12. august 2026 · **Branch:** arena/019ff770-aploft-updated · **Remote:** github.com/Bondastic/aploft-updated
 
 ---
 
@@ -156,15 +156,47 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
 1. Velkomstskærm → vælg HHX → brugernavn (kan springes over) → **land på Profil med
    spotlight-guiden** → gennemgå hele turen → "Færdig" → Hjem.
 2. Øv dig → HHX-kategori → teach-trin → opgave → "Spørg AI" → bekræft dialog → ChatGPT-link.
+   Gennemfør "Introduktion: fra bunden" og åbn den igen: den skal kunne læses om uden fejlskærm.
 3. Prøve → HHX-prøve → ingen latin-opgaver.
 4. Profil → Indstillinger → skift til STX → latindel + oversættelsesark-knap på
    oversættelses-/grammatik-/sum- og ordforråds-opgaver (forsvinder efter svar).
-5. Topbar på 375 px: logo + mærke (med hat/koffert-ikon) + streak/XP-tal i én lav
-   række uden overlap (teksterne "dages streak"/"XP" er skjult på små skærme).
+5. Topbar på 375 px: logo + mærke + streak/XP uden overlap.
+6. Intro igen uden crash. Lås et senere forløb op. Gå tilbage/frem i et sæt.
+7. Skriv navn på mobil: siden må ikke zoome ind. Nattetilstand: Næste er lilla, ikke hvid.
 
 ---
 
-## 6. Kendte problemer & faldgruber
+## 6. Kendte problemer & faldgruber (historik + regler)
+
+Disse fejl er fundet i produktion/feedback og er rettet. Behold rettelserne.
+
+- **Genafvikling af intro-forløb (rettet):** Efter beståelse filtrerede sessionen
+  alle teach/info-trin væk. HHX-introer (og flere STX-latin-introer) er KUN
+  undervisning, så listen blev tom og `task.category` crashede. Løsning:
+  `buildSessionTasks` i `data/paths.ts`. Test: HHX → Øv dig → Ordklasser →
+  Introduktion → gennemfør → åbn igen.
+- **Android-rundvisning (rettet):** Spotlight brugte `box-shadow: 0 0 0 9999px`,
+  som ofte fejler på Android Chrome (hullet rammer forkert eller vises slet ikke).
+  Nu bruges fire overlay-paneler + `visualViewport` + flere måleforsøg.
+  Zoom nulstilles, når turen starter (`utils/viewport.ts`). Lås IKKE body-scroll
+  med overflow:hidden under turen: det ødelægger måling på Android.
+- **Mobil-zoom i tekstfelter (rettet):** iOS/Android zoomer ind, hvis input har
+  font-size under 16px (velkomst-navn var `text-sm`). Alle inputs er nu 16px,
+  og viewport er `maximum-scale=1, user-scalable=no`.
+- **Streak ved åbning (rettet):** `touchStreak` kørte i AploftApp ved load, så
+  streak steg bare ved at åbne appen. Streak røres nu kun i `recordAnswer`
+  (når man har svaret på en rigtig opgave).
+- **Næste-knap i nattetilstand (rettet):** `bg-ink` bliver lys i dark mode
+  (fordi `--color-ink` skifter til tekstfarve), så knappen blev hvid-på-hvid.
+  `.dark .bg-ink` er overstyret til lilla i `globals.css`.
+- **STX så HHX-kategorier i Udvikling (rettet):** brug `STX_CATEGORIES`, ikke
+  `ALL_CATEGORIES`. `getCategory(id, education)` skal have education, fordi
+  STX og HHX deler id'er som `ordklasser`.
+- **Opsamlingstest med teach-kort (rettet):** review-pool filtrerer `isContentTask`.
+- **Desktop føltes som telefon (rettet):** venstre sidebar fra `lg`, bredere
+  `.app-page` (max 64rem), 2-kolonne kategorier, 4-kolonne forside.
+
+- **GitHub:** arbejd altid på sessionens `arena/…`-branch og åbn PR derfra.
 
 - **GitHub:** push/PR virker fra denne session. Arbejd altid på
   `arena/019fecdf-aploft-updated` og åbn PR derfra (aldrig andre brancher).
@@ -179,16 +211,19 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
   og kører `node scripts/gen-icons.mjs`. SVG-rasterisering: brug `density: 72`, ellers
   bliver størrelserne 1,33× for store (96/72).
 - **src/db/** er ubrugt boilerplate (drizzle/postgres). Rør den ikke.
-- **Guide og AnimatePresence:** GuidedTour navigerer selv via onNavigate (stabil
-  useCallback) og måler med 80/280 ms delays. Målet rulles ind på skærmen (med
-  kortvarig ophævelse af scroll-låsen): forsidens genvejsknapper (alignTop) scroller
-  helt op under topbaren, så Linguas taleboble ligger under knappen og aldrig
-  dækker den; øvrige trin centrerer målet. data-tour-attributter skal følge med,
-  hvis man flytter/omdøber elementer: profil, hjem, ov-dig, proeve, symboler
-  (bund-nav-faner) + hjem-lynkursus og hjem-udvikling (forsidens genvejsknapper,
-  som rundvisningens sidste to trin fremhæver i stedet for selve siderne). Når
-  turen slutter/springes over, ruller appen til toppen af forsiden (respekterer
-  reduceMotion).
+- **Guide og AnimatePresence:** GuidedTour navigerer via onNavigate og måler
+  flere gange (40-1400 ms) plus visualViewport-resize. Spotlight er fire
+  overlay-rektangler (ikke kæmpe box-shadow). data-tour-attributter: profil,
+  hjem, ov-dig, proeve, symboler (nav) + hjem-lynkursus og hjem-udvikling
+  (forsidens genvejsknapper). På desktop er nav en venstre sidebar; samme
+  data-tour-attributter. Når turen slutter, ruller appen til toppen.
+- **Tilbage/frem i opgavesæt:** `reached` er det længste index man må nå.
+  Man kan gå tilbage og frem til `reached`, aldrig længere. Review-mode i
+  TaskRenderer (`review` + `reviewCorrect`) viser forklaringen uden at tælle
+  svaret om. Gælder Øv dig og Prøve (`SessionNav`).
+- **Manuel oplåsning:** `progress.unlockedLessons` (string[]). "Lås op" på et
+  låst forløb tilføjer alle noder frem til og med det valgte. De markeres
+  IKKE som gennemført. Brug `unlockLessonsThrough` / `isManuallyUnlocked`.
 
 ---
 

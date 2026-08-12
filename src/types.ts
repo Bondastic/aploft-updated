@@ -195,6 +195,21 @@ export type Task =
   | TableFillTaskT
   | TeachTaskT;
 
+/** Gemt elevsvar, så tilbage/frem kan vise præcis det, der blev afleveret. */
+export type SavedAnswer =
+  | { kind: "choice"; selected: number | null }
+  | { kind: "click-word"; selected: number[] }
+  | {
+      kind: "analysis";
+      assignments: Partial<Record<number, LedSymbol>>;
+      // Liste i chunk-rækkefølge, så genskabelse ikke afhænger af objektnøgler.
+      symbols?: (LedSymbol | null)[];
+    }
+  | { kind: "build-sentence"; words: string[]; orderDiffers?: boolean }
+  | { kind: "write"; value: string }
+  | { kind: "table-fill"; assignments: Record<number, string> }
+  | { kind: "content" };
+
 /** Rene undervisnings-/gennemgangstrin uden rigtigt/forkert-bedømmelse. */
 export function isContentTask(task: Task): task is TeachTaskT | InfoTaskT {
   return task.type === "teach" || task.type === "info";
@@ -246,6 +261,10 @@ export interface Progress {
   categoryStats: Record<string, CategoryStat>;
   completedSteps: string[];
   completedLessons: Record<string, LessonResult>;
+  // Forløb man har låst op manuelt (uden at have bestået de forrige).
+  // Bruges så øvede elever kan springe hen til sværere opgaver. De
+  // manuelt oplåste forløb tæller IKKE som gennemført.
+  unlockedLessons: string[];
   examAttempts: ExamAttempt[];
   settings: ProgressSettings;
 }

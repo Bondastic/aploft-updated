@@ -1,4 +1,4 @@
-import type { CategoryDef } from "../types";
+import type { CategoryDef, Education } from "../types";
 
 // Rækkefølgen herunder er bevidst: de mest grundlæggende og vigtigste emner
 // (dem alt andet bygger ovenpå) står øverst, mens mere overordnede/abstrakte
@@ -234,10 +234,17 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  },
 ];
 
-export const ALL_CATEGORIES: CategoryDef[] = [...ALMEN_CATEGORIES, ...LATIN_CATEGORIES, ...HHX_CATEGORIES];
+export const STX_CATEGORIES: CategoryDef[] = [...ALMEN_CATEGORIES, ...LATIN_CATEGORIES];
 
-export function getCategory(id: string): CategoryDef | undefined {
- return ALL_CATEGORIES.find((c) => c.id === id);
+// Bemærk: STX og HHX deler nogle kategori-id'er (fx "ordklasser"). Brug
+// derfor altid getCategory(id, education), så HHX ikke får STX-farver/tekst.
+export const ALL_CATEGORIES: CategoryDef[] = [...STX_CATEGORIES, ...HHX_CATEGORIES];
+
+export function getCategory(id: string, education?: Education): CategoryDef | undefined {
+  if (education === "hhx") {
+    return HHX_CATEGORIES.find((c) => c.id === id) ?? STX_CATEGORIES.find((c) => c.id === id);
+  }
+  return STX_CATEGORIES.find((c) => c.id === id) ?? HHX_CATEGORIES.find((c) => c.id === id);
 }
 
 export const CATEGORY_COLOR_CLASSES: Record<string, { bg: string; text: string; ring: string; solid: string }> = {

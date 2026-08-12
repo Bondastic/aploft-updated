@@ -1,14 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, Task } from "../types";
+import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, SavedAnswer, Task } from "../types";
 import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, ALL_HHX_TASKS, type ExamTrack } from "../lib/examGenerator";
 import { getEducation } from "../lib/education";
 import { getCategory } from "../data/categories";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import { cn } from "../utils/cn";
+import SessionNav from "../components/SessionNav";
 import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
+
+type Outcome = { ok: boolean; answer?: SavedAnswer } | null;
 
 const TRACK_INFO: Record<ExamTrack, { label: string; icon: IconName; desc: string }> = {
   almen: { label: "Almen del", icon: "almen", desc: "Ordklasser, sætningsled, morfologi, tempus, kasus, syntaks og sprog." },
@@ -44,10 +47,12 @@ export default function ExamPage({
   const [count, setCount] = useState(12);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [index, setIndex] = useState(0);
-  const [answered, setAnswered] = useState(false);
+  const [reached, setReached] = useState(0);
+  const [results, setResults] = useState<Outcome[]>([]);
   const [correctCount, setCorrectCount] = useState(0);
   const [byCategory, setByCategory] = useState<Record<string, CategoryStat>>({});
   const [pose, setPose] = useState<MascotPose>("explain");
+  const [confirmAbort, setConfirmAbort] = useState(false);
   const reduceMotion = progress.settings.reduceMotion;
 
   const isHhx = education === "hhx";
@@ -64,24 +69,38 @@ export default function ExamPage({
 
   function startExam() {
     const generated = generateExam(track, count, education);
+    if (generated.length === 0) return;
     setTasks(generated);
     setIndex(0);
-    setAnswered(false);
+    setReached(0);
+    setResults(Array.from({ length: generated.length }, () => null));
     setCorrectCount(0);
     setByCategory({});
     setPose("explain");
+    setConfirmAbort(false);
     setPhase("running");
   }
 
+  const outcome = results[index] ?? null;
+  const answered = outcome !== null;
+  const isReview = index < reached;
+
   function finishNow() {
-    onExamComplete(track, correctCount, index + (answered ? 1 : 0), byCategory);
+    const answeredCount = results.filter((r) => r !== null).length;
+    onExamComplete(track, correctCount, answeredCount || index + (answered ? 1 : 0), byCategory);
     setPose("celebrate");
     setPhase("result");
   }
 
-  function handleSubmit(correct: boolean) {
-    const category = tasks[index].category;
-    setAnswered(true);
+  function handleSubmit(correct: boolean, answer?: SavedAnswer) {
+    const current = tasks[index];
+    if (!current || answered) return;
+    const category = current.category;
+    setResults((prev) => {
+      const next = [...prev];
+      next[index] = { ok: correct, answer };
+      return next;
+    });
     setByCategory((prev) => {
       const stat: CategoryStat = prev[category] ?? { correct: 0, total: 0 };
       return { ...prev, [category]: { correct: stat.correct + (correct ? 1 : 0), total: stat.total + 1 } };
@@ -102,15 +121,16 @@ export default function ExamPage({
       setPose("celebrate");
       setPhase("result");
     } else {
-      setIndex((i) => i + 1);
-      setAnswered(false);
+      const nextI = index + 1;
+      setIndex(nextI);
+      setReached((r) => Math.max(r, nextI));
       setPose("thinking");
     }
   }
 
   if (phase === "setup") {
     return (
-      <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+      <div className="app-page space-y-6">
         <div>
           <h1 className="font-display text-2xl font-extrabold text-ink">Tag en prøve</h1>
           <p className="text-sm text-ink/50">
@@ -222,33 +242,93 @@ export default function ExamPage({
 
   if (phase === "running") {
     const task = tasks[index];
+    if (!task) {
+      return (
+        <div className="app-page-narrow space-y-5 pt-10 text-center">
+          <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
+          <h2 className="font-display text-2xl font-extrabold text-ink">Prøven kunne ikke startes</h2>
+          <p className="text-sm text-ink/60">Der var ingen spørgsmål at trække. Prøv en anden længde eller et andet spor.</p>
+          <button onClick={() => setPhase("setup")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+            Tilbage
+          </button>
+        </div>
+      );
+    }
     return (
-      <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
-        <div className="flex items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-ink/50" aria-live="polite">
-            Spørgsmål {index + 1} / {tasks.length}
-          </p>
-          <p className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink/50">
+      <div className="app-page-narrow space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={() => setConfirmAbort(true)}
+            className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink hover:border-rose-300 hover:text-rose-600"
+          >
+            Afbryd prøve
+          </button>
+          <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-ink/50">
             <CategoryIcon name={TRACK_INFO[track].icon} className="h-4 w-4" />
             {TRACK_INFO[track].label}
           </p>
         </div>
+        <p className="text-center text-sm font-semibold text-ink/50" aria-live="polite">
+          Spørgsmål {index + 1} af {tasks.length}
+        </p>
         <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={tasks.length}>
           <div className={cn("h-full rounded-full transition-all", isHhx ? theme.bar : "bg-purple")} style={{ width: `${(index / tasks.length) * 100}%` }} />
         </div>
+        <SessionNav
+          canBack={index > 0}
+          canForward={index < reached}
+          onBack={() => setIndex((i) => Math.max(0, i - 1))}
+          onForward={() => setIndex((i) => Math.min(reached, i + 1))}
+        />
+        {isReview && (
+          <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere spørgsmål. Dine valg vises stadig. Gå frem for at fortsætte, hvor du slap.</p>
+        )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
         <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
-          <TaskRenderer key={task.id} task={task} onSubmit={handleSubmit} reduceMotion={reduceMotion} />
+          <TaskRenderer
+            key={`exam-${index}-${task.id}`}
+            task={task}
+            onSubmit={handleSubmit}
+            reduceMotion={reduceMotion}
+            review={answered}
+            reviewCorrect={outcome?.ok === true}
+            savedAnswer={outcome?.answer}
+          />
         </div>
-        {answered && (
+        {answered && !isReview && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}
-        {isUltimate && (
-          <button onClick={finishNow} className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/60 hover:border-rose-300 hover:text-rose-600">
-            Afslut prøven nu og se resultat
-          </button>
+        <button
+          type="button"
+          onClick={finishNow}
+          className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/70 hover:border-rose-300 hover:text-rose-600"
+        >
+          Afslut prøven nu og se resultat
+        </button>
+        {confirmAbort && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4">
+            <div className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-5 shadow-2xl" role="dialog" aria-modal="true">
+              <h3 className="font-display text-lg font-extrabold text-ink">Afbryd prøven?</h3>
+              <p className="text-sm text-ink/70">Du kan gå tilbage til opsætningen. Det, du har svaret indtil nu, bliver ikke gemt som et prøveresultat.</p>
+              <div className="flex gap-2">
+                <button onClick={() => setConfirmAbort(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                  Fortsæt
+                </button>
+                <button
+                  onClick={() => {
+                    setConfirmAbort(false);
+                    setPhase("setup");
+                  }}
+                  className="flex-1 rounded-full bg-ink py-2.5 text-sm font-bold text-white"
+                >
+                  Afbryd
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     );
@@ -259,7 +339,7 @@ export default function ExamPage({
   const totalAnswered = categoryEntries.reduce((s, [, v]) => s + v.total, 0) || tasks.length;
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-8 text-center">
+    <div className="app-page-narrow space-y-6 pt-8 text-center">
       <Mascot pose={pct >= 70 ? "celebrate" : pct >= 40 ? "thumbsup" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
       <div>
         <h2 className="font-display text-2xl font-extrabold text-ink">Prøven er afsluttet!</h2>
@@ -271,7 +351,7 @@ export default function ExamPage({
       <div className="space-y-2 rounded-2xl border border-ink/10 bg-white p-5 text-left shadow-sm">
         <p className="mb-2 text-sm font-bold text-ink">Resultat pr. kategori</p>
         {categoryEntries.map(([catId, stat]) => {
-          const cat = getCategory(catId);
+          const cat = getCategory(catId, education);
           const p = Math.round((stat.correct / stat.total) * 100);
           return (
             <div key={catId} className="flex items-center gap-3 text-sm">

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import type { Education, Progress } from "../types";
-import { ALL_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES } from "../data/categories";
+import { CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, STX_CATEGORIES } from "../data/categories";
 import { getCategoryPath } from "../data/paths";
 import { LESSON_PASS_THRESHOLD } from "../lib/progress";
 import Mascot from "../components/Mascot";
@@ -48,7 +48,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   const isHhx = education === "hhx";
 
   const rows = useMemo(() => {
-    const cats = isHhx ? HHX_CATEGORIES : ALL_CATEGORIES;
+    const cats = isHhx ? HHX_CATEGORIES : STX_CATEGORIES;
     return cats.map((cat) => {
       const stat = progress.categoryStats[cat.id];
       const total = stat?.total ?? 0;
@@ -82,7 +82,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   const untouched = rows.filter((r) => r.total === 0);
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+    <div className="app-page space-y-6">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Din udvikling</h1>
         <p className="text-sm text-ink/50">Se hvor du står i hver kategori, hvad du bør øve mest, og få en estimeret standpunktskarakter.</p>
@@ -151,7 +151,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
         <div className="flex items-start gap-4">
           <Mascot pose="explain" size="md" speech={null} reduceMotion={reduceMotion} />
           <div className="flex-1">
-            <p className="font-display text-lg font-extrabold text-ink">Lingua's vurdering</p>
+            <p className="font-display text-lg font-extrabold text-ink">Linguas vurdering</p>
             <p className="mt-1 text-sm text-ink/60">
               Lingua kan give dig en hardcoded standpunktskarakter ud fra dine resultater i de kategorier, du allerede har trænet.
             </p>

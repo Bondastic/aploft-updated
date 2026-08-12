@@ -5,7 +5,7 @@ import type { Progress } from "../types";
 
 export default function SymbolsPage({ progress }: { progress: Progress }) {
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+    <div className="app-page space-y-6">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Sætningsled-symboler</h1>
         <p className="text-sm text-ink/50">Alle 7 officielle symboler til at analysere sætningsled. Brug dem, når du løser analyse-opgaver.</p>

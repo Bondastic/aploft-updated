@@ -16,11 +16,11 @@ export default function HomePage({
   const isHhx = progress.education === "hhx";
 
   return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
-      <div className={cn("overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white shadow-lg", isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30")}>
+    <div className="app-page space-y-6">
+      <div className={cn("overflow-hidden rounded-3xl bg-gradient-to-br p-6 text-white shadow-lg lg:p-8", isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30")}>
         <div className="flex items-center justify-between gap-4">
           <div>
-            <p className="font-display text-xl font-extrabold">{greeting}</p>
+            <p className="font-display text-xl font-extrabold lg:text-3xl">{greeting}</p>
             <p className="mt-1 text-sm text-white/80">
               {isHhx ? "Klar til at træne HHX Almen Sprogforståelse i dag?" : "Klar til at træne STX Almen Sprogforståelse i dag?"}
             </p>
@@ -38,7 +38,7 @@ export default function HomePage({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <button
           onClick={() => onNavigate("practice")}
           className="flex flex-col items-start gap-2 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
@@ -87,7 +87,7 @@ export default function HomePage({
         <button
           data-tour="hjem-udvikling"
           onClick={() => onNavigate("udvikling")}
-          className="col-span-2 flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
+          className="col-span-2 flex items-center gap-3 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple lg:col-span-4"
         >
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600">
             <TrendUpIcon className="h-5 w-5" />
@@ -107,8 +107,8 @@ export default function HomePage({
         <p className="text-sm text-ink/60">
           Hvert forløb under &quot;Øv dig&quot; starter med en kort, rolig introduktion, der forklarer emnet fra nul. Du behøver
           ikke kunne noget i forvejen. Første gang du tager et forløb, kommer opgaverne i en fast, gennemtænkt rækkefølge; når
-          du har bestået, kan du træne igen med tilfældige spørgsmål. &quot;Tag en prøve&quot; er stadig altid tilfældig, ligesom en
-          rigtig eksamen.
+          du har bestået, kan du træne igen med tilfældige spørgsmål. Introduktioner kan du altid læse igen. &quot;Tag en prøve&quot;
+          er stadig altid tilfældig, ligesom en rigtig eksamen.
         </p>
       </div>
     </div>

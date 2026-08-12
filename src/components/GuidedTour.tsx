@@ -4,29 +4,19 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronRightIcon, XIcon } from "./icons";
 import { cn } from "../utils/cn";
+import { resetViewportZoom, viewportBox } from "../utils/viewport";
 
-// Spotlight-rundvisningen: en kort guide for nye brugere, der starter på
-// Profil (hvor man lander efter velkomstskærmen) og går gennem hele appen:
-// Hjem → Øv dig → Prøve → Symboler → Lynkursus → Din udvikling → Hjem.
-// De to sidste trin fremhæver genvejsknapperne på forsiden (som tager en
-// ind på lynkurset hhv. udviklingssiden), ikke selve siderne.
-// Alt andet end det aktuelle element mørklægges (spotlight-hul), scroll
-// låses, og Lingua forklarer kort i en taleboble. Kan springes over.
-//
-// Hvert trin peger på et element via en data-tour-attribut. Trinnet skifter
-// selv side via onNavigate, venter på at siden er rendret, ruller målet ind
-// midt på skærmen og måler så elementets position for at placere hullet.
+// Spotlight-rundvisningen. Hullet følger målets egne afrundede hjørner
+// (box-shadow), så der ikke sidder en firkant uden om runde knapper.
+// Zoom nulstilles, når turen starter, så spotlightet rammer det rigtige.
 
 export type TourPage = "profile" | "home" | "practice" | "exam" | "symbols" | "lynkursus" | "udvikling";
 
 interface TourStep {
   page: TourPage;
-  target: string; // CSS-selector for det element, der skal fremhæves
+  target: string;
   title: string;
   text: string;
-  // Rul målet helt op, så dets top ligger lige under topbaren (kun til
-  // indhold midt på en side, fx forsidens genvejsknapper). Så er der god
-  // plads under målet til Linguas taleboble, og boblen dækker den aldrig.
   alignTop?: boolean;
 }
 
@@ -41,7 +31,7 @@ const STEPS: TourStep[] = [
     page: "home",
     target: '[data-tour="hjem"]',
     title: "Hjem",
-    text: "Hjem-fanen nederst på skærmen fører dig altid tilbage til forsiden med dine statusser og genveje til hele appen.",
+    text: "Hjem-fanen nederst på skærmen (på computer i venstre side) fører dig altid tilbage til forsiden med dine statusser og genveje til hele appen.",
   },
   {
     page: "practice",
@@ -82,6 +72,7 @@ interface HoleRect {
   left: number;
   width: number;
   height: number;
+  radius: number;
 }
 
 export default function GuidedTour({
@@ -102,81 +93,64 @@ export default function GuidedTour({
   const current = STEPS[step];
   const isLast = step >= STEPS.length - 1;
 
-  // Nulstil turen, hver gang den aktiveres (fx efter et "Nulstil alle data"
-  // + nyt velkomstflow), så den altid starter forfra på Profil.
   const prevActive = useRef(false);
   useEffect(() => {
     if (active && !prevActive.current) {
       setStep(0);
       setRect(null);
+      resetViewportZoom();
     }
     prevActive.current = active;
   }, [active]);
 
-  // Mål det aktuelle trins målelement og gem dets position (viewport-koordinater).
-  // Målet rulles først ind på skærmen, så hullet altid er synligt. For trin med
-  // alignTop (forsidens genvejsknapper) rulles knappen helt op, så dens top
-  // ligger lige under topbaren: så er der plads under knappen til Linguas
-  // taleboble, og boblen dækker aldrig målet. Scroll-låsen fjernes kortvarigt,
-  // fordi overflow:hidden ellers blokerer programmatisk scroll.
-  const NAV_GAP = 72;
   const measure = useCallback(() => {
     const el = document.querySelector<HTMLElement>(STEPS[step].target);
     if (!el) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "";
-    if (STEPS[step].alignTop) {
-      const before = el.getBoundingClientRect();
-      window.scrollBy({ top: before.top - 72, behavior: "auto" });
-    } else {
-      el.scrollIntoView({ block: "center", behavior: "auto" });
-    }
-    document.body.style.overflow = prevOverflow;
-    const r = el.getBoundingClientRect();
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    // Hold hullet inden for vinduet og over bund-navigationen.
+    if (STEPS[step].alignTop) {
+      const before = el.getBoundingClientRect();
+      window.scrollBy({ top: before.top - 80, behavior: "auto" });
+    } else {
+      el.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
+    }
+    const r = el.getBoundingClientRect();
     const top = Math.max(0, r.top);
     const left = Math.max(0, r.left);
-    const right = Math.min(vw, r.right);
-    const bottom = r.bottom > vh ? vh - NAV_GAP : Math.min(vh, r.bottom);
-    if (right <= left || bottom <= top) return;
-    setRect({ top, left, width: right - left, height: bottom - top });
+    const width = Math.min(vw - left, r.width);
+    const height = Math.min(vh - top, r.height);
+    if (width < 4 || height < 4) return;
+    const rawRadius = parseFloat(window.getComputedStyle(el).borderRadius);
+    const radius = Number.isFinite(rawRadius) ? rawRadius : 16;
+    setRect({ top, left, width, height, radius });
   }, [step]);
 
-  // Skift til trinnets side, og mål målet, når siden er rendret. To forsøg:
-  // ét lige efter side-skiftet (fx faner i bund-navigationen, som altid er
-  // monteret) og ét efter sideovergangen (~160 ms AnimatePresence) er færdig.
   useEffect(() => {
     if (!active) return;
     onNavigate(STEPS[step].page);
     setRect(null);
-    const t1 = window.setTimeout(measure, 80);
-    const t2 = window.setTimeout(measure, 280);
+    const delays = [40, 120, 280, 480, 800, 1400];
+    const timers = delays.map((ms) => window.setTimeout(measure, ms));
     return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
+      for (const t of timers) window.clearTimeout(t);
     };
   }, [active, step, onNavigate, measure]);
 
-  // Lås scroll, mens turen kører.
   useEffect(() => {
     if (!active) return;
-    const prev = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    const onChange = () => measure();
+    window.addEventListener("resize", onChange);
+    window.addEventListener("orientationchange", onChange);
+    window.visualViewport?.addEventListener("resize", onChange);
+    window.visualViewport?.addEventListener("scroll", onChange);
     return () => {
-      document.body.style.overflow = prev;
+      window.removeEventListener("resize", onChange);
+      window.removeEventListener("orientationchange", onChange);
+      window.visualViewport?.removeEventListener("resize", onChange);
+      window.visualViewport?.removeEventListener("scroll", onChange);
     };
-  }, [active]);
-
-  // Genmål, hvis vinduet ændrer størrelse (fx rotation af telefonen).
-  useEffect(() => {
-    if (!active) return;
-    window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
   }, [active, measure]);
 
-  // Escape springer turen over.
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
@@ -186,12 +160,11 @@ export default function GuidedTour({
     return () => window.removeEventListener("keydown", onKey);
   }, [active, onFinish]);
 
-  // Taleboblen placeres under målet, hvis der er plads; ellers over det
-  // (fx når målet er en fane i bund-navigationen).
   useEffect(() => {
     if (!rect) return;
+    const { height: vh } = viewportBox();
     const bottom = rect.top + rect.height;
-    setBubbleAbove(window.innerHeight - bottom < 260);
+    setBubbleAbove(vh - bottom < 240);
   }, [rect]);
 
   function next() {
@@ -202,14 +175,16 @@ export default function GuidedTour({
     }
   }
 
-  const holeStyle: React.CSSProperties | undefined = rect
+  const PAD = 4;
+  const hole = rect
     ? {
-        top: rect.top - 6,
-        left: rect.left - 6,
-        width: rect.width + 12,
-        height: rect.height + 12,
+        top: Math.max(0, rect.top - PAD),
+        left: Math.max(0, rect.left - PAD),
+        width: rect.width + PAD * 2,
+        height: rect.height + PAD * 2,
+        borderRadius: Math.max(rect.radius + PAD, 8),
       }
-    : undefined;
+    : null;
 
   return (
     <AnimatePresence>
@@ -224,43 +199,47 @@ export default function GuidedTour({
           aria-modal="true"
           aria-label="Rundvisning med Lingua"
         >
-          {/* Klik-spærre: fanger alle klik, så man ikke kommer ud af turen */}
           <div className="fixed inset-0 z-40" aria-hidden="true" />
-
-          {/* Mørklægning med spotlight-hul (box-shadow-tricket): hullet er en
-              gennemsigtig boks, hvis enorme skygge mørklægger resten af skærmen. */}
-          {holeStyle && (
+          {!hole && (
+            <div className="pointer-events-none fixed inset-0 z-40" style={{ background: "rgba(23, 18, 37, 0.8)" }} aria-hidden="true" />
+          )}
+          {hole && (
             <>
               <div
-                className="pointer-events-none fixed z-40 rounded-2xl transition-all duration-200 ease-out"
-                style={{ ...holeStyle, boxShadow: "0 0 0 9999px rgba(23, 18, 37, 0.8)" }}
+                className="pointer-events-none fixed z-40"
+                style={{
+                  top: hole.top,
+                  left: hole.left,
+                  width: hole.width,
+                  height: hole.height,
+                  borderRadius: hole.borderRadius,
+                  boxShadow: "0 0 0 9999px rgba(23, 18, 37, 0.8)",
+                }}
               />
               <div
-                className="pointer-events-none fixed z-40 rounded-2xl ring-2 ring-white/80"
-                style={holeStyle}
+                className="pointer-events-none fixed z-40 ring-2 ring-white/80"
+                style={{
+                  top: hole.top,
+                  left: hole.left,
+                  width: hole.width,
+                  height: hole.height,
+                  borderRadius: hole.borderRadius,
+                }}
               />
             </>
           )}
 
-          {/* Mørk topbar med trin-/sideindikator */}
           <div className="fixed inset-x-0 top-0 z-50 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 bg-[#171225]/95 px-4 py-2.5 text-white shadow-lg">
             <div className="flex min-w-0 items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/mascot/welcome.png"
-                alt=""
-                className="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-white/30"
-              />
+              <img src="/mascot/welcome.png" alt="" className="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-white/30" />
               <p className="truncate text-sm font-extrabold">Rundvisning med Lingua</p>
             </div>
             <div className="flex items-center gap-2">
               <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-bold text-white/80">
                 Trin {step + 1} af {STEPS.length}
               </span>
-              <button
-                onClick={onFinish}
-                className="rounded-full px-2 py-1 text-xs font-semibold text-white/60 transition hover:text-white"
-              >
+              <button onClick={onFinish} className="rounded-full px-2 py-1 text-xs font-semibold text-white/60 transition hover:text-white">
                 Spring over
               </button>
               <button
@@ -273,19 +252,18 @@ export default function GuidedTour({
             </div>
           </div>
 
-          {/* Taleboble med Lingua + forklaring + næste-knap */}
           <motion.div
             className="fixed inset-x-4 z-50 mx-auto max-w-md"
             style={
               bubbleAbove
-                ? { bottom: 92 }
+                ? { bottom: "calc(5.5rem + env(safe-area-inset-bottom, 0px))" }
                 : { top: (rect ? rect.top + rect.height : 0) + 18 }
             }
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
           >
-            <div className="flex items-start gap-3 rounded-3xl bg-white p-4 shadow-2xl">
+            <div className="flex items-start gap-3 rounded-3xl bg-white p-4 shadow-2xl dark:bg-[#241d38]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/mascot/explain.png"

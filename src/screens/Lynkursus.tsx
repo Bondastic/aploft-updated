@@ -437,7 +437,7 @@ export default function LynkursusPage({ education, progress }: { education: Educ
  const accent = isHhx ? "text-blue-600" : tab === "almen" ? "text-purple" : "text-orange-600";
 
  return (
-    <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-4">
+    <div className="app-page space-y-6">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Lynkursus</h1>
  <p className="text-sm text-ink/50">
