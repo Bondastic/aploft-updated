@@ -105,7 +105,11 @@ export default function GuidedTour({
   const measure = useCallback(() => {
     const el = document.querySelector<HTMLElement>(STEPS[step].target);
     if (!el) return;
-    const { width: vw, height: vh } = viewportBox();
+    // Brug layout-viewport (innerWidth/innerHeight), ikke visualViewport.
+    // Android Chrome's visualViewport er ofte lavere end skærmen (adresselinje),
+    // så bund-fanerne blev klippet væk og spotlightet forsvandt.
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
     if (STEPS[step].alignTop) {
       const before = el.getBoundingClientRect();
       window.scrollBy({ top: before.top - 80, behavior: "auto" });
@@ -113,18 +117,16 @@ export default function GuidedTour({
       el.scrollIntoView({ block: "center", inline: "nearest", behavior: "auto" });
     }
     const r = el.getBoundingClientRect();
-    const pad = 4;
-    const top = Math.max(pad, r.top);
-    const left = Math.max(pad, r.left);
-    const right = Math.min(vw - pad, r.right);
-    const bottom = Math.min(vh - pad, r.bottom);
-    if (right - left < 8 || bottom - top < 8) return;
-    setRect({ top, left, width: right - left, height: bottom - top });
+    const top = Math.max(0, r.top);
+    const left = Math.max(0, r.left);
+    const width = Math.min(vw - left, r.width);
+    const height = Math.min(vh - top, r.height);
+    if (width < 4 || height < 4) return;
+    setRect({ top, left, width, height });
   }, [step]);
 
   useEffect(() => {
     if (!active) return;
-    resetViewportZoom();
     onNavigate(STEPS[step].page);
     setRect(null);
     const delays = [40, 120, 280, 480, 800, 1400];
@@ -182,8 +184,6 @@ export default function GuidedTour({
       }
     : null;
 
-  const shade = "bg-[#171225]/80";
-
   return (
     <AnimatePresence>
       {active && (
@@ -198,16 +198,20 @@ export default function GuidedTour({
           aria-label="Rundvisning med Lingua"
         >
           <div className="fixed inset-0 z-40" aria-hidden="true" />
-
+          {!hole && <div className="pointer-events-none fixed inset-0 z-40" style={{ background: "rgba(23, 18, 37, 0.8)" }} aria-hidden="true" />}
           {hole && (
             <>
-              <div className={cn("pointer-events-none fixed z-40", shade)} style={{ top: 0, left: 0, right: 0, height: hole.top }} />
-              <div className={cn("pointer-events-none fixed z-40", shade)} style={{ top: hole.top, left: 0, width: hole.left, height: hole.height }} />
+              <div className="pointer-events-none fixed z-40" style={{ top: 0, left: 0, right: 0, height: hole.top, background: "rgba(23, 18, 37, 0.8)" }} />
+              <div className="pointer-events-none fixed z-40" style={{ top: hole.top, left: 0, width: hole.left, height: hole.height, background: "rgba(23, 18, 37, 0.8)" }} />
               <div
-                className={cn("pointer-events-none fixed z-40", shade)}
-                style={{ top: hole.top, left: hole.left + hole.width, right: 0, height: hole.height }}
+                className="pointer-events-none fixed z-40"
+                style={{ top: hole.top, left: hole.left + hole.width, right: 0, height: hole.height, background: "rgba(23, 18, 37, 0.8)" }}
               />
-              <div className={cn("pointer-events-none fixed z-40", shade)} style={{ top: hole.top + hole.height, left: 0, right: 0, bottom: 0 }} />
+              <div className="pointer-events-none fixed z-40" style={{ top: hole.top + hole.height, left: 0, right: 0, bottom: 0, background: "rgba(23, 18, 37, 0.8)" }} />
+              <div
+                className="pointer-events-none fixed z-40 rounded-2xl"
+                style={{ ...hole, boxShadow: "0 0 0 9999px rgba(23, 18, 37, 0.45)" }}
+              />
               <div className="pointer-events-none fixed z-40 rounded-2xl ring-2 ring-white/85" style={hole} />
             </>
           )}

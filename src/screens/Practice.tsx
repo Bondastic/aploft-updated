@@ -339,20 +339,32 @@ export default function PracticePage({
               !!prevNode &&
               progress.completedLessons[prevNode.id]?.bestPct !== undefined &&
               progress.completedLessons[prevNode.id]!.bestPct >= LESSON_PASS_THRESHOLD;
-            const unlocked = i === 0 || passedPrev || isManuallyUnlocked(progress, node.id);
+            // Oplåst hvis: første trin, forrige er bestået, denne er sprunget
+            // til, ELLER et senere trin er sprunget til (så alt før det også er åbent).
+            const skippedHereOrLater = path.nodes.slice(i).some((n) => isManuallyUnlocked(progress, n.id));
+            const unlocked = i === 0 || passedPrev || skippedHereOrLater;
             const result = progress.completedLessons[node.id];
             const passed = !!result && result.bestPct >= LESSON_PASS_THRESHOLD;
             const isReview = node.kind === "review";
             const contentOnly = isContentOnlyLesson(node, education);
 
             return (
-              <li key={node.id} className="flex items-stretch gap-2">
+              <li key={node.id}>
                 <button
-                  onClick={() => unlocked && startLesson(node)}
-                  disabled={!unlocked}
+                  type="button"
+                  onClick={() => {
+                    if (unlocked) {
+                      startLesson(node);
+                      return;
+                    }
+                    setUnlockTarget({
+                      node,
+                      throughIds: path.nodes.slice(0, i + 1).map((n) => n.id),
+                    });
+                  }}
                   className={cn(
-                    "flex min-w-0 flex-1 items-center gap-4 rounded-2xl border-2 p-4 text-left shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
-                    unlocked ? "border-ink/10 bg-white hover:-translate-y-0.5 hover:shadow-md" : "cursor-not-allowed border-ink/5 bg-ink/5 opacity-70",
+                    "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
+                    unlocked ? "border-ink/10 bg-white hover:-translate-y-0.5 hover:shadow-md" : "border-dashed border-ink/20 bg-white hover:border-ink/40",
                     isReview && unlocked && cn("border-ink/10 bg-ink/5")
                   )}
                 >
@@ -387,25 +399,15 @@ export default function PracticePage({
                     ) : unlocked ? (
                       <p className="text-xs text-ink/40">{contentOnly ? "Kort introduktion · kan læses igen bagefter" : "Ikke forsøgt endnu"}</p>
                     ) : (
-                      <p className="text-xs text-ink/40">Lås op ved at bestå forløbet ovenfor</p>
+                      <p className="text-xs font-semibold text-ink/50">Tryk for at låse op til her</p>
                     )}
                   </div>
-                  {unlocked && <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink/30" />}
+                  {unlocked ? (
+                    <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink/30" />
+                  ) : (
+                    <span className={cn("shrink-0 rounded-full px-3 py-1 text-[11px] font-bold text-white", theme.solidBg)}>Lås op</span>
+                  )}
                 </button>
-                {!unlocked && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setUnlockTarget({
-                        node,
-                        throughIds: path.nodes.slice(0, i + 1).map((n) => n.id),
-                      })
-                    }
-                    className="shrink-0 self-center rounded-full border-2 border-ink/15 px-3 py-2 text-[11px] font-bold text-ink/70 hover:border-ink/30"
-                  >
-                    Lås op
-                  </button>
-                )}
               </li>
             );
           })}
