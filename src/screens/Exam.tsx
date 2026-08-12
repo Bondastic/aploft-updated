@@ -64,6 +64,7 @@ export default function ExamPage({
 
   function startExam() {
     const generated = generateExam(track, count, education);
+    if (generated.length === 0) return;
     setTasks(generated);
     setIndex(0);
     setAnswered(false);
@@ -80,7 +81,9 @@ export default function ExamPage({
   }
 
   function handleSubmit(correct: boolean) {
-    const category = tasks[index].category;
+    const current = tasks[index];
+    if (!current) return;
+    const category = current.category;
     setAnswered(true);
     setByCategory((prev) => {
       const stat: CategoryStat = prev[category] ?? { correct: 0, total: 0 };
@@ -222,6 +225,18 @@ export default function ExamPage({
 
   if (phase === "running") {
     const task = tasks[index];
+    if (!task) {
+      return (
+        <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-10 text-center">
+          <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
+          <h2 className="font-display text-2xl font-extrabold text-ink">Prøven kunne ikke startes</h2>
+          <p className="text-sm text-ink/60">Der var ingen spørgsmål at trække. Prøv en anden længde eller et andet spor.</p>
+          <button onClick={() => setPhase("setup")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+            Tilbage
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
         <div className="flex items-center justify-between gap-2">
@@ -271,7 +286,7 @@ export default function ExamPage({
       <div className="space-y-2 rounded-2xl border border-ink/10 bg-white p-5 text-left shadow-sm">
         <p className="mb-2 text-sm font-bold text-ink">Resultat pr. kategori</p>
         {categoryEntries.map(([catId, stat]) => {
-          const cat = getCategory(catId);
+          const cat = getCategory(catId, education);
           const p = Math.round((stat.correct / stat.total) * 100);
           return (
             <div key={catId} className="flex items-center gap-3 text-sm">

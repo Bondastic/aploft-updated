@@ -4,22 +4,13 @@ import { useState } from "react";
 import type { CategoryId, Education, MascotPose, Progress, Task, Track } from "../types";
 import { isContentTask } from "../types";
 import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
-import { getCategoryPath, getLessonTasks, type LessonNode } from "../data/paths";
+import { buildSessionTasks, getCategoryPath, isContentOnlyLesson, type LessonNode } from "../data/paths";
 import { LESSON_PASS_THRESHOLD } from "../lib/progress";
 import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import { cn } from "../utils/cn";
 import { CategoryIcon, CheckIcon, ChevronRightIcon, LockIcon } from "../components/icons";
-
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 type View = "categories" | "path" | "session" | "result";
 
@@ -64,12 +55,10 @@ export default function PracticePage({
 
   function startLesson(node: LessonNode) {
     const alreadyPassed = (progress.completedLessons[node.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD;
-    const authored = getLessonTasks(node, education);
-    // FØRSTE gennemgang: fast, gennemtænkt rækkefølge med undervisning før
-    // opgaver, aldrig tilfældig. Kun EFTER beståelse må træningen randomiseres,
-    // og så er det kun opgaverne (ikke undervisningstrinene), der blandes,
-    // så eleven ikke skal læse forklaringer igen, hun allerede har set.
-    const tasks = alreadyPassed ? shuffle(authored.filter((t) => !isContentTask(t))) : authored;
+    // FØRSTE gennemgang: fast rækkefølge med undervisning før opgaver.
+    // EFTER beståelse: bland kun opgaverne. Rene intro-forløb (kun teach/info)
+    // vises igen, så sessionen aldrig bliver tom.
+    const tasks = buildSessionTasks(node, education, alreadyPassed);
     setActiveNode(node);
     setSessionTasks(tasks);
     setIndex(0);
@@ -79,14 +68,33 @@ export default function PracticePage({
     setView("session");
   }
 
+  function finishSession() {
+    const pct = gradableCount > 0 ? Math.round((correctCount / gradableCount) * 100) : 100;
+    // Gem den tidligere bedste score FØR vi opdaterer den, så resultatskærmen
+    // kan vise en tydelig sammenligning ("ny rekord" / "bedste er stadig X%").
+    setPrevBestPct(activeNode ? progress.completedLessons[activeNode.id]?.bestPct ?? null : null);
+    if (activeNode) onLessonComplete(activeNode.id, pct);
+    setPose("celebrate");
+    setView("result");
+  }
+
   function handleSubmit(correct: boolean) {
     const task = sessionTasks[index];
-    setAnswered(true);
+    if (!task) return;
     if (isContentTask(task)) {
-      // Undervisningstrin: ingen rigtigt/forkert, og de tæller ikke med i score.
+      // Undervisningstrin: ingen rigtigt/forkert. Gå videre med det samme,
+      // så eleven ikke skal trykke både "Forstået" og "Næste".
       setPose("explain");
+      if (index + 1 >= sessionTasks.length) {
+        finishSession();
+      } else {
+        setIndex((i) => i + 1);
+        setAnswered(false);
+        setPose("thinking");
+      }
       return;
     }
+    setAnswered(true);
     const category = task.category;
     if (correct) {
       onCorrect(category);
@@ -100,13 +108,7 @@ export default function PracticePage({
 
   function next() {
     if (index + 1 >= sessionTasks.length) {
-      const pct = gradableCount > 0 ? Math.round((correctCount / gradableCount) * 100) : 100;
-      // Gem den tidligere bedste score FØR vi opdaterer den, så resultatskærmen
-      // kan vise en tydelig sammenligning ("ny rekord" / "bedste er stadig X%").
-      setPrevBestPct(activeNode ? progress.completedLessons[activeNode.id]?.bestPct ?? null : null);
-      if (activeNode) onLessonComplete(activeNode.id, pct);
-      setPose("celebrate");
-      setView("result");
+      finishSession();
     } else {
       setIndex((i) => i + 1);
       setAnswered(false);
@@ -119,7 +121,21 @@ export default function PracticePage({
   // ---------------------------------------------------------------------
   if (view === "session") {
     const task = sessionTasks[index];
-    const cat = getCategory(task.category);
+    if (!task) {
+      return (
+        <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-10 text-center">
+          <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
+          <h2 className="font-display text-2xl font-extrabold text-ink">Ingen opgaver her</h2>
+          <p className="text-sm text-ink/60">
+            Dette forløb har ingen opgaver lige nu. Gå tilbage og vælg et andet, eller prøv igen senere.
+          </p>
+          <button onClick={() => setView("path")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+            Tilbage til forløb
+          </button>
+        </div>
+      );
+    }
+    const cat = getCategory(task.category, education);
     return (
       <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-4">
         <div className="flex items-center justify-between">
@@ -169,24 +185,29 @@ export default function PracticePage({
     const bestPctNow = Math.max(pct, prevBestPct ?? 0);
     const isNewBest = !isFirstAttempt && pct > (prevBestPct ?? 0);
     const isSameAsBest = !isFirstAttempt && pct === prevBestPct;
+    const contentOnly = gradableCount === 0;
     return (
       <div className="mx-auto max-w-2xl space-y-6 px-4 pb-28 pt-10 text-center">
         <Mascot pose={pct >= 70 ? "celebrate" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
         <h2 className="font-display text-2xl font-extrabold text-ink">{activeNode?.title ?? "Forløb"} klaret!</h2>
-        <p className="text-ink/60">
-          Du fik <span className={cn("font-bold", theme.accentText)}>{correctCount}</span> ud af {gradableCount} rigtige (
-          <span className="font-bold">{pct}%</span>).
-        </p>
+        {contentOnly ? (
+          <p className="text-ink/60">Du har læst introduktionen. Du kan altid åbne den igen, hvis du vil friske den op.</p>
+        ) : (
+          <p className="text-ink/60">
+            Du fik <span className={cn("font-bold", theme.accentText)}>{correctCount}</span> ud af {gradableCount} rigtige (
+            <span className="font-bold">{pct}%</span>).
+          </p>
+        )}
         {passed ? (
           <p className="mx-auto max-w-sm rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
-            Bestået! Det næste forløb i rækken er nu låst op.
+            {contentOnly ? "Næste forløb i rækken er nu låst op." : "Bestået! Det næste forløb i rækken er nu låst op."}
           </p>
         ) : (
           <p className="mx-auto max-w-sm rounded-2xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
             Du skal have mindst {LESSON_PASS_THRESHOLD}% rigtige for at låse det næste forløb op. Prøv igen. Det går bedre næste gang!
           </p>
         )}
-        {!isFirstAttempt && (
+        {!contentOnly && !isFirstAttempt && (
           <p
             className={cn(
               "mx-auto max-w-sm rounded-2xl px-4 py-3 text-sm font-semibold",
@@ -210,7 +231,7 @@ export default function PracticePage({
               onClick={() => startLesson(activeNode)}
               className={cn("rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md", theme.solidBg)}
             >
-              Øv dette forløb igen
+              {contentOnly ? "Læs introduktionen igen" : "Øv dette forløb igen"}
             </button>
           )}
         </div>
@@ -222,7 +243,17 @@ export default function PracticePage({
   // PATH (forløbsoversigt for én kategori)
   // ---------------------------------------------------------------------
   if (view === "path" && activeCategory) {
-    const cat = getCategory(activeCategory)!;
+    const cat = getCategory(activeCategory, education);
+    if (!cat) {
+      return (
+        <div className="mx-auto max-w-2xl space-y-5 px-4 pb-28 pt-10 text-center">
+          <h2 className="font-display text-2xl font-extrabold text-ink">Kategorien findes ikke</h2>
+          <button onClick={() => setView("categories")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+            Tilbage til kategorier
+          </button>
+        </div>
+      );
+    }
     const colors = CATEGORY_COLOR_CLASSES[cat.color];
     const path = getCategoryPath(activeCategory, education);
     const stat = progress.categoryStats[activeCategory];
@@ -274,6 +305,7 @@ export default function PracticePage({
             const result = progress.completedLessons[node.id];
             const passed = !!result && result.bestPct >= LESSON_PASS_THRESHOLD;
             const isReview = node.kind === "review";
+            const contentOnly = isContentOnlyLesson(node, education);
 
             return (
               <li key={node.id}>
@@ -302,11 +334,20 @@ export default function PracticePage({
                           Opsamling
                         </span>
                       )}
+                      {contentOnly && (
+                        <span className={cn("ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold uppercase", theme.accentText)}>
+                          Intro
+                        </span>
+                      )}
                     </p>
                     {result ? (
-                      <p className="text-xs text-ink/50">Bedste resultat: {result.bestPct}% rigtige · forsøgt {result.timesPlayed}×</p>
+                      <p className="text-xs text-ink/50">
+                        {contentOnly
+                          ? `Læst · kan læses igen · åbnet ${result.timesPlayed}×`
+                          : `Bedste resultat: ${result.bestPct}% rigtige · forsøgt ${result.timesPlayed}×`}
+                      </p>
                     ) : unlocked ? (
-                      <p className="text-xs text-ink/40">Ikke forsøgt endnu</p>
+                      <p className="text-xs text-ink/40">{contentOnly ? "Kort introduktion · kan læses igen bagefter" : "Ikke forsøgt endnu"}</p>
                     ) : (
                       <p className="text-xs text-ink/40">Lås op ved at bestå forløbet ovenfor</p>
                     )}

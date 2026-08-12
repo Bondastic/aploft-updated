@@ -156,6 +156,7 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
 1. Velkomstskærm → vælg HHX → brugernavn (kan springes over) → **land på Profil med
    spotlight-guiden** → gennemgå hele turen → "Færdig" → Hjem.
 2. Øv dig → HHX-kategori → teach-trin → opgave → "Spørg AI" → bekræft dialog → ChatGPT-link.
+   Gennemfør "Introduktion: fra bunden" og åbn den igen: den skal kunne læses om uden fejlskærm.
 3. Prøve → HHX-prøve → ingen latin-opgaver.
 4. Profil → Indstillinger → skift til STX → latindel + oversættelsesark-knap på
    oversættelses-/grammatik-/sum- og ordforråds-opgaver (forsvinder efter svar).
@@ -165,6 +166,12 @@ npm run start -- -H 0.0.0.0 -p 3000   # produktions-server (preview)
 ---
 
 ## 6. Kendte problemer & faldgruber
+
+- **Genafvikling af intro-forløb:** Rene undervisningsforløb ("Introduktion: fra bunden",
+  især på HHX hvor de kun består af teach/info) må ALDRIG filtreres ned til en tom
+  session efter beståelse. Logikken ligger i `buildSessionTasks` i `data/paths.ts`.
+  Hvis du ændrer retry-logikken, så test: HHX → Øv dig → Ordklasser → Introduktion
+  → gennemfør → åbn den igen. Det må ikke crashe.
 
 - **GitHub:** push/PR virker fra denne session. Arbejd altid på
   `arena/019fecdf-aploft-updated` og åbn PR derfra (aldrig andre brancher).

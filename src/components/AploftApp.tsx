@@ -20,6 +20,7 @@ import {
 import TopBar from "./TopBar";
 import BottomNav, { type NavPage } from "./BottomNav";
 import GuidedTour, { type TourPage } from "./GuidedTour";
+import ErrorBoundary from "./ErrorBoundary";
 import WelcomePage from "../screens/Welcome";
 import HomePage from "../screens/Home";
 import PracticePage from "../screens/Practice";
@@ -88,16 +89,18 @@ export default function AploftApp() {
   // hvor spotlight-rundvisningen starter.
   if (!progress.onboarded) {
     return (
-      <div className="min-h-screen bg-[#faf8ff]">
-        <WelcomePage
-          reduceMotion={progress.settings.reduceMotion}
-          onComplete={(education, nickname) => {
-            setProgress((p) => completeOnboarding(p, education, nickname));
-            setPage("profile");
-            setGuideActive(true);
-          }}
-        />
-      </div>
+      <ErrorBoundary>
+        <div className="min-h-screen bg-[#faf8ff]">
+          <WelcomePage
+            reduceMotion={progress.settings.reduceMotion}
+            onComplete={(education, nickname) => {
+              setProgress((p) => completeOnboarding(p, education, nickname));
+              setPage("profile");
+              setGuideActive(true);
+            }}
+          />
+        </div>
+      </ErrorBoundary>
     );
   }
 
@@ -133,6 +136,7 @@ export default function AploftApp() {
   const education = progress.education;
 
   return (
+    <ErrorBoundary onReset={() => setPage("home")}>
     <div className="min-h-screen bg-[#faf8ff]">
       <a
         href="#main-content"
@@ -196,5 +200,6 @@ export default function AploftApp() {
         reduceMotion={progress.settings.reduceMotion}
       />
     </div>
+    </ErrorBoundary>
   );
 }

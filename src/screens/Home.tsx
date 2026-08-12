@@ -107,8 +107,8 @@ export default function HomePage({
         <p className="text-sm text-ink/60">
           Hvert forløb under &quot;Øv dig&quot; starter med en kort, rolig introduktion, der forklarer emnet fra nul. Du behøver
           ikke kunne noget i forvejen. Første gang du tager et forløb, kommer opgaverne i en fast, gennemtænkt rækkefølge; når
-          du har bestået, kan du træne igen med tilfældige spørgsmål. &quot;Tag en prøve&quot; er stadig altid tilfældig, ligesom en
-          rigtig eksamen.
+          du har bestået, kan du træne igen med tilfældige spørgsmål. Introduktioner kan du altid læse igen. &quot;Tag en prøve&quot;
+          er stadig altid tilfældig, ligesom en rigtig eksamen.
         </p>
       </div>
     </div>

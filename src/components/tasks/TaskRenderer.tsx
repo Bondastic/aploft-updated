@@ -39,6 +39,8 @@ export default function TaskRenderer({
   const [checking, setChecking] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
+  if (!task) return null;
+
   // Oversættelsesarket vises kun ved latinske opgaver, hvor ordforråd eller
   // bøjning er en del af opgaven (oversættelse, grammatik, sum/esse og
   // ordforråd) - og kun indtil opgaven er besvaret, så man ikke kan "snyde"

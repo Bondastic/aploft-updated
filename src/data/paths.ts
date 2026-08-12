@@ -6,11 +6,21 @@
 // bank. Trin 2+ er låst, indtil det foregående trin er bestået (se
 // LESSON_PASS_THRESHOLD i lib/progress.ts).
 import type { CategoryId, Education, Task } from "../types";
+import { isContentTask } from "../types";
 import { ALMEN_TASKS } from "./questions";
 import { LATIN_TASKS } from "./latinQuestions";
 import { HHX_TASKS } from "./hhxQuestions";
 import { CATEGORY_INTRO } from "./teaching";
 import { HHX_CATEGORY_INTRO } from "./hhx/teaching";
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 const INTRO_TASKS: Task[] = Object.values(CATEGORY_INTRO).flat();
 const INTRO_ID_SET = new Set(INTRO_TASKS.map((t) => t.id));
@@ -169,14 +179,18 @@ export function getCategoryPath(categoryId: CategoryId, education: Education = "
   const titles = CATEGORY_LESSON_TITLES[categoryId] ?? ["Forløb 1"];
   const chunks = chunkEvenly(tasks, titles.length);
 
-  const nodes: LessonNode[] = chunks.map((chunkTasks, i) => ({
-    id: `${categoryId}__lesson-${i + 1}`,
-    categoryId,
-    title: titles[i],
-    order: i,
-    kind: "lesson" as const,
-    taskIds: chunkTasks.map((t) => t.id),
-  }));
+  const nodes: LessonNode[] = chunks
+    .map((chunkTasks, i) => ({
+      id: `${categoryId}__lesson-${i + 1}`,
+      categoryId,
+      title: titles[i],
+      order: i,
+      kind: "lesson" as const,
+      taskIds: chunkTasks.map((t) => t.id),
+    }))
+    // Tomme bidder (fx hvis en kategori har færre opgaver end titler) må
+    // aldrig blive til klikbare forløb: de ville crashe sessionen.
+    .filter((n) => (n.taskIds?.length ?? 0) > 0);
 
   // Introduktionstrin: undervisningstrin, der forklarer emnet fra bunden,
   // FØR eleven møder den almindelige spørgsmålsbank. Vises som kategoriens
@@ -196,14 +210,16 @@ export function getCategoryPath(categoryId: CategoryId, education: Education = "
     });
   }
 
-  nodes.push({
-    id: `${categoryId}__review`,
-    categoryId,
-    title: "Opsamlingstest",
-    order: nodes.length,
-    kind: "review",
-    sampleSize: Math.min(20, tasks.length),
-  });
+  if (tasks.length > 0) {
+    nodes.push({
+      id: `${categoryId}__review`,
+      categoryId,
+      title: "Opsamlingstest",
+      order: nodes.length,
+      kind: "review",
+      sampleSize: Math.min(20, tasks.length),
+    });
+  }
 
   const path: CategoryPath = { categoryId, nodes };
   pathCache.set(cacheKey, path);
@@ -217,8 +233,31 @@ export function getLessonTasks(node: LessonNode, education: Education = "stx"): 
     const byId = new Map(pool.map((t) => [t.id, t] as const));
     return node.taskIds.map((id) => byId.get(id)).filter((t): t is Task => !!t);
   }
-  // Opsamlingstest: bland alle opgaver i kategorien og træk et tilfældigt udsnit.
-  const categoryPool = pool.filter((t) => t.category === node.categoryId);
-  const shuffled = [...categoryPool].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, node.sampleSize ?? categoryPool.length);
+  // Opsamlingstest: kun bedømmelige opgaver. Rene undervisningstrin (teach/info)
+  // hører hjemme i intro-forløbet, ikke midt i en test.
+  const categoryPool = pool.filter((t) => t.category === node.categoryId && !isContentTask(t));
+  return shuffle(categoryPool).slice(0, node.sampleSize ?? categoryPool.length);
+}
+
+/** True hvis forløbet kun består af undervisning (ingen rigtigt/forkert). */
+export function isContentOnlyLesson(node: LessonNode, education: Education = "stx"): boolean {
+  const tasks = getLessonTasks(node, education);
+  return tasks.length > 0 && tasks.every((t) => isContentTask(t));
+}
+
+/**
+ * Bygger den session, eleven faktisk skal igennem.
+ *
+ * Første gennemgang: fast rækkefølge med undervisning før opgaver.
+ * Efter beståelse: bland kun de rigtige opgaver, så man ikke skal læse
+ * forklaringerne igen. UNDTAGELSE: hvis forløbet KUN er undervisning
+ * (fx "Introduktion: fra bunden" på HHX), så vis undervisningen igen.
+ * Ellers ville sessionen blive tom og crashe.
+ */
+export function buildSessionTasks(node: LessonNode, education: Education, alreadyPassed: boolean): Task[] {
+  const authored = getLessonTasks(node, education);
+  if (!alreadyPassed) return authored;
+  const practice = authored.filter((t) => !isContentTask(t));
+  if (practice.length === 0) return authored;
+  return shuffle(practice);
 }
