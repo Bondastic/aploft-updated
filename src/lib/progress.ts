@@ -1,4 +1,5 @@
-import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress } from "../types";
+import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress, CategoryId } from "../types";
+import { getCategoryPath, isContentOnlyLesson } from "../data/paths";
 
 const STORAGE_KEY = "aploft.progress.v4";
 
@@ -121,6 +122,26 @@ export function touchStreak(p: Progress): Progress {
 export function addXp(p: Progress, amount: number): Progress {
   const boosted = Math.round(amount * p.multiplier);
   return { ...p, xp: p.xp + boosted };
+}
+
+/** Gennemsnittet af de bedste scorer (highscores) i en kategori.
+ *
+ * I stedet for at tælle ALLE besvarede opgaver (så et forløb med mange
+ * forsøg trækker gennemsnittet ned), tager vi hvert forløb i kategoriens
+ * sti, som eleven faktisk har bestået/afsluttet, og gennemsnitter de enkelte
+ * bedste scorer. Rene introduktionsforløb (kun undervisning) tæller ikke med.
+ */
+export function getCategoryHighScoreAverage(p: Progress, categoryId: CategoryId, education: Education): { avg: number | null; lessons: number } {
+  const path = getCategoryPath(categoryId, education);
+  const scores: number[] = [];
+  for (const node of path.nodes) {
+    if (isContentOnlyLesson(node, education)) continue;
+    const best = p.completedLessons[node.id]?.bestPct;
+    if (typeof best === "number") scores.push(best);
+  }
+  if (scores.length === 0) return { avg: null, lessons: 0 };
+  const sum = scores.reduce((a, b) => a + b, 0);
+  return { avg: Math.round(sum / scores.length), lessons: scores.length };
 }
 
 export function recordAnswer(p: Progress, category: string, correct: boolean): Progress {

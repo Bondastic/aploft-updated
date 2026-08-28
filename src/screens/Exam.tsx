@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { motion } from "framer-motion";
 import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, SavedAnswer, Task } from "../types";
 import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, ALL_HHX_TASKS, type ExamTrack } from "../lib/examGenerator";
 import { getEducation } from "../lib/education";
@@ -130,7 +131,13 @@ export default function ExamPage({
 
   if (phase === "setup") {
     return (
-      <div className="app-page space-y-6">
+      <motion.div
+        key="setup"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="app-page space-y-6"
+      >
         <div>
           <h1 className="font-display text-2xl font-extrabold text-ink">Tag en prøve</h1>
           <p className="text-sm text-ink/50">
@@ -236,7 +243,7 @@ export default function ExamPage({
           <ExamIcon className="h-5 w-5" />
           Start prøve
         </button>
-      </div>
+      </motion.div>
     );
   }
 
@@ -255,7 +262,13 @@ export default function ExamPage({
       );
     }
     return (
-      <div className="app-page-narrow space-y-5">
+      <motion.div
+        key="running"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="app-page-narrow space-y-5"
+      >
         <div className="flex flex-wrap items-center justify-between gap-2">
           <button
             type="button"
@@ -285,7 +298,13 @@ export default function ExamPage({
           <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere spørgsmål. Dine valg vises stadig. Gå frem for at fortsætte, hvor du slap.</p>
         )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
-        <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
+        <motion.div
+          key={`exam-task-${index}-${task.id}`}
+          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.16, ease: "easeOut" }}
+          className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm"
+        >
           <TaskRenderer
             key={`exam-${index}-${task.id}`}
             task={task}
@@ -295,7 +314,7 @@ export default function ExamPage({
             reviewCorrect={outcome?.ok === true}
             savedAnswer={outcome?.answer}
           />
-        </div>
+        </motion.div>
         {answered && !isReview && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}
@@ -330,7 +349,7 @@ export default function ExamPage({
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     );
   }
 
@@ -339,7 +358,13 @@ export default function ExamPage({
   const totalAnswered = categoryEntries.reduce((s, [, v]) => s + v.total, 0) || tasks.length;
 
   return (
-    <div className="app-page-narrow space-y-6 pt-8 text-center">
+    <motion.div
+      key="result"
+      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="app-page-narrow space-y-6 pt-8 text-center"
+    >
       <Mascot pose={pct >= 70 ? "celebrate" : pct >= 40 ? "thumbsup" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
       <div>
         <h2 className="font-display text-2xl font-extrabold text-ink">Prøven er afsluttet!</h2>
@@ -384,6 +409,6 @@ export default function ExamPage({
           Prøv igen
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 }
