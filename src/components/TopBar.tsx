@@ -16,7 +16,7 @@ export default function TopBar({ progress }: { progress: Progress }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3 lg:pl-60">
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/banner.png" alt="AP Klar" className="h-9 w-auto object-contain sm:h-10" />
+          <img src="/banner.webp" alt="AP Klar" className="h-9 w-auto object-contain sm:h-10" />
           <span
             className={cn(
               "inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-[10px] font-bold sm:px-2 sm:text-[11px]",

@@ -232,7 +232,7 @@ export default function GuidedTour({
           <div className="fixed inset-x-0 top-0 z-50 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 bg-[#171225]/95 px-4 py-2.5 text-white shadow-lg">
             <div className="flex min-w-0 items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/mascot/welcome.png" alt="" className="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-white/30" />
+              <img src="/mascot/welcome.webp" alt="" className="h-8 w-8 shrink-0 rounded-full object-cover ring-2 ring-white/30" />
               <p className="truncate text-sm font-extrabold">Rundvisning med Lingua</p>
             </div>
             <div className="flex items-center gap-2">
@@ -266,7 +266,7 @@ export default function GuidedTour({
             <div className="flex items-start gap-3 rounded-3xl bg-white p-4 shadow-2xl dark:bg-[#241d38]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src="/mascot/explain.png"
+                src="/mascot/explain.webp"
                 alt=""
                 className="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-purple/20"
               />

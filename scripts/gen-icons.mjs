@@ -1,6 +1,6 @@
 /* Genererer app-ikoner + og-image til AP Klar.
  * Kør: node scripts/gen-icons.mjs
- * Bruger public/mascot/welcome.png som motiv og brandfarverne fra globals.css.
+ * Bruger public/mascot/welcome.webp som motiv og brandfarverne fra globals.css.
  */
 import sharp from "sharp";
 import { readFileSync, writeFileSync } from "node:fs";
@@ -8,7 +8,10 @@ import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
-const mascot = readFileSync(join(root, "public/mascot/welcome.png"));
+const mascotWebp = readFileSync(join(root, "public/mascot/welcome.webp"));
+// Konvertér maskotten til en PNG-buffer, før den indlejres i SVG'ens
+// data-URI (librsvg indlejrer PNG/JPEG mest pålideligt).
+const mascot = await sharp(mascotWebp).png().toBuffer();
 
 // App-ikon: lilla gradient + hvid "tallerken" + maskotten i en cirkel.
 // rx: hjørnerunding i forhold til størrelsen (0 = skarpe hjørner).
@@ -40,7 +43,9 @@ async function appIcon(size, rxRatio, outName) {
   </g>
 </svg>`;
 
-  await sharp(Buffer.from(svg), { density: 72 }).png().toFile(join(root, "public", outName));
+  // Format vælges ud fra filendelsen (.webp til manifest-ikoner, .png til
+  // apple-touch-icon + favicon, som Safari kræver som PNG).
+  await sharp(Buffer.from(svg), { density: 72 }).toFile(join(root, "public", outName));
   console.log("skrevet", outName, `${size}x${size}`);
 }
 
@@ -73,18 +78,18 @@ async function ogImage() {
   <text x="74" y="566" font-family="DejaVu Sans" font-size="20" fill="rgba(255,255,255,0.55)">apklar.vercel.app</text>
 </svg>`;
 
-  await sharp(Buffer.from(svg), { density: 72 }).png().toFile(join(root, "public", "og-image.png"));
-  console.log("skrevet og-image.png 1200x630");
+  await sharp(Buffer.from(svg), { density: 72 }).toFile(join(root, "public", "og-image.webp"));
+  console.log("skrevet og-image.webp 1200x630");
 }
 
-await appIcon(512, 0.22, "icon-512.png");
-await appIcon(192, 0.22, "icon-192.png");
+await appIcon(512, 0.22, "icon-512.webp");
+await appIcon(192, 0.22, "icon-192.webp");
 await appIcon(180, 0, "apple-touch-icon.png");
 await appIcon(64, 0.22, "favicon.png");
 await ogImage();
 
 // Sanity-tjek: er maskotten faktisk i ikonet (ikke gennemsigtig/ensfarvet)?
-const buf = await sharp(join(root, "public", "icon-192.png")).raw().toBuffer({ resolveWithObject: true });
+const buf = await sharp(join(root, "public", "icon-192.webp")).raw().toBuffer({ resolveWithObject: true });
 const { data, info } = buf;
 let nonBg = 0;
 const stride = info.channels;

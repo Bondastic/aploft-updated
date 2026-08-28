@@ -4,14 +4,14 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { MascotPose } from "../types";
 
 const POSE_IMAGES: Record<MascotPose, string> = {
-  welcome: "/mascot/welcome.png",
-  explain: "/mascot/explain.png",
-  celebrate: "/mascot/celebrate.png",
-  surprise: "/mascot/surprise.png",
-  encourage: "/mascot/encourage.png",
-  thinking: "/mascot/thinking.png",
-  thumbsup: "/mascot/thumbsup.png",
-  chaos: "/mascot/chaos.png",
+  welcome: "/mascot/welcome.webp",
+  explain: "/mascot/explain.webp",
+  celebrate: "/mascot/celebrate.webp",
+  surprise: "/mascot/surprise.webp",
+  encourage: "/mascot/encourage.webp",
+  thinking: "/mascot/thinking.webp",
+  thumbsup: "/mascot/thumbsup.webp",
+  chaos: "/mascot/chaos.webp",
 };
 
 const POSE_LINES: Record<MascotPose, string[]> = {

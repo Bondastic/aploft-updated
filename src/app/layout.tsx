@@ -46,7 +46,7 @@ export const metadata: Metadata = {
       "Øv ordklasser, sætningsled, tempus, kasus, syntaks og latin. Ingen login, ingen tracking.",
     images: [
       {
-        url: "/og-image.png", // 1200×630
+        url: "/og-image.webp", // 1200×630
         width: 1200,
         height: 630,
         alt: "AP Klar: øvelsesapp til Almen Sprogforståelse",
@@ -58,7 +58,7 @@ export const metadata: Metadata = {
     title: `${siteName}: Træn Almen Sprogforståelse og latin`,
     description:
       "Øv ordklasser, sætningsled, tempus, kasus, syntaks og latin. Ingen login, ingen tracking.",
-    images: ["/og-image.png"],
+    images: ["/og-image.webp"],
   },
   robots: {
     index: true,
@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: "/favicon.png", type: "image/png" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon-192.webp", sizes: "192x192", type: "image/webp" },
     ],
     apple: "/apple-touch-icon.png",
   },

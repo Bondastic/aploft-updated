@@ -50,6 +50,17 @@ public/mascot/*.png + ubrugte worksheet.png-filer. Koden refererer kun til
 public/mascot/*.png, public/banner.png, public/favicon.png, public/icon-192.png,
 public/icon-512.png, public/apple-touch-icon.png, public/og-image.png + manifest.webmanifest.
 
+> **OPDATERET (billedoptimering):** Alle billeder er nu WebP, og de ubrugte
+> rod-duplikaterne + worksheet.png-filerne er slettet permanent. public/ er
+> gået fra ~20 MB til ~350 KB. Koden refererer nu til public/mascot/*.webp,
+> public/banner.webp, public/og-image.webp, public/icon-192.webp,
+> public/icon-512.webp (manifest + metadata, type: image/webp) samt
+> public/favicon.png + public/apple-touch-icon.png (bevaret som PNG, da
+> Safari kræver PNG til favicon/apple-touch-icon). Mascot-billederne er
+> nedskaleret 1024→640 px (vises maks. 208 px i UI'et). `scripts/gen-icons.mjs`
+> læser nu public/mascot/welcome.webp og skriver .webp-output til
+> icon-512/192 + og-image (apple-touch-icon + favicon stadig .png).
+
 ---
 
 ## 2. Projektets formål og features
@@ -111,11 +122,10 @@ src/
     examGenerator.ts
   db/                       # UBRUGT boilerplate (drizzle/postgres) - rør den ikke
 scripts/
-  gen-icons.mjs             # Genererer public/icon-*.png, apple-touch-icon, favicon, og-image
+  gen-icons.mjs             # Genererer public/icon-*.webp, apple-touch-icon.png, favicon.png, og-image.webp
 public/
-  banner.png, favicon.png, icon-192.png, icon-512.png, apple-touch-icon.png,
-  og-image.png, manifest.webmanifest, mascot/*.png, latin/worksheet.png,
-  + ubrugte rod-duplikater (se ovenfor) + aploft-updated.zip (gitignored!)
+  banner.webp, favicon.png, icon-192.webp, icon-512.webp, apple-touch-icon.png,
+  og-image.webp, manifest.webmanifest, mascot/*.webp
 ```
 
 ### Vigtige mønstre
