@@ -15,7 +15,7 @@ export function ErrorFallback({
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 py-16 text-center">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src="/mascot/surprise.png"
+        src="/mascot/surprise.webp"
         alt=""
         className="mb-4 h-28 w-28 rounded-full object-cover shadow-lg ring-4 ring-white"
       />
