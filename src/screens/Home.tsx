@@ -1,8 +1,11 @@
 import type { Progress } from "../types";
+import Link from "next/link";
 import Mascot from "../components/Mascot";
 import { getLevelInfo } from "../lib/progress";
-import { BoltIcon, ExamIcon, FlameIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon } from "../components/icons";
+import { ArrowUpRightIcon, BoltIcon, ExamIcon, FlameIcon, InfoIcon, InstagramIcon, PracticeIcon, SparklesIcon, SymbolsIcon, TrendUpIcon } from "../components/icons";
 import { cn } from "../utils/cn";
+
+const INSTAGRAM_URL = "https://www.instagram.com/lindouweb?igsi=amN6MHJ3cHd3aHVs&utm_source=qr";
 
 export default function HomePage({
   progress,
@@ -100,16 +103,34 @@ export default function HomePage({
       </div>
 
       <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
-        <p className="mb-3 flex items-center gap-2 font-bold text-ink">
-          <SparklesIcon className="h-4 w-4 text-purple" />
-          Nyt: APklar underviser dig nu fra bunden
-        </p>
+        <div className="mb-3 flex items-center justify-between gap-2">
+          <p className="flex items-center gap-2 font-bold text-ink">
+            <InfoIcon className="h-4 w-4 text-purple" />
+            Om AP Klar
+          </p>
+          <Link
+            href="/om"
+            className="inline-flex items-center gap-1 rounded-full bg-purple/10 px-3 py-1.5 text-xs font-bold text-purple transition hover:bg-purple/20"
+          >
+            Læs mere
+            <ArrowUpRightIcon className="h-3.5 w-3.5" />
+          </Link>
+        </div>
         <p className="text-sm text-ink/60">
-          Hvert forløb under &quot;Øv dig&quot; starter med en kort, rolig introduktion, der forklarer emnet fra nul. Du behøver
-          ikke kunne noget i forvejen. Første gang du tager et forløb, kommer opgaverne i en fast, gennemtænkt rækkefølge; når
-          du har bestået, kan du træne igen med tilfældige spørgsmål. Introduktioner kan du altid læse igen. &quot;Tag en prøve&quot;
-          er stadig altid tilfældig, ligesom en rigtig eksamen.
+          AP Klar er lavet af gymnasieelever til gymnasieelever: en gratis øvelsesapp til Almen Sprogforståelse på STX og
+          HHX. Hvert forløb starter med en rolig introduktion, før du bliver spurgt, så du kan lære uden at kunne noget i
+          forvejen.
         </p>
+        <a
+          href={INSTAGRAM_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-fuchsia-600 transition hover:text-fuchsia-700 dark:text-fuchsia-400"
+        >
+          <InstagramIcon className="h-4 w-4" />
+          Følg os på Instagram
+          <ArrowUpRightIcon className="h-4 w-4" />
+        </a>
       </div>
     </div>
   );

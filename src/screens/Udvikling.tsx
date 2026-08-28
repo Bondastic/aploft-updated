@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { Education, Progress } from "../types";
 import { CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, STX_CATEGORIES } from "../data/categories";
 import { getCategoryPath } from "../data/paths";
-import { LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { getCategoryHighScoreAverage, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import Mascot from "../components/Mascot";
 import { CategoryIcon } from "../components/icons";
 import { cn } from "../utils/cn";
@@ -35,7 +35,6 @@ const CATEGORY_WEIGHT: Record<string, number> = {
 };
 
 const MIN_ANSWERS_FOR_GRADE = 15;
-const MIN_ANSWERS_PER_CATEGORY = 4;
 
 function gradeFor(pct: number): { grade: string; label: string } {
   const found = GRADE_SCALE.find((g) => pct >= g.minPct);
@@ -53,15 +52,16 @@ export default function UdviklingPage({ education, progress }: { education: Educ
       const stat = progress.categoryStats[cat.id];
       const total = stat?.total ?? 0;
       const correct = stat?.correct ?? 0;
-      const pct = total > 0 ? Math.round((correct / total) * 100) : null;
+      const hs = getCategoryHighScoreAverage(progress, cat.id, education);
+      const pct = hs.avg;
       const path = getCategoryPath(cat.id, education);
       const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
-      return { cat, total, correct, pct, lessonsPassed, lessonsTotal: path.nodes.length };
+      return { cat, total, correct, pct, lessons: hs.lessons, lessonsPassed, lessonsTotal: path.nodes.length };
     });
   }, [progress, education, isHhx]);
 
   const totalAnswered = rows.reduce((s, r) => s + r.total, 0);
-  const eligibleRows = rows.filter((r) => r.total >= MIN_ANSWERS_PER_CATEGORY);
+  const eligibleRows = rows.filter((r) => r.lessons > 0);
   const canGrade = totalAnswered >= MIN_ANSWERS_FOR_GRADE && eligibleRows.length >= 2;
 
   const weightedPct = useMemo(() => {
@@ -69,7 +69,7 @@ export default function UdviklingPage({ education, progress }: { education: Educ
     let weightSum = 0;
     let scoreSum = 0;
     for (const r of eligibleRows) {
-      const w = (CATEGORY_WEIGHT[r.cat.id] ?? 1) * r.total;
+      const w = (CATEGORY_WEIGHT[r.cat.id] ?? 1) * r.lessons;
       weightSum += w;
       scoreSum += w * (r.pct ?? 0);
     }
@@ -177,8 +177,8 @@ export default function UdviklingPage({ education, progress }: { education: Educ
 
         {!canGrade && (
           <p className="mt-3 text-xs text-ink/50">
-            Svar på flere opgaver (mindst {MIN_ANSWERS_FOR_GRADE} i alt, fordelt på mindst 2 kategorier), så Lingua har nok data til at give
-            dig en vurdering.
+            Gennemfør flere forløb (mindst {MIN_ANSWERS_FOR_GRADE} opgaver i alt, fordelt på mindst 2 kategorier), så Lingua har nok data til at
+            give dig en vurdering.
           </p>
         )}
 

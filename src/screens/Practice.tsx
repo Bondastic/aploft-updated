@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import type { CategoryId, Education, MascotPose, Progress, SavedAnswer, Task, Track } from "../types";
 import { isContentTask } from "../types";
 import { ALMEN_CATEGORIES, CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, LATIN_CATEGORIES, getCategory } from "../data/categories";
 import { buildSessionTasks, getCategoryPath, isContentOnlyLesson, type LessonNode } from "../data/paths";
-import { isManuallyUnlocked, LESSON_PASS_THRESHOLD } from "../lib/progress";
+import { getCategoryHighScoreAverage, isManuallyUnlocked, LESSON_PASS_THRESHOLD } from "../lib/progress";
 import { getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
@@ -44,11 +45,36 @@ export default function PracticePage({
   const [pose, setPose] = useState<MascotPose>("explain");
   const [prevBestPct, setPrevBestPct] = useState<number | null>(null);
   const [unlockTarget, setUnlockTarget] = useState<{ node: LessonNode; throughIds: string[] } | null>(null);
+  // Sekventiel oplåsning: "unlockingIds" er rækkefølgen, "revealedIds" dem der
+  // allerede er låst op. Bruges til at vise, at forløbene åbner et ad gangen.
+  const [unlockingIds, setUnlockingIds] = useState<string[]>([]);
+  const [revealedIds, setRevealedIds] = useState<string[]>([]);
+
+  // Referencer, så de sekventielle timeouts ikke nulstilles, når forælderen
+  // re-renderer (onUnlockLessons skifter identitet hver render).
+  const onUnlockLessonsRef = useRef(onUnlockLessons);
+  useEffect(() => {
+    onUnlockLessonsRef.current = onUnlockLessons;
+  }, [onUnlockLessons]);
 
   const isHhx = education === "hhx";
   const theme = getEducation(education);
   const categories = isHhx ? HHX_CATEGORIES : tab === "almen" ? ALMEN_CATEGORIES : LATIN_CATEGORIES;
   const reduceMotion = progress.settings.reduceMotion;
+
+  // Sekventiel oplåsning: åbn forløbene et ad gangen (med ~420 ms imellem),
+  // så man kan se dem låse op én for én. Ved reduceMotion springes animationen
+  // over, og alt låses op med det samme.
+  useEffect(() => {
+    if (unlockingIds.length === 0) return;
+    if (revealedIds.length >= unlockingIds.length) return;
+    const nextId = unlockingIds[revealedIds.length];
+    const timer = window.setTimeout(() => {
+      setRevealedIds((prev) => [...prev, nextId]);
+      onUnlockLessonsRef.current([nextId]);
+    }, reduceMotion ? 0 : 420);
+    return () => window.clearTimeout(timer);
+  }, [unlockingIds, revealedIds, reduceMotion]);
 
   function openCategory(catId: CategoryId) {
     setActiveCategory(catId);
@@ -155,7 +181,13 @@ export default function PracticePage({
     }
     const cat = getCategory(task.category, education);
     return (
-      <div className="app-page-narrow space-y-5">
+      <motion.div
+        key="session"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="app-page-narrow space-y-5"
+      >
         <div className="flex items-center justify-between">
           <button
             type="button"
@@ -194,7 +226,13 @@ export default function PracticePage({
           </p>
         )}
         <Mascot pose={pose} size="sm" reduceMotion={reduceMotion} />
-        <div className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm">
+        <motion.div
+          key={`task-${task.id}`}
+          initial={reduceMotion ? false : { opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.16, ease: "easeOut" }}
+          className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm"
+        >
           <TaskRenderer
             key={task.id}
             task={task}
@@ -204,13 +242,13 @@ export default function PracticePage({
             reviewCorrect={outcome?.ok === true || outcome?.ok === "content"}
             savedAnswer={outcome?.answer}
           />
-        </div>
+        </motion.div>
         {answered && !isReview && (
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= sessionTasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}
-      </div>
+      </motion.div>
     );
   }
 
@@ -226,7 +264,13 @@ export default function PracticePage({
     const isSameAsBest = !isFirstAttempt && pct === prevBestPct;
     const contentOnly = gradableCount === 0;
     return (
-      <div className="app-page-narrow space-y-6 pt-10 text-center">
+      <motion.div
+        key="result"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="app-page-narrow space-y-6 pt-10 text-center"
+      >
         <Mascot pose={pct >= 70 ? "celebrate" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
         <h2 className="font-display text-2xl font-extrabold text-ink">{activeNode?.title ?? "Forløb"} klaret!</h2>
         {contentOnly ? (
@@ -274,7 +318,7 @@ export default function PracticePage({
             </button>
           )}
         </div>
-      </div>
+      </motion.div>
     );
   }
 
@@ -295,11 +339,17 @@ export default function PracticePage({
     }
     const colors = CATEGORY_COLOR_CLASSES[cat.color];
     const path = getCategoryPath(activeCategory, education);
-    const stat = progress.categoryStats[activeCategory];
-    const overallPct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
+    const hs = getCategoryHighScoreAverage(progress, activeCategory, education);
+    const overallPct = hs.avg;
 
     return (
-      <div className="app-page space-y-6">
+      <motion.div
+        key="path"
+        initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: "easeOut" }}
+        className="app-page space-y-6"
+      >
         <button onClick={() => setView("categories")} className="text-sm font-semibold text-ink/50 hover:text-ink">
           ← Alle kategorier
         </button>
@@ -324,7 +374,9 @@ export default function PracticePage({
               <div className={cn("h-full rounded-full", colors.solid)} style={{ width: `${overallPct}%` }} />
             </div>
             <p className="mt-1 text-[11px] text-ink/40">
-              Baseret på {stat!.total} besvarede opgaver i alt · viser den procentdel, du i gennemsnit har svaret rigtigt på
+              {hs.lessons > 0
+                ? `Et gennemsnit af din bedste score i de ${hs.lessons} forløb, du har gennemført i ${cat.short}. Genspiller du et forløb, tæller kun din bedste score.`
+                : "Gennemfør et forløb i kategorien for at få en gennemsnitlig score."}
             </p>
           </div>
         )}
@@ -353,8 +405,16 @@ export default function PracticePage({
             const isReview = node.kind === "review";
             const contentOnly = isContentOnlyLesson(node, education);
 
+            const justUnlocked = revealedIds.includes(node.id);
+
             return (
-              <li key={node.id}>
+              <motion.li
+                key={node.id}
+                layout
+                initial={false}
+                animate={justUnlocked ? { scale: [1, 1.04, 1] } : { scale: 1 }}
+                transition={{ duration: 0.35, ease: "easeOut" }}
+              >
                 <button
                   type="button"
                   onClick={() => {
@@ -413,7 +473,7 @@ export default function PracticePage({
                     <span className={cn("shrink-0 rounded-full px-3 py-1 text-[11px] font-bold text-white", theme.solidBg)}>Lås op</span>
                   )}
                 </button>
-              </li>
+              </motion.li>
             );
           })}
         </ol>
@@ -435,8 +495,14 @@ export default function PracticePage({
                 </button>
                 <button
                   onClick={() => {
-                    onUnlockLessons(unlockTarget.throughIds);
+                    const ids = unlockTarget.throughIds;
                     setUnlockTarget(null);
+                    if (reduceMotion) {
+                      onUnlockLessons(ids);
+                    } else {
+                      setUnlockingIds(ids);
+                      setRevealedIds([]);
+                    }
                   }}
                   className={cn("flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-md", theme.solidBg)}
                 >
@@ -446,7 +512,7 @@ export default function PracticePage({
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     );
   }
 
@@ -454,7 +520,13 @@ export default function PracticePage({
   // KATEGORIER (forside for Øv dig)
   // ---------------------------------------------------------------------
   return (
-    <div className="app-page space-y-6">
+    <motion.div
+      key="categories"
+      initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.18, ease: "easeOut" }}
+      className="app-page space-y-6"
+    >
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Øv dig</h1>
         <p className="text-sm text-ink/50">
@@ -496,9 +568,9 @@ export default function PracticePage({
 
       <div className="space-y-3">
         {categories.map((cat) => {
-          const stat = progress.categoryStats[cat.id];
           const colors = CATEGORY_COLOR_CLASSES[cat.color];
-          const pct = stat && stat.total > 0 ? Math.round((stat.correct / stat.total) * 100) : null;
+          const hs = getCategoryHighScoreAverage(progress, cat.id, education);
+          const pct = hs.avg;
           const path = getCategoryPath(cat.id, education);
           const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
           return (
@@ -528,6 +600,6 @@ export default function PracticePage({
           );
         })}
       </div>
-    </div>
+    </motion.div>
   );
 }
