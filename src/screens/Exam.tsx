@@ -10,7 +10,10 @@ import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import { cn } from "../utils/cn";
 import SessionNav from "../components/SessionNav";
-import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
+import { CategoryIcon, ClockIcon, ExamIcon, InfoIcon } from "../components/icons";
+import ExamSatsPage from "./ExamSats";
+import ExamFormatSheet from "../components/exam/ExamFormatSheet";
+import { EXAM_FORMATS } from "../data/hhx/examFormats";
 
 type Outcome = { ok: boolean; answer?: SavedAnswer } | null;
 
@@ -58,6 +61,9 @@ export default function ExamPage({
 
   const isHhx = education === "hhx";
   const theme = getEducation(education);
+  // Eksamenssæt (kun HHX) + "Sådan foregår eksamen"-arket (begge spor).
+  const [satsOpen, setSatsOpen] = useState(false);
+  const [formatOpen, setFormatOpen] = useState(false);
   // På HHX er der kun én prøve (hele HHX-pensum); på STX kan man vælge spor.
   const tracks = isHhx ? (["hhx"] as ExamTrack[]) : (Object.keys(TRACK_INFO) as ExamTrack[]);
 
@@ -129,6 +135,18 @@ export default function ExamPage({
     }
   }
 
+  // Eksamenssættet (kun HHX) fylder hele skærmen, indtil det lukkes igen.
+  if (satsOpen) {
+    return (
+      <ExamSatsPage
+        education={education}
+        progress={progress}
+        onClose={() => setSatsOpen(false)}
+        onExamComplete={onExamComplete}
+      />
+    );
+  }
+
   if (phase === "setup") {
     return (
       <motion.div
@@ -146,6 +164,65 @@ export default function ExamPage({
               : "Vælg spor og hvor lang prøven skal være, så finder vi de bedste spørgsmål til dig."}
           </p>
         </div>
+
+        {/* EKSAMENSFORMEN: øverst og tydelig, så alle elever ved hvad de bliver
+            eksamineret i, og hvordan det foregår. De to skoler har hver sin form:
+            Egå Gymnasium (STX) og Risskov, Handelsskolen (HHX). */}
+        <button
+          type="button"
+          onClick={() => setFormatOpen(true)}
+          className={cn(
+            "flex w-full items-center gap-4 rounded-2xl border-2 bg-white p-4 text-left shadow-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+            isHhx ? "border-blue-500" : "border-red-500"
+          )}
+        >
+          <span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", isHhx ? theme.softBg : "bg-red-100 text-red-600")}>
+            <InfoIcon className="h-6 w-6" />
+          </span>
+          <span className="flex-1">
+            <span className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-ink">Sådan foregår din eksamen</span>
+              <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide", isHhx ? theme.accentChip : "bg-red-100 text-red-700")}>
+                {isHhx ? "HHX-formen er klar" : "STX-formen: under udarbejdelse"}
+              </span>
+            </span>
+            <span className="mt-0.5 block text-xs text-ink/50">
+              {isHhx
+                ? `Eksamensformen på ${EXAM_FORMATS.hhx.school}: tekst + spørgsmålssæt med 40 minutters forberedelse. Se hele forløbet og hvad du bliver eksamineret i.`
+                : `Vi er ved at beskrive eksamensformen på ${EXAM_FORMATS.stx.school}. Se hvad vi ved, og sammenlign med HHX-formen.`}
+            </span>
+          </span>
+          <span className={cn("shrink-0 rounded-full px-3 py-1.5 text-xs font-bold text-white", isHhx ? theme.solidBg : "bg-red-600")}>
+            Læs formen
+          </span>
+        </button>
+
+        {/* Eksamensprøven: den format-tro eksamen simulering, kun for HHX (STX har
+            en anden eksamensform, og prøverne er derfor forskellige). */}
+        {isHhx && (
+          <button
+            type="button"
+            onClick={() => setSatsOpen(true)}
+            className={cn(
+              "flex w-full items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-left text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            )}
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+              <ExamIcon className="h-7 w-7" />
+            </span>
+            <span className="flex-1">
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="font-display text-lg font-extrabold">Eksamensprøve</span>
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">40 min · rigtige-format</span>
+              </span>
+              <span className="mt-0.5 block text-xs leading-relaxed text-white/85">
+                Prøv den virkelige eksamen: tekst at læse og tusche, spørgsmålssæt med blokke, ur der matcher forberedelsen, aflevering og
+                AI-bedømmelse. Indholdet er det, du har trænet i appen.
+              </span>
+            </span>
+            <span className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-extrabold text-blue-600 shadow">Start →</span>
+          </button>
+        )}
 
         <Mascot pose="explain" size="md" speech="Vælg selv sværhedsgrad og længde. Jeg samler spørgsmålene til dig!" reduceMotion={reduceMotion} />
 
@@ -223,8 +300,9 @@ export default function ExamPage({
           )}
           {isHhx && (
             <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
-              HHX-prøven svarer til delprøve 1 i den interne AP-prøve: interaktive spørgsmål over grammatik, kommunikation,
-              sproghandlinger, semantik, pragmatik og sproghistorie.
+              HHX-prøven her svarer til delprøve 1 i den interne AP-prøve: interaktive spørgsmål over grammatik, kommunikation, sproghandlinger,
+              semantik, pragmatik og sproghistorie. Vil du træne til HELE eksamen som den ser ud på Risskov (tekst + spørgsmål + 40 min), så vælg
+              “Eksamensprøve” ovenfor.
             </p>
           )}
           <div className="mt-4 flex items-center gap-2 rounded-xl bg-ink/5 px-3 py-2 text-sm font-semibold text-ink/70">
@@ -243,6 +321,8 @@ export default function ExamPage({
           <ExamIcon className="h-5 w-5" />
           Start prøve
         </button>
+
+        {formatOpen && <ExamFormatSheet education={education} onClose={() => setFormatOpen(false)} />}
       </motion.div>
     );
   }

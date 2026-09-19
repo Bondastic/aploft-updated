@@ -47,7 +47,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Sætningsled er de roller, ordene spiller i en sætning: grundleddet (subjekt) er den, der handler, udsagnsleddet (verbal) er handlingen, og genstandsleddet (objekt) er det, handlingen rammer.",
+ "Sætningsled er de roller, ordene spiller i en sætning: subjektet er den, der handler, verballeddet (verbal) er handlingen, og det direkte objekt er det, handlingen rammer.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -57,12 +57,12 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Sådan finder du dem",
  body:
- "Find først udsagnsleddet (verbet). Spørg derefter 'hvem/hvad + verbet?' → grundled. Spørg 'verbet + hvem/hvad?' → genstandsled. Spørg 'til/for hvem?' → hensynsled.",
+ "Find først verballeddet (verbet). Spørg derefter 'hvem/hvad + verbet?' → subjekt. Spørg 'verbet + hvem/hvad?' → direkte objekt. Spørg 'til/for hvem?' → indirekte objekt.",
  },
  ],
  {
- examples: ["Virksomheden (grundled) sender (udsagnsled) kunden (hensynsled) en faktura (genstandsled)."],
- tip: "Udsagnsleddet er din nøgle: find verbet først, så falder resten på plads.",
+ examples: ["Virksomheden (subjekt) sender (verballed) kunden (indirekte objekt) en faktura (direkte objekt)."],
+ tip: "Verballeddet er din nøgle: find verbet først, så falder resten på plads.",
  }
  ),
  ],

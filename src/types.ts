@@ -279,3 +279,99 @@ export interface CategoryDef {
   icon: IconName;
   comingSoon?: boolean;
 }
+
+// ---------------------------------------------------------------------------
+// Eksamenssæt (kun HHX): appens simulering af den virkelige AP-eksamen med
+// tekst, faste spørgsmålsblokke og 40 minutters timer. Eleven besvarer ALTING
+// med klik-blokke (valg, ordklasse-taps, led-markering) - aldrig med et
+// bestemt skemaformat. Fritekst-felter er kun "noter" (frivillige) og bruges
+// udelukkende, når besvarelsen kopieres til AI-bedømmelse.
+// Vigtigt: verken hints eller spørgsmålstekster må afsløre svarene.
+// ---------------------------------------------------------------------------
+
+// Ordklasse-mærkater til sætningens ord (bruges i opgave-LED'en i
+// eksamenssættet og til at mærke ord inde i selve artiklen).
+export type ExamWordClassTag =
+  | "substantiv"
+  | "verbum"
+  | "adjektiv"
+  | "adverbium"
+  | "pronomen"
+  | "præposition"
+  | "konjunktion"
+  | "numerale"
+  | "interjektion";
+
+interface ExamQuestionBaseT {
+  id: string;
+  // Kategori-chip øverst på spørgsmålet, fx "Kommunikation" eller "Syntaks".
+  label: string;
+  // Valgfri kategoritag - bruges kun til at føle statistik (pr. kategori)
+  // på prøvens resultat, fx til karakter-feltet på Profil-siden.
+  category?: CategoryId;
+  prompt: string;
+  // "?"-knappen: forklarer KUN, hvad eleven skal gøre (aldrig svaret).
+  hint: string;
+  // Vises efter aflevering: hvad der er rigtigt/forkert og hvorfor.
+  feedback: string;
+  // Vises efter aflevering: det her, eleven skal gøre til den virkelige eksamen.
+  examTip: string;
+}
+
+export interface ExamChoiceQuestionT extends ExamQuestionBaseT {
+  kind: "choice";
+  options: string[];
+  correctIndex: number;
+}
+
+export interface ExamMultiChoiceQuestionT extends ExamQuestionBaseT {
+  kind: "multi";
+  options: string[];
+  correctIndexes: number[];
+}
+
+export interface ExamWordClassQuestionT extends ExamQuestionBaseT {
+  kind: "wordclass";
+  // Ord, der optræder i artiklen; eleven klikker på hver og vælger ordklasse.
+  words: { word: string; correct: ExamWordClassTag }[];
+}
+
+export interface ExamAnalysisQuestionT extends ExamQuestionBaseT {
+  kind: "analysis";
+  // Sætning fra artiklen, som analyseres med de 7 led-symboler (præcis som i
+  // øvrige analyseopgaver: klik på klump, vælg symbol).
+  sentence: string;
+  chunks: string[];
+  correctMap: LedSymbol[];
+}
+
+export type ExamQuestionT =
+  | ExamChoiceQuestionT
+  | ExamMultiChoiceQuestionT
+  | ExamWordClassQuestionT
+  | ExamAnalysisQuestionT;
+
+export interface ExamArticleT {
+  title: string;
+  byline: string;
+  paragraphs: string[];
+}
+
+export interface ExamSatsT {
+  id: string;
+  title: string;
+  // Skole/spor-tekst på forsiden af prøven, fx "Risskov · HHX".
+  schoolLabel: string;
+  // Forberedelsestid i minutter (matcher skolens eksamensforberedelse).
+  minutes: number;
+  // Informationssiden eleven ser FØR prøven: om eksamen og dens forløb.
+  intro: {
+    heading: string;
+    lead: string;
+    steps: string[];
+    examIn: { title: string; body: string }[];
+    closingNote: string;
+  };
+  article: ExamArticleT;
+  questions: ExamQuestionT[];
+}
