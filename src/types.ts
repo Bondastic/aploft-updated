@@ -291,17 +291,25 @@ export interface CategoryDef {
 // har 40 minutters skriftlig forberedelse ; til selve eksamen besvares de syv
 // opgaver mundtligt.
 //
-// Hver opgave har derfor TO dele i appen:
-//   1. et fritekst-felt : elevens egen besvarelse, præcis som notepapiret man
-//      tager med ind til eksamen. Den kan appen ikke bedømme, men den kopieres
-//      med over til AI-feedback (kopiér-knappen på resultatsiden).
-//   2. lukkede delspørgsmål (checks) : valg, ordklasse-taps og led-markering.
-//      DEM retter appen automatisk, og det er dem, karakteren bygger på.
+// Hver opgave har sin EGEN svarform, præcis som på skolens eksamensark:
+//   1. genre        : vælg blandt de fem genrer + begrund med tekstbelæg
+//   2. pentagram    : seks små felter (afsender, emne, modtager, situation,
+//                     genre/sprog + formålet i midten)
+//   3. særtræk      : ét observationsfelt (citater fra teksten)
+//   4. morfologi    : pr. ord : morfem-opdeling med bindestreger + fleksiv
+//   5. syntaks      : led-symboler på sætningens klumper
+//   6. verbaltid    : pr. sætning : vælg tid + omskriv sætningen
+//   7. hoved/led    : marker hoved- og ledsætning + indleder + ledfunktion
+//
+// Det, appen kan rette automatisk (genre, morfemer, led, tider, omskrivninger,
+// indleder og ledfunktion), giver karakteren. De åbne felter (begrundelser,
+// pentagram og særtræk) rettes ALDRIG automatisk : de kopieres med over til
+// AI-feedback, præcis som AP-læreren har bedt om, fordi der er mange rigtige
+// svar netop dér.
 // Vigtigt: hverken hints eller opgavetekster må afsløre svarene.
 // ---------------------------------------------------------------------------
 
-// Ordklasse-mærkater til sætningens ord (bruges i opgave-LED'en i
-// eksamenssættet og til at mærke ord inde i selve artiklen).
+// Ordklasse-mærkater til ord i artiklen (læseværktøjet i teksten).
 export type ExamWordClassTag =
   | "substantiv"
   | "verbum"
@@ -313,43 +321,132 @@ export type ExamWordClassTag =
   | "numerale"
   | "interjektion";
 
-interface ExamCheckBaseT {
+/** De genrer, man kan komme op i (fast liste, samme ved hver tekst). */
+export type ExamGenreId =
+  | "politisk-tale"
+  | "ejendomsannonce"
+  | "opinionsartikel"
+  | "informerende-artikel"
+  | "reklame";
+
+/** Verbaltider, som de hedder i skolens vejledning (latin + dansk). */
+export type ExamTenseId = "praesens" | "praeteritum" | "perfektum" | "pluskvamperfektum" | "futurum";
+
+/** Ledsætningens funktion i hovedsætningen. */
+export type ExamClauseFnId = "subjekt" | "objekt" | "adverbial" | "subjektspraedikat" | "attribut";
+
+/** Et lille skrivefelt med label, hjælpetekst og eksempel i pladsholderen. */
+export interface ExamFieldT {
   id: string;
-  /** Selve delspørgsmålet. Må aldrig afsløre facit. */
-  prompt: string;
-  /** Vises efter aflevering: hvad der er rigtigt/forkert og hvorfor. */
-  feedback: string;
+  label: string;
+  /** Uddybning i parentes under labelen, fx "(Hvem taler/skriver?)". */
+  help?: string;
+  placeholder?: string;
+  /** Flere linjer (observationsfeltet) frem for én. */
+  rows?: number;
 }
 
-export interface ExamChoiceCheckT extends ExamCheckBaseT {
-  kind: "choice";
-  options: string[];
-  correctIndex: number;
+/** Opgave 1: vælg genre blandt de fem + begrund med noget fra teksten. */
+export interface ExamGenrePartT {
+  kind: "genre";
+  correct: ExamGenreId;
+  /** Begrundelsesfeltet ("Hvordan kan du se det?"). Rettes ikke automatisk. */
+  justify: ExamFieldT;
 }
 
-export interface ExamMultiCheckT extends ExamCheckBaseT {
-  kind: "multi";
-  options: string[];
-  correctIndexes: number[];
+/** Opgave 2 og 3: kun skrivefelter (mange rigtige svar, rettes ikke). */
+export interface ExamFieldsPartT {
+  kind: "fields";
+  fields: ExamFieldT[];
 }
 
-export interface ExamWordClassCheckT extends ExamCheckBaseT {
-  kind: "wordclass";
-  /** Ord, der optræder i artiklen; eleven klikker på hvert og vælger ordklasse. */
-  words: { word: string; correct: ExamWordClassTag }[];
+/** Opgave 4: morfologisk analyse, ét ord ad gangen. */
+export interface ExamMorphWordT {
+  /** Ordet, som det står i teksten. */
+  word: string;
+  /** Facit for morfem-opdelingen, fx "impuls-køb-e-ne". */
+  split: string;
+  /** Andre opdelinger, der også tæller som rigtige. */
+  splitAccepts?: string[];
+  /** Eksempel i pladsholderen, fx "Fx impuls-køb-...". Må ikke være facit. */
+  splitPlaceholder: string;
+  /**
+   * Det ekstra spørgsmål under opdelingen: eleven skal trække ÉT bestemt
+   * morfem ud (fx bøjningsendelsen, rodmorfemet, præfikset eller suffikset).
+   * Hvilket der spørges om, skifter fra ord til ord, så alle fire typer trænes.
+   */
+  ask: {
+    /** Fx "Bøjningsendelsen (fleksiv)" eller "Rodmorfemet". */
+    label: string;
+    /** Eksempel i feltet, fx "Fx -en". Må aldrig være facit. */
+    placeholder: string;
+    answer: string;
+    accepts?: string[];
+  };
+  /** Kort forklaring af opdelingen (vises i gennemgangen). */
+  explain: string;
 }
 
-export interface ExamAnalysisCheckT extends ExamCheckBaseT {
+export interface ExamMorphologyPartT {
+  kind: "morphology";
+  words: ExamMorphWordT[];
+}
+
+/** Opgave 5: led-symboler på sætningens klumper. */
+export interface ExamAnalysisPartT {
   kind: "analysis";
-  /** Sætning fra artiklen, som analyseres med de 7 led-symboler (præcis som i
-   *  øvrige analyseopgaver: klik på klump, vælg symbol). */
   sentence: string;
   chunks: string[];
   correctMap: LedSymbol[];
+  /** Kort forklaring af analysen (vises i gennemgangen). */
+  explain: string;
 }
 
-/** Lukket delspørgsmål: det er dem, appen retter og giver karakter ud fra. */
-export type ExamCheckT = ExamChoiceCheckT | ExamMultiCheckT | ExamWordClassCheckT | ExamAnalysisCheckT;
+/** Opgave 6: pr. sætning : hvilken tid, og omskriv til en anden tid. */
+export interface ExamTenseItemT {
+  id: string;
+  sentence: string;
+  /** Verballeddet, der spørges til, fx "har gjort". */
+  verb: string;
+  correct: ExamTenseId;
+  /** Tiden, sætningen skal omskrives til. */
+  rewriteTo: ExamTenseId;
+  /** Facit-sætningen i den nye tid. */
+  rewriteAnswer: string;
+  /**
+   * Ordene, der SKAL optræde i omskrivningen, for at den tæller som rigtig
+   * (typisk verbet i den nye form). Tjekkes mildt: små/store bogstaver og
+   * tegnsætning er ligegyldige.
+   */
+  rewriteKeys: string[];
+  explain: string;
+}
+
+export interface ExamTensePartT {
+  kind: "tense";
+  items: ExamTenseItemT[];
+}
+
+/** Opgave 7: marker hoved- og ledsætning, og bestem indleder + funktion. */
+export interface ExamClausePartT {
+  kind: "clause";
+  sentence: string;
+  /** Sætningen delt i sine dele : eleven markerer hver del som HS eller LS. */
+  parts: { text: string; type: "hoved" | "led" }[];
+  /** Ledsætningens indleder (fx "når"). Accepteres uden hensyn til store bogstaver. */
+  indleder: string;
+  indlederAccepts?: string[];
+  funktion: ExamClauseFnId;
+  explain: string;
+}
+
+export type ExamPartT =
+  | ExamGenrePartT
+  | ExamFieldsPartT
+  | ExamMorphologyPartT
+  | ExamAnalysisPartT
+  | ExamTensePartT
+  | ExamClausePartT;
 
 /**
  * Én af de syv opgaver på eksamensarket. Rækkefølgen og emnerne følger
@@ -369,10 +466,8 @@ export interface ExamTaskT {
   prompt: string;
   /** "?"-knappen: forklarer KUN metoden (trin for trin), aldrig facit. */
   hint: string;
-  /** Pladsholder i fritekst-feltet (elevens eget svar, som på notepapiret). */
-  placeholder: string;
-  /** Lukkede delspørgsmål, der giver karakteren. */
-  checks: ExamCheckT[];
+  /** Selve svarformen for netop denne opgave. */
+  part: ExamPartT;
   /** Punkter et stærkt mundtligt svar rammer (vises som checkliste bagefter). */
   points: string[];
   /** Vises efter aflevering: sådan kunne et stærkt svar lyde. */
@@ -383,7 +478,7 @@ export interface ExamTaskT {
   examTip: string;
   /**
    * Opgaver, hvor MANGE svar er rigtige (opgave 2 og 3 ifølge AP-læreren).
-   * Appen siger det tydeligt og retter aldrig fritekst-delen som rigtig/forkert.
+   * Appen siger det tydeligt og retter dem aldrig som rigtigt/forkert.
    */
   openEnded?: boolean;
 }

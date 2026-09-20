@@ -1,30 +1,27 @@
 // Datatjek for HHX-eksamenssættene. Kør fra repo-roden:
 //   node --experimental-strip-types scripts/exam-data-check.mts
 //
-// Tjekker, at de seks sæt følger skolens eksamensark (syv opgaver i fast
-// rækkefølge), at alle delspørgsmål er gyldige, at ord og sætninger, der
-// citeres, faktisk STÅR i teksten, og at hverken opgavetekster eller hints
-// afslører facit.
-import { HHX_EXAM_SATS, EXAM_WORD_CLASS_TAGS } from "../src/data/hhx/examSats.ts";
+// Tjekker, at de seks sæt følger skolens eksamensark: syv opgaver i fast
+// rækkefølge, den rigtige svarform pr. opgave, at alt hvad der citeres faktisk
+// STÅR i teksten, at morfem-opdelingerne giver ordet igen, at omskrivningerne
+// indeholder de verbumsformer, de rettes på, og at hverken opgavetekster,
+// hints eller pladsholdere afslører facit.
+import { EXAM_CLAUSE_FUNCTIONS, EXAM_GENRES, EXAM_TENSES, HHX_EXAM_SATS } from "../src/data/hhx/examSats.ts";
 import { SYMBOLS } from "../src/data/symbols.ts";
 
 let fails = 0;
 const bad = (msg: string) => { fails++; console.log("FAIL:", msg); };
 const ok = (msg: string) => console.log("ok:", msg);
 
-// Skolens eksamensark: rækkefølgen af de syv opgaver ligger fast.
+// Skolens eksamensark: rækkefølgen og svarformen ligger fast.
 const TASK_ORDER = ["Genre", "Kommunikationssituation", "Sproglige særtræk", "Morfologi", "Syntaktisk analyse", "Verballedets tid", "Hoved- og ledsætninger"];
+const PART_ORDER = ["genre", "fields", "fields", "morphology", "analysis", "tense", "clause"];
 
-/** Til sammenligning med teksten: ens anførselstegn, ingen dobbelt-mellemrum. */
 const norm = (t: string) =>
   t.normalize("NFKC").toLowerCase().replace(/['’‘"“”]/g, "").replace(/\s+/g, " ").trim();
-/** Et citat kan slutte med tegnsætning eller udeladelsesprikker. */
 const trimQuote = (t: string) => t.replace(/(\.\.\.|…)/gu, " ").replace(/^[.,;:!?\s]+|[.,;:!?\s]+$/gu, "").trim();
+const bare = (t: string) => norm(t).replace(/[.,;:!?]/g, "");
 
-/**
- * Citater i opgavetekster springer ofte noget over ("Lige nu kan du ... Det
- * tager tyve minutter"). Hvert stykke skal findes i teksten for sig.
- */
 function quotedFragments(text: string): string[] {
   const out: string[] = [];
   for (const q of text.match(/'([^']{4,})'/g) ?? []) {
@@ -37,89 +34,116 @@ function quotedFragments(text: string): string[] {
 }
 
 const taskIds = new Set<string>();
-const checkIds = new Set<string>();
 
 for (const sats of HHX_EXAM_SATS) {
   const artText = norm([sats.article.title, sats.article.byline, ...sats.article.paragraphs].join(" "));
-  const rawWords = sats.article.paragraphs.join(" ").split(/\s+/).length;
-  ok(`${sats.title}: ${sats.tasks.length} opgaver, ${sats.minutes} min, ${sats.article.paragraphs.length} afsnit, ${rawWords} ord`);
+  const artBare = artText.replace(/[.,;:!?]/g, "");
+  const words = sats.article.paragraphs.join(" ").split(/\s+/).length;
+  ok(`${sats.title}: ${sats.tasks.length} opgaver, ${sats.minutes} min, ${sats.article.paragraphs.length} afsnit, ${words} ord`);
 
   if (sats.tasks.length !== 7) bad(`${sats.id}: ${sats.tasks.length} opgaver, der skal være 7 (skolens ark)`);
   sats.tasks.forEach((t, i) => {
     if (t.no !== i + 1) bad(`${t.id}: opgavenummer ${t.no} står på plads ${i + 1}`);
     if (t.label !== TASK_ORDER[i]) bad(`${t.id}: emnet "${t.label}" står hvor "${TASK_ORDER[i]}" skulle stå`);
+    if (t.part.kind !== PART_ORDER[i]) bad(`${t.id}: svarformen "${t.part.kind}" passer ikke til opgave ${i + 1} (skal være "${PART_ORDER[i]}")`);
   });
+
+  let points = 0;
 
   for (const t of sats.tasks) {
     if (taskIds.has(t.id)) bad(`dublet opgave-id ${t.id}`);
     taskIds.add(t.id);
     if (!t.hint || !t.feedback || !t.examTip) bad(`${t.id} mangler hint/feedback/examTip`);
     if (!t.modelAnswer || t.modelAnswer.length < 80) bad(`${t.id} mangler et rigtigt modelsvar`);
-    if (!t.placeholder) bad(`${t.id} mangler placeholder i fritekst-feltet`);
     if (t.points.length < 3) bad(`${t.id}: kun ${t.points.length} punkter i checklisten (mindst 3)`);
-    if (t.checks.length === 0) bad(`${t.id} har ingen delspørgsmål, så den kan ikke give karakter`);
 
-    // Hintet må forklare metoden, men ALDRIG afsløre modelsvaret.
     const modelStart = norm(t.modelAnswer).split(" ").slice(0, 6).join(" ");
     if (modelStart.length > 20 && norm(t.hint).includes(modelStart)) bad(`${t.id}: hintet afslører modelsvaret`);
 
-    // Citater i opgaveteksten skal stå i teksten (fanger slåfejl i ord/sætninger).
     for (const frag of quotedFragments(t.prompt)) {
       if (!artText.includes(frag)) bad(`${t.id}: citatet "${frag}" findes ikke i teksten`);
     }
 
-    for (const c of t.checks) {
-      if (checkIds.has(c.id)) bad(`dublet delspørgsmåls-id ${c.id}`);
-      checkIds.add(c.id);
-      if (!c.prompt || !c.feedback) bad(`${c.id} mangler prompt/feedback`);
+    const p = t.part;
 
-      for (const frag of quotedFragments(c.prompt)) {
-        if (!artText.includes(frag)) bad(`${c.id}: citatet "${frag}" findes ikke i teksten`);
-      }
+    if (p.kind === "genre") {
+      if (!EXAM_GENRES.some((g) => g.id === p.correct)) bad(`${t.id}: ukendt genre ${p.correct}`);
+      if (!p.justify.label || !p.justify.placeholder) bad(`${t.id}: begrundelsesfeltet mangler label/pladsholder`);
+      points += 1;
+    }
 
-      if (c.kind === "choice") {
-        if (c.correctIndex < 0 || c.correctIndex >= c.options.length) bad(`${c.id} correctIndex uden for range`);
-        if (c.options.length < 3) bad(`${c.id}: for få svarmuligheder`);
-        const corr = norm(c.options[c.correctIndex] ?? "");
-        const corrFirstWords = corr.split(" ").slice(0, 5).join(" ");
-        if (corrFirstWords.length > 12 && (norm(c.prompt).includes(corrFirstWords) || norm(t.hint).includes(corrFirstWords)))
-          bad(`${c.id}: prompt/hint afslorer korrekt svarmulighed`);
-      }
+    if (p.kind === "fields") {
+      if (p.fields.length === 0) bad(`${t.id}: ingen skrivefelter`);
+      for (const f of p.fields) if (!f.label || !f.placeholder) bad(`${t.id}: feltet ${f.id} mangler label/pladsholder`);
+      if (!t.openEnded) bad(`${t.id}: rene skriveopgaver skal være mærket openEnded (mange rigtige svar)`);
+    }
 
-      if (c.kind === "multi") {
-        for (const i of c.correctIndexes) if (i < 0 || i >= c.options.length) bad(`${c.id} korrekt index uden for range`);
-        if (c.correctIndexes.length === 0 || c.correctIndexes.length >= c.options.length) bad(`${c.id} multi: forkert antal korrekte`);
-        // Er alle muligheder ENKELTE ord, er det en "klik på ordene"-opgave:
-        // så skal ordene findes i teksten.
-        if (c.options.every((o) => /^[\wÆØÅæøå-]+$/u.test(o))) {
-          for (const o of c.options) if (!artText.includes(norm(o))) bad(`${c.id}: ordet "${o}" findes ikke i teksten`);
+    if (p.kind === "morphology") {
+      if (p.words.length !== 4) bad(`${t.id}: ${p.words.length} ord i morfologien, der skal være 4`);
+      for (const w of p.words) {
+        if (!artBare.includes(bare(w.word))) bad(`${t.id}: ordet "${w.word}" findes ikke i teksten`);
+        for (const variant of [w.split, ...(w.splitAccepts ?? [])]) {
+          const joined = norm(variant).replace(/-/g, "");
+          if (joined !== norm(w.word)) bad(`${t.id}: opdelingen "${variant}" giver "${joined}", ikke "${w.word}"`);
         }
+        if (!w.split.includes("-")) bad(`${t.id}: "${w.word}" er ikke delt med bindestreger`);
+        if (!w.ask.answer) bad(`${t.id}: "${w.word}" mangler facit til ${w.ask.label}`);
+        // Pladsholderen er et eksempel, ikke facit.
+        if (norm(w.splitPlaceholder.replace(/^fx\s*/i, "").replace(/\.\.\.$/, "")) === norm(w.split))
+          bad(`${t.id}: pladsholderen afslører opdelingen af "${w.word}"`);
+        if (norm(w.ask.placeholder.replace(/^fx\s*/i, "")) === norm(w.ask.answer))
+          bad(`${t.id}: pladsholderen afslører ${w.ask.label} for "${w.word}"`);
+        points += 2;
       }
+    }
 
-      if (c.kind === "analysis") {
-        if (c.chunks.length !== c.correctMap.length) bad(`${c.id} chunks/correctMap ikke ens`);
-        for (const sym of c.correctMap) if (!SYMBOLS.some((s) => s.symbol === sym)) bad(`${c.id} ugyldigt symbol ${sym}`);
-        const rebuilt = c.chunks.join(" ");
-        if (!artText.includes(norm(trimQuote(c.sentence)))) bad(`${c.id} sætning findes ikke i teksten`);
-        if (rebuilt + "." !== c.sentence && rebuilt !== c.sentence) bad(`${c.id} chunks matcher ikke sætningen: '${rebuilt}' vs '${c.sentence}'`);
-      }
+    if (p.kind === "analysis") {
+      if (p.chunks.length !== p.correctMap.length) bad(`${t.id}: chunks/correctMap ikke ens`);
+      for (const sym of p.correctMap) if (!SYMBOLS.some((s) => s.symbol === sym)) bad(`${t.id}: ugyldigt symbol ${sym}`);
+      const rebuilt = p.chunks.join(" ");
+      if (rebuilt + "." !== p.sentence && rebuilt !== p.sentence) bad(`${t.id}: klumperne giver ikke sætningen: '${rebuilt}'`);
+      if (!artBare.includes(bare(trimQuote(p.sentence)))) bad(`${t.id}: sætningen findes ikke i teksten`);
+      points += p.chunks.length;
+    }
 
-      if (c.kind === "wordclass") {
-        for (const w of c.words) {
-          const bare = w.word.replace(/[.,;:!?]/g, "");
-          if (!artText.includes(norm(bare))) bad(`${c.id} ord "${w.word}" findes ikke i teksten`);
-          if (!EXAM_WORD_CLASS_TAGS.some((tag) => tag.id === w.correct)) bad(`${c.id} ugyldig ordklasse ${w.correct}`);
+    if (p.kind === "tense") {
+      if (p.items.length !== 2) bad(`${t.id}: ${p.items.length} sætninger i verbaltiden, der skal være 2`);
+      for (const it of p.items) {
+        if (!artBare.includes(bare(trimQuote(it.sentence)))) bad(`${t.id}/${it.id}: sætningen findes ikke i teksten`);
+        if (!bare(it.sentence).includes(bare(it.verb))) bad(`${t.id}/${it.id}: verbet "${it.verb}" står ikke i sætningen`);
+        if (!EXAM_TENSES.some((x) => x.id === it.correct)) bad(`${t.id}/${it.id}: ukendt tid ${it.correct}`);
+        if (!EXAM_TENSES.some((x) => x.id === it.rewriteTo)) bad(`${t.id}/${it.id}: ukendt omskrivningstid ${it.rewriteTo}`);
+        if (it.correct === it.rewriteTo) bad(`${t.id}/${it.id}: omskrivningen er til den tid, sætningen allerede står i`);
+        if (it.rewriteKeys.length === 0) bad(`${t.id}/${it.id}: ingen nøgleord til omskrivningen`);
+        for (const k of it.rewriteKeys) {
+          if (!` ${bare(it.rewriteAnswer)} `.includes(` ${bare(k)} `)) bad(`${t.id}/${it.id}: nøgleordet "${k}" står ikke i facit-sætningen`);
         }
+        // Mindst ét nøgleord skal være NYT, ellers kan en uændret sætning
+        // tælle som en rigtig omskrivning.
+        if (it.rewriteKeys.every((k) => ` ${bare(it.sentence)} `.includes(` ${bare(k)} `)))
+          bad(`${t.id}/${it.id}: ingen af nøgleordene ændrer sig i omskrivningen`);
+        points += 2;
       }
+    }
+
+    if (p.kind === "clause") {
+      const rebuilt = p.parts.map((x) => x.text).join(" ");
+      if (rebuilt !== p.sentence) bad(`${t.id}: delene giver ikke sætningen: '${rebuilt}'`);
+      if (!artBare.includes(bare(trimQuote(p.sentence)))) bad(`${t.id}: sætningen findes ikke i teksten`);
+      if (!p.parts.some((x) => x.type === "led")) bad(`${t.id}: ingen ledsætning at spørge til`);
+      if (!p.parts.some((x) => x.type === "hoved")) bad(`${t.id}: ingen hovedsætning`);
+      if (!bare(p.sentence).includes(bare(p.indleder))) bad(`${t.id}: indlederen "${p.indleder}" står ikke i sætningen`);
+      if (!EXAM_CLAUSE_FUNCTIONS.some((f) => f.id === p.funktion)) bad(`${t.id}: ukendt ledfunktion ${p.funktion}`);
+      points += p.parts.length + 2;
     }
   }
 
-  // Grammatikdelen (opgave 4-7) skal vægte tungt: læreren har meldt, at det er
-  // dér eleverne har sværest ved stoffet.
-  const grammar = sats.tasks.filter((t) => t.no >= 4).reduce((n, t) => n + t.checks.length, 0);
-  const total = sats.tasks.reduce((n, t) => n + t.checks.length, 0);
-  if (grammar < 6) bad(`${sats.id}: kun ${grammar} delspørgsmål i opgave 4-7 (mindst 6)`);
-  ok(`${sats.id}: ${total} delspørgsmål i alt, heraf ${grammar} i grammatikdelen (opgave 4-7)`);
+  // Grammatikdelen (opgave 4-7) skal veje tungt: læreren har meldt, at det er
+  // dér, eleverne har sværest ved stoffet.
+  const grammar = sats.tasks.filter((t) => t.no >= 4).length;
+  if (grammar !== 4) bad(`${sats.id}: grammatikdelen mangler opgaver`);
+  if (points < 15) bad(`${sats.id}: kun ${points} point at rette på (for lidt til en karakter)`);
+  ok(`${sats.id}: ${points} point kan rettes automatisk (opgave 1 + 4-7)`);
 }
 
 // Terminologi-tjek: latinske kortnavne i led-symbolerne.
