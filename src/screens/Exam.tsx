@@ -14,7 +14,7 @@ import { CategoryIcon, ClockIcon, ExamIcon, InfoIcon } from "../components/icons
 import ExamSatsPage from "./ExamSats";
 import ExamFormatSheet from "../components/exam/ExamFormatSheet";
 import { formatForSchoolId } from "../data/hhx/examFormats";
-import { getSchool } from "../data/schools";
+import { canTakeExamSats, getSchool, schoolsWithExam, HHX_EXAM_SATS_ID, SCHOOL_EXAM_LABELS } from "../data/schools";
 import { buildQuizAiPrompt } from "../lib/examCopy";
 import { CheckIcon, SparklesIcon } from "../components/icons";
 import { copyTextToClipboard } from "../lib/examCopy";
@@ -82,6 +82,10 @@ export default function ExamPage({
   // Skolens egen eksamensform (valgt ved onboarding); ubekendt skole => sporets liste.
   const schoolDef = getSchool(progress.school);
   const myFormat = formatForSchoolId(schoolDef?.formatId);
+  // Prøverne er delt op pr. skole: eksamensprøven simulerer ÉN skoles
+  // eksamensform og vises derfor kun for elever på den skole (se schools.ts).
+  const maySats = canTakeExamSats(progress.school, education);
+  const satsSchools = schoolsWithExam(HHX_EXAM_SATS_ID);
 
   // Bekræftelses-dialog der bruges både fra setup og fra "Prøv igen" på resultatet.
   const startConfirmModal = confirmStart && (
@@ -198,7 +202,8 @@ export default function ExamPage({
     }
   }
 
-  // Eksamenssættet (kun HHX) fylder hele skærmen, indtil det lukkes igen.
+  // Eksamenssættet (kun HHX + kun skoler med netop denne form) fylder hele
+  // skærmen, indtil det lukkes igen. ExamSatsPage har sin egen adgangsvagt.
   if (satsOpen) {
     return (
       <ExamSatsPage
@@ -263,9 +268,11 @@ export default function ExamPage({
           </span>
         </button>
 
-        {/* Eksamensprøven: den format-tro eksamen simulering, kun for HHX (STX har
-            en anden eksamensform, og prøverne er derfor forskellige). */}
-        {isHhx && (
+        {/* Eksamensprøven: den format-tro eksamens-simulering. Den er både
+            uddannelses- OG skolebestemt: kun HHX (STX har en anden
+            eksamensform), og kun skoler, der har netop denne form på deres
+            liste i schools.ts. Andre får det forklarende kort nedenunder. */}
+        {isHhx && maySats && (
           <button
             type="button"
             onClick={() => setSatsOpen(true)}
@@ -279,15 +286,40 @@ export default function ExamPage({
             <span className="flex-1">
               <span className="flex flex-wrap items-center gap-2">
                 <span className="font-display text-lg font-extrabold">Eksamensprøve</span>
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">40 min · rigtige-format</span>
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">
+                  7 opgaver · 40 min forberedelse
+                </span>
               </span>
               <span className="mt-0.5 block text-xs leading-relaxed text-white/85">
-                Prøv den virkelige eksamen: tekst at læse og tusche, spørgsmålssæt med blokke, ur der matcher forberedelsen, aflevering og
-                AI-bedømmelse. Indholdet er det, du har trænet i appen.
+                Prøv den virkelige eksamen: du trækker en ukendt tekst med syv opgaver, markerer i teksten, skriver dine svar som på notepapiret
+                og svarer på delspørgsmål, der giver en vejledende karakter. Bagefter kan du kopiere hele besvarelsen over til en AI for
+                feedback : {schoolDef ? `formen er ${schoolDef.name}s egen.` : "formen er din skoles egen."}
               </span>
             </span>
             <span className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-extrabold text-blue-600 shadow">Start →</span>
           </button>
+        )}
+
+        {isHhx && !maySats && (
+          <div className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+            <p className="flex flex-wrap items-center gap-2 font-bold">
+              <InfoIcon className="h-4 w-4" /> {SCHOOL_EXAM_LABELS[HHX_EXAM_SATS_ID].short}: ikke for din skole endnu
+              <span className="rounded-full bg-amber-200/70 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">skolebestemt</span>
+            </p>
+            <p className="mt-1 leading-relaxed">
+              Eksamensprøven er bygget 1:1 efter ét skole-eksamensark, og AP-eksamen afvikles forskelligt fra skole til skole. Derfor kan den
+              lige nu kun tages af elever på {satsSchools.map((sc) => sc.name).join(", ") || "de skoler, vi har formen for"}.
+              {schoolDef
+                ? " Vi tilføjer flere skoler, så snart vi har deres form bekræftet."
+                : satsSchools.length === 1
+                  ? " Går du der, kan du vælge din skole under Profil → Indstillinger."
+                  : " Går du på en af dem, kan du vælge din skole under Profil → Indstillinger."}
+            </p>
+            <p className="mt-1.5 leading-relaxed">
+              Indtil da træner prøvegeneratoren herunder præcis de samme fagbegreber : ordklasser, morfologi, syntaktisk analyse, verbaltider og
+              hoved- og ledsætninger.
+            </p>
+          </div>
         )}
 
         <Mascot pose="explain" size="md" speech="Vælg selv sværhedsgrad og længde. Jeg samler spørgsmålene til dig!" reduceMotion={reduceMotion} />
@@ -366,9 +398,9 @@ export default function ExamPage({
           )}
           {isHhx && (
             <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
-              HHX-prøven her svarer til delprøve 1 i den interne AP-prøve: interaktive spørgsmål over grammatik, kommunikation, sproghandlinger,
-              semantik, pragmatik og sproghistorie. Vil du træne til HELE eksamen som den ser ud på Risskov (tekst + spørgsmål + 40 min), så vælg
-              “Eksamensprøve” ovenfor.
+              HHX-prøven her er prøvegeneratoren: interaktive spørgsmål over grammatik, kommunikation, sproghandlinger, semantik, pragmatik og
+              sproghistorie, som du kan tage så mange gange du vil. Vil du træne HELE eksamen, som den afvikles (ukendt tekst, syv opgaver, 40
+              minutters forberedelse og mundtlig eksamination bagefter), så brug “Eksamensprøve”{maySats ? " ovenfor" : ", når din skole er med"}.
             </p>
           )}
           <div className="mt-4 flex items-center gap-2 rounded-xl bg-ink/5 px-3 py-2 text-sm font-semibold text-ink/70">

@@ -286,12 +286,18 @@ export interface CategoryDef {
 }
 
 // ---------------------------------------------------------------------------
-// Eksamenssæt (kun HHX): appens simulering af den virkelige AP-eksamen med
-// tekst, faste spørgsmålsblokke og 40 minutters timer. Eleven besvarer ALTING
-// med klik-blokke (valg, ordklasse-taps, led-markering) - aldrig med et
-// bestemt skemaformat. Fritekst-felter er kun "noter" (frivillige) og bruges
-// udelukkende, når besvarelsen kopieres til AI-bedømmelse.
-// Vigtigt: verken hints eller spørgsmålstekster må afsløre svarene.
+// Eksamenssæt (kun HHX): appens simulering af den virkelige AP-eksamen, som
+// den afvikles på Risskov. Eleven trækker en ukendt tekst med SYV opgaver og
+// har 40 minutters skriftlig forberedelse ; til selve eksamen besvares de syv
+// opgaver mundtligt.
+//
+// Hver opgave har derfor TO dele i appen:
+//   1. et fritekst-felt : elevens egen besvarelse, præcis som notepapiret man
+//      tager med ind til eksamen. Den kan appen ikke bedømme, men den kopieres
+//      med over til AI-feedback (kopiér-knappen på resultatsiden).
+//   2. lukkede delspørgsmål (checks) : valg, ordklasse-taps og led-markering.
+//      DEM retter appen automatisk, og det er dem, karakteren bygger på.
+// Vigtigt: hverken hints eller opgavetekster må afsløre svarene.
 // ---------------------------------------------------------------------------
 
 // Ordklasse-mærkater til sætningens ord (bruges i opgave-LED'en i
@@ -307,54 +313,80 @@ export type ExamWordClassTag =
   | "numerale"
   | "interjektion";
 
-interface ExamQuestionBaseT {
+interface ExamCheckBaseT {
   id: string;
-  // Kategori-chip øverst på spørgsmålet, fx "Kommunikation" eller "Syntaks".
-  label: string;
-  // Valgfri kategoritag - bruges kun til at føle statistik (pr. kategori)
-  // på prøvens resultat, fx til karakter-feltet på Profil-siden.
-  category?: CategoryId;
+  /** Selve delspørgsmålet. Må aldrig afsløre facit. */
   prompt: string;
-  // "?"-knappen: forklarer KUN, hvad eleven skal gøre (aldrig svaret).
-  hint: string;
-  // Vises efter aflevering: hvad der er rigtigt/forkert og hvorfor.
+  /** Vises efter aflevering: hvad der er rigtigt/forkert og hvorfor. */
   feedback: string;
-  // Vises efter aflevering: det her, eleven skal gøre til den virkelige eksamen.
-  examTip: string;
 }
 
-export interface ExamChoiceQuestionT extends ExamQuestionBaseT {
+export interface ExamChoiceCheckT extends ExamCheckBaseT {
   kind: "choice";
   options: string[];
   correctIndex: number;
 }
 
-export interface ExamMultiChoiceQuestionT extends ExamQuestionBaseT {
+export interface ExamMultiCheckT extends ExamCheckBaseT {
   kind: "multi";
   options: string[];
   correctIndexes: number[];
 }
 
-export interface ExamWordClassQuestionT extends ExamQuestionBaseT {
+export interface ExamWordClassCheckT extends ExamCheckBaseT {
   kind: "wordclass";
-  // Ord, der optræder i artiklen; eleven klikker på hver og vælger ordklasse.
+  /** Ord, der optræder i artiklen; eleven klikker på hvert og vælger ordklasse. */
   words: { word: string; correct: ExamWordClassTag }[];
 }
 
-export interface ExamAnalysisQuestionT extends ExamQuestionBaseT {
+export interface ExamAnalysisCheckT extends ExamCheckBaseT {
   kind: "analysis";
-  // Sætning fra artiklen, som analyseres med de 7 led-symboler (præcis som i
-  // øvrige analyseopgaver: klik på klump, vælg symbol).
+  /** Sætning fra artiklen, som analyseres med de 7 led-symboler (præcis som i
+   *  øvrige analyseopgaver: klik på klump, vælg symbol). */
   sentence: string;
   chunks: string[];
   correctMap: LedSymbol[];
 }
 
-export type ExamQuestionT =
-  | ExamChoiceQuestionT
-  | ExamMultiChoiceQuestionT
-  | ExamWordClassQuestionT
-  | ExamAnalysisQuestionT;
+/** Lukket delspørgsmål: det er dem, appen retter og giver karakter ud fra. */
+export type ExamCheckT = ExamChoiceCheckT | ExamMultiCheckT | ExamWordClassCheckT | ExamAnalysisCheckT;
+
+/**
+ * Én af de syv opgaver på eksamensarket. Rækkefølgen og emnerne følger
+ * skolens eget ark: 1) genre, 2) kommunikationssituation, 3) sproglige
+ * særtræk, 4) morfologisk analyse, 5) syntaktisk analyse, 6) verballedets
+ * tid, 7) hoved- og ledsætninger.
+ */
+export interface ExamTaskT {
+  id: string;
+  /** Opgavenummer på eksamensarket (1-7). */
+  no: number;
+  /** Kort emne-chip, fx "Genre" eller "Morfologi". */
+  label: string;
+  /** Bruges kun til statistik pr. kategori på prøvens resultat. */
+  category?: CategoryId;
+  /** Opgaveteksten, formuleret som på eksamensarket. */
+  prompt: string;
+  /** "?"-knappen: forklarer KUN metoden (trin for trin), aldrig facit. */
+  hint: string;
+  /** Pladsholder i fritekst-feltet (elevens eget svar, som på notepapiret). */
+  placeholder: string;
+  /** Lukkede delspørgsmål, der giver karakteren. */
+  checks: ExamCheckT[];
+  /** Punkter et stærkt mundtligt svar rammer (vises som checkliste bagefter). */
+  points: string[];
+  /** Vises efter aflevering: sådan kunne et stærkt svar lyde. */
+  modelAnswer: string;
+  /** Vises efter aflevering: hvad der typisk er rigtigt/forkert i opgaven. */
+  feedback: string;
+  /** Vises efter aflevering: det her skal du gøre til den virkelige eksamen. */
+  examTip: string;
+  /**
+   * Opgaver, hvor MANGE svar er rigtige (opgave 2 og 3 ifølge AP-læreren).
+   * Appen siger det tydeligt og retter aldrig fritekst-delen som rigtig/forkert.
+   */
+  openEnded?: boolean;
+}
 
 export interface ExamArticleT {
   title: string;
@@ -378,5 +410,6 @@ export interface ExamSatsT {
     closingNote: string;
   };
   article: ExamArticleT;
-  questions: ExamQuestionT[];
+  /** De syv opgaver fra eksamensarket (i rækkefølge). */
+  tasks: ExamTaskT[];
 }
