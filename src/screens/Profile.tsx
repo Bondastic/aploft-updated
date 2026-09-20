@@ -1,12 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { motion } from "framer-motion";
 import type { Education, Progress } from "../types";
 import { getLevelInfo } from "../lib/progress";
 import { EDU_THEMES, getEducation } from "../lib/education";
 import Mascot from "../components/Mascot";
 import { CategoryIcon, FlameIcon, SettingsIcon, StxIcon, HhxIcon, TrendUpIcon } from "../components/icons";
 import DarkModeToggle from "../components/DarkModeToggle";
+import SchoolStep from "../components/onboarding/SchoolStep";
+import { getSchool } from "../data/schools";
 import { cn } from "../utils/cn";
 
 export default function ProfilePage({
@@ -15,6 +18,7 @@ export default function ProfilePage({
   onSetNickname,
   onSetReduceMotion,
   onSetEducation,
+  onSetSchool,
   onReset,
 }: {
   progress: Progress;
@@ -22,10 +26,14 @@ export default function ProfilePage({
   onSetNickname: (name: string) => void;
   onSetReduceMotion: (v: boolean) => void;
   onSetEducation: (education: Education) => void;
+  onSetSchool: (school: string | null) => void;
   onReset: () => void;
 }) {
   const [nickname, setNicknameLocal] = useState(progress.nickname);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [schoolDraft, setSchoolDraft] = useState<string | null>(null);
+  const [schoolOpen, setSchoolOpen] = useState(false);
+  const schoolDef = getSchool(progress.school);
   const level = getLevelInfo(progress.xp);
 
   return (
@@ -174,6 +182,28 @@ export default function ProfilePage({
           </p>
         </div>
 
+        {/* Skole: afgør hvilken eksamensform eleven ser under Prøve. Kun lokalt. */}
+        <div className="rounded-2xl border border-ink/10 bg-ink/[0.02] p-4">
+          <p className="mb-1 text-sm font-bold text-ink">Skole</p>
+          <p className="mb-3 text-xs text-ink/50">
+            Din skole afgør, hvilken eksamensform du ser under Prøve. Vælg kun lokalt : data sendes eller indsamles ikke.
+          </p>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm font-semibold text-ink">
+              {schoolDef ? schoolDef.name : progress.school === "unknown" ? "Anden skole (jeg er i tvivl)" : "Ikke valgt endnu"}
+            </p>
+            <button
+              onClick={() => {
+                setSchoolDraft(progress.school === "unknown" ? null : progress.school);
+                setSchoolOpen(true);
+              }}
+              className="rounded-full border-2 border-ink/15 bg-white px-4 py-1.5 text-xs font-bold text-ink transition hover:border-blue-400 hover:bg-blue-50"
+            >
+              {progress.school && progress.school !== "unknown" ? "Skift skole" : "Vælg skole"}
+            </button>
+          </div>
+        </div>
+
         <DarkModeToggle variant="full" />
         <label className="flex items-center justify-between gap-3 text-sm">
           <span className="text-ink/70">Reducér animationer</span>
@@ -221,6 +251,55 @@ export default function ProfilePage({
               Ja, nulstil
             </button>
           </div>
+        </div>
+      )}
+
+      {schoolOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Vælg din skole"
+          onClick={() => setSchoolOpen(false)}
+        >
+          <motion.div
+            initial={progress.settings.reduceMotion ? false : { scale: 0.94, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 340, damping: 28 }}
+            className="max-h-[86vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-5 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <h3 className="font-display text-lg font-extrabold text-ink">Hvilken skole går du på?</h3>
+                <p className="mt-0.5 text-xs text-ink/55">Valget bestemmer hvilken eksamensform, appen viser. Det gemmes kun på din enhed.</p>
+              </div>
+              <button onClick={() => setSchoolOpen(false)} aria-label="Luk" className="rounded-full p-1.5 text-ink/40 transition hover:bg-ink/5 hover:text-ink">
+                ✕
+              </button>
+            </div>
+            <div className="mt-4">
+              <SchoolStep education={progress.education} value={schoolDraft} onChange={setSchoolDraft} reduceMotion={progress.settings.reduceMotion} />
+            </div>
+            <div className="mt-4 flex gap-2">
+              <button onClick={() => setSchoolOpen(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                Fortryd
+              </button>
+              <button
+                disabled={!schoolDraft}
+                onClick={() => {
+                  if (schoolDraft) onSetSchool(schoolDraft);
+                  setSchoolOpen(false);
+                }}
+                className={cn(
+                  "flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-md transition",
+                  schoolDraft ? "bg-ink hover:bg-ink/90" : "cursor-not-allowed bg-ink/15 text-ink/30"
+                )}
+              >
+                Gem skolevalg
+              </button>
+            </div>
+          </motion.div>
         </div>
       )}
     </div>

@@ -25,6 +25,7 @@ export default function PracticePage({
   onWrong,
   onLessonComplete,
   onUnlockLessons,
+  onSessionChange,
 }: {
   education: Education;
   progress: Progress;
@@ -32,6 +33,9 @@ export default function PracticePage({
   onWrong: (category: CategoryId) => void;
   onLessonComplete: (lessonId: string, pct: number) => void;
   onUnlockLessons: (lessonIds: string[]) => void;
+  /** Melder tilbage når en opgave-session er IGANGVÆRENDE, så app-skallen kan
+   *  advare ("Er du sikker?") før navigation væk midt i en opgave. */
+  onSessionChange?: (active: boolean) => void;
 }) {
   const [tab, setTab] = useState<Track>(education === "hhx" ? "hhx" : "almen");
   const [view, setView] = useState<View>("categories");
@@ -44,6 +48,7 @@ export default function PracticePage({
   const [results, setResults] = useState<Outcome[]>([]);
   const [pose, setPose] = useState<MascotPose>("explain");
   const [prevBestPct, setPrevBestPct] = useState<number | null>(null);
+  const [confirmAbandon, setConfirmAbandon] = useState(false);
   const [unlockTarget, setUnlockTarget] = useState<{ node: LessonNode; throughIds: string[] } | null>(null);
   // Sekventiel oplåsning: "unlockingIds" er rækkefølgen, "revealedIds" dem der
   // allerede er låst op. Bruges til at vise, at forløbene åbner et ad gangen.
@@ -56,6 +61,15 @@ export default function PracticePage({
   useEffect(() => {
     onUnlockLessonsRef.current = onUnlockLessons;
   }, [onUnlockLessons]);
+
+  // Session-rapport til app-skallen (kun selve øvelsen tæller som "i gang").
+  const onSessionChangeRef = useRef(onSessionChange);
+  useEffect(() => {
+    onSessionChangeRef.current = onSessionChange;
+  }, [onSessionChange]);
+  useEffect(() => {
+    onSessionChangeRef.current?.(view === "session");
+  }, [view]);
 
   const isHhx = education === "hhx";
   const theme = getEducation(education);
@@ -191,7 +205,7 @@ export default function PracticePage({
         <div className="flex items-center justify-between">
           <button
             type="button"
-            onClick={() => setView("path")}
+            onClick={() => setConfirmAbandon(true)}
             className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink hover:border-rose-300 hover:text-rose-600"
           >
             Afbryd
@@ -247,6 +261,45 @@ export default function PracticePage({
           <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
             {index + 1 >= sessionTasks.length ? "Se resultat →" : "Næste →"}
           </button>
+        )}
+
+        {confirmAbandon && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+            role="alertdialog"
+            aria-modal="true"
+            aria-label="Bekræft afbrydelse af forløbet"
+            onClick={() => setConfirmAbandon(false)}
+          >
+            <motion.div
+              initial={reduceMotion ? false : { scale: 0.92, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: "spring", stiffness: 380, damping: 28 }}
+              className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-6 text-center shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="font-display text-lg font-extrabold text-ink">Afbryd forløbet midt i?</h3>
+              <p className="text-sm leading-relaxed text-ink/60">
+                Du er {index + 1} trin hen i forløbet. Afbryder du nu, <span className="font-bold text-ink">bliver fremdriften i netop denne session
+                ikke gemt</span> (de enkelte rigtige og forkerte svar tæller dog med i din statistik). Forløbet skal startes forfra, hvis du vil have
+                det bestået.
+              </p>
+              <div className="flex gap-2">
+                <button onClick={() => setConfirmAbandon(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                  Bliv i forløbet
+                </button>
+                <button
+                  onClick={() => {
+                    setConfirmAbandon(false);
+                    setView("path");
+                  }}
+                  className="flex-1 rounded-full bg-rose-600 py-2.5 text-sm font-bold text-white shadow-md"
+                >
+                  Afbryd alligevel
+                </button>
+              </div>
+            </motion.div>
+          </div>
         )}
       </motion.div>
     );

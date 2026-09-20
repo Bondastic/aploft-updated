@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { Education } from "../types";
 import { EDU_THEMES } from "../lib/education";
 import Mascot from "../components/Mascot";
+import SchoolStep from "../components/onboarding/SchoolStep";
 import { StxIcon, HhxIcon, CheckIcon, ChevronRightIcon } from "../components/icons";
 import { cn } from "../utils/cn";
 
@@ -12,19 +13,23 @@ import { cn } from "../utils/cn";
 // (STX = rød, HHX = blå), og valget gemmes i localStorage, så man ikke skal
 // vælge igen næste gang. Brugernavnet er valgfrit.
 //
-// To korte trin:
+// Tre korte trin:
 //  1) Vælg uddannelse. Kortet "lyser op" med en glidende skala- og glød-
 //     animation, og "Vælg"-knappen glider op, når der er valgt noget.
-//  2) Brugernavn (valgfrit). Tryk "Kom i gang" (eller spring over).
+//  2) Vælg skole (så kan eleven se NETOP sin skoles eksamensform under Prøve;
+//     "Anden skole" viser de former, vi har for sporet). Valget gemmes KUN
+//     lokalt paa enheden - der indsamles ingen data.
+//  3) Brugernavn (valgfrit). Tryk "Kom i gang" (eller spring over).
 export default function WelcomePage({
   reduceMotion,
   onComplete,
 }: {
   reduceMotion: boolean;
-  onComplete: (education: Education, nickname: string) => void;
+  onComplete: (education: Education, nickname: string, school: string | null) => void;
 }) {
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [education, setEducation] = useState<Education | null>(null);
+  const [school, setSchool] = useState<string | null>(null);
   const [nickname, setNickname] = useState("");
 
   const anim = reduceMotion ? { initial: false } : {};
@@ -37,7 +42,7 @@ export default function WelcomePage({
   }
 
   function finish() {
-    if (education) onComplete(education, nickname.trim());
+    if (education) onComplete(education, nickname.trim(), school);
   }
 
   return (
@@ -45,7 +50,13 @@ export default function WelcomePage({
       <Mascot
         pose={step === 1 ? "welcome" : "explain"}
         size="lg"
-        speech={step === 1 ? "Velkommen! Hvilken uddannelse går du på?" : "Skriv gerne et navn, så jeg kan hilse på dig. Du kan også springe over."}
+        speech={
+          step === 1
+            ? "Velkommen! Hvilken uddannelse går du på?"
+            : step === 2
+              ? "Kender jeg din skole, kan jeg vise lige præcis jeres eksamensform."
+              : "Skriv gerne et navn, så jeg kan hilse på dig. Du kan også springe over."
+        }
         reduceMotion={reduceMotion}
       />
 
@@ -54,7 +65,9 @@ export default function WelcomePage({
         <p className="mx-auto mt-1 max-w-md text-sm text-ink/50">
           {step === 1
             ? "Vi har øvelser til begge uddannelser. Vælg din, så finder vi det rigtige pensum til dig."
-            : "Det tager kun 5 sekunder. Du kan altid skifte uddannelse senere under Profil → Indstillinger."}
+            : step === 2
+              ? "Eksamen ser forskellig ud fra skole til skole. Vælg din, så ser du den rigtige eksamensform under Prøve."
+              : "Det tager kun 5 sekunder. Du kan altid skifte uddannelse senere under Profil → Indstillinger."}
         </p>
       </div>
 
@@ -183,7 +196,7 @@ export default function WelcomePage({
                     education === "stx" ? "from-red-500 to-rose-600 shadow-red-500/40" : "from-blue-500 to-indigo-600 shadow-blue-500/40"
                   )}
                 >
-                  Vælg {EDU_THEMES[education].label}
+                  Fortsæt med {EDU_THEMES[education].label}
                   <ChevronRightIcon className="h-5 w-5" />
                 </motion.button>
               )}
@@ -197,6 +210,40 @@ export default function WelcomePage({
                 <ChevronRightIcon className="h-5 w-5" />
               </button>
             )}
+          </motion.div>
+        ) : step === 2 ? (
+          <motion.div
+            key="step-school"
+            initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduceMotion ? undefined : { opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="mt-8 w-full space-y-4"
+          >
+            {education && <SchoolStep education={education} value={school} onChange={setSchool} reduceMotion={reduceMotion} />}
+            <div className="flex gap-2">
+              <motion.button
+                onClick={() => setStep(1)}
+                whileTap={{ scale: 0.97 }}
+                className="rounded-full border-2 border-ink/15 px-5 py-3 text-sm font-semibold text-ink/60 transition hover:border-ink/30 hover:text-ink"
+              >
+                ← Tilbage
+              </motion.button>
+              <motion.button
+                onClick={() => setStep(3)}
+                disabled={!school}
+                whileTap={school ? { scale: 0.97 } : undefined}
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-2 rounded-full py-3.5 text-base font-bold shadow-lg",
+                  school
+                    ? cn("bg-gradient-to-r text-white", education === "stx" ? "from-red-500 to-rose-600 shadow-red-500/40" : "from-blue-500 to-indigo-600 shadow-blue-500/40")
+                    : "cursor-not-allowed bg-ink/15 text-ink/30"
+                )}
+              >
+                {school ? "Bekræft skolevalg" : "Vælg din skole (eller &lsquo;anden skole&rsquo;)"}
+                {school && <ChevronRightIcon className="h-5 w-5" />}
+              </motion.button>
+            </div>
           </motion.div>
         ) : (
           <motion.div
@@ -238,7 +285,7 @@ export default function WelcomePage({
 
             <div className="flex gap-2">
               <motion.button
-                onClick={() => setStep(1)}
+                onClick={() => setStep(2)}
                 whileTap={{ scale: 0.97 }}
                 className="rounded-full border-2 border-ink/15 px-5 py-3 text-sm font-semibold text-ink/60 transition hover:border-ink/30 hover:text-ink"
               >

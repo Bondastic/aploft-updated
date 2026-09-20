@@ -42,11 +42,11 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  teach(
  "t-kasus-2",
  "kasus",
- "Nominativ: grundleddets kasus",
+ "Nominativ: subjektets kasus",
  [
  {
  body:
- "Nominativ er den kasus, der bruges om sætningens subjekt (grundled) ; den eller det, der udfører handlingen, eller som sætningen handler om.",
+ "Nominativ er den kasus, der bruges om sætningens subjekt ; den eller det, der udfører handlingen, eller som sætningen handler om.",
  },
  {
  heading: "Sådan kender du den",
@@ -69,14 +69,14 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  teach(
  "t-kasus-3",
  "kasus",
- "Akkusativ: genstandsleddets kasus",
+ "Akkusativ: det direkte objekts kasus",
  [
  {
- body: "Akkusativ er den kasus, der markerer det direkte objekt (genstandsled) ; det, som handlingen går direkte ud over.",
+ body: "Akkusativ er den kasus, der markerer det direkte objekt ; det, som handlingen går direkte ud over.",
  },
  {
  heading: "Sådan kender du den",
- body: "Spørg 'verbet + hvem/hvad?'. Svaret er genstandsleddet og ville stå i akkusativ på latin.",
+ body: "Spørg 'verbet + hvem/hvad?'. Svaret er det direkte objekt og ville stå i akkusativ på latin.",
  },
  ],
  { examples: ["Puella puerum videt. (Pigen ser drengen.) ; 'puerum' er akkusativ, fordi han er den, der bliver set."] }
@@ -87,7 +87,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "'Peter spiser en kage.' Hvilket led ville stå i akkusativ på latin?",
  ["Peter", "en kage", "spiser"],
  1,
- "'En kage' er genstandsleddet (det, handlingen 'spiser' rammer), og ville derfor stå i akkusativ."
+ "'En kage' er det direkte objekt (det, handlingen 'spiser' rammer), og ville derfor stå i akkusativ."
  ),
  teach(
  "t-kasus-4",
@@ -96,7 +96,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  heading: "Dativ",
- body: "Dativ markerer hensynsleddet ; den, noget gives til eller gøres for. Spørg: 'til/for hvem?'.",
+ body: "Dativ markerer det indirekte objekt ; den, noget gives til eller gøres for. Spørg: 'til/for hvem?'.",
  },
  {
  heading: "Genitiv",
@@ -137,9 +137,9 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Overblik: sætningsled ↔ kasus",
  "Nu hvor du kender begreberne enkeltvis, er her hele sammenhængen samlet i ét skema. Vend gerne tilbage til den, når du er i tvivl.",
  [
- { label: "Grundled (subjekt)", value: "Nominativ ; hvem/hvad + verbum?" },
- { label: "Genstandsled (objekt)", value: "Akkusativ ; verbum + hvem/hvad?" },
- { label: "Hensynsled (indir. objekt)", value: "Dativ ; til/for hvem?" },
+ { label: "Subjekt", value: "Nominativ ; hvem/hvad + verbum?" },
+ { label: "Direkte objekt", value: "Akkusativ ; verbum + hvem/hvad?" },
+ { label: "Indirekte objekt (indir. objekt)", value: "Dativ ; til/for hvem?" },
  { label: "Ejerskab ('-s')", value: "Genitiv ; hvis?" },
  { label: "Adverbial (middel/sted/måde)", value: "Ablativ ; hvordan/hvormed/hvorfra?" },
  { label: "Direkte tiltale", value: "Vokativ ; (ingen, direkte tiltale)" },
@@ -152,13 +152,13 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Prøv at huske sammenhængen: udfyld de tomme felter.",
  "Sætningsled ↔ kasus",
  [
- { label: "Grundled (subjekt)", value: "Nominativ" },
- { label: "Genstandsled (objekt)", value: "Akkusativ" },
- { label: "Hensynsled (indir. objekt)", value: "Dativ" },
+ { label: "Subjekt", value: "Nominativ" },
+ { label: "Direkte objekt", value: "Akkusativ" },
+ { label: "Indirekte objekt (indir. objekt)", value: "Dativ" },
  { label: "Ejerskab ('-s')", value: "Genitiv" },
  ],
  [1, 2],
- "Genstandsled = akkusativ (verbum + hvem/hvad?), hensynsled = dativ (til/for hvem?).",
+ "Direkte objekt = akkusativ (verbum + hvem/hvad?), indirekte objekt = dativ (til/for hvem?).",
  ["Vokativ", "Ablativ"]
  ),
  ],
@@ -276,50 +276,50 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  teach(
  "t-sled-2",
  "saetningsled",
- "Grundled og udsagnsled",
+ "Subjekt og verballed",
  [
  {
- heading: "Grundled (subjekt) ; symbol: ×",
- body: "Den eller det, der udfører handlingen, eller som sætningen handler om. Spørg: 'hvem/hvad + udsagnsled?'.",
+ heading: "Subjekt ; symbol: ×",
+ body: "Den eller det, der udfører handlingen, eller som sætningen handler om. Spørg: 'hvem/hvad + verballed?'.",
  },
  {
- heading: "Udsagnsled (verballed) ; symbol: ○",
+ heading: "Verballed ; symbol: ○",
  body: "Det bøjede verbum i sætningen. Find altid dette FØRST ; det gør det meget nemmere at finde resten.",
  },
  ],
- { examples: ["Katten (grundled, ×) sover (udsagnsled, ○) på sofaen."] }
+ { examples: ["Katten (subjekt, ×) sover (verballed, ○) på sofaen."] }
  ),
  ck(
  "t-sled-ex-1",
  "saetningsled",
- "Klik på udsagnsleddet (det bøjede verbum) i sætningen.",
+ "Klik på verballeddet (det bøjede verbum) i sætningen.",
  "Peter læser en bog",
  [1],
- "'Læser' er det bøjede verbum og dermed udsagnsleddet. Det er ofte klogt at finde dette led først."
+ "'Læser' er det bøjede verbum og dermed verballeddet. Det er ofte klogt at finde dette led først."
  ),
  teach(
  "t-sled-3",
  "saetningsled",
- "Genstandsled og hensynsled",
+ "Direkte objekt og indirekte objekt",
  [
  {
- heading: "Genstandsled (direkte objekt) ; symbol: △",
- body: "Det, handlingen rammer direkte. Spørg: 'udsagnsled + hvem/hvad?'.",
+ heading: "Direkte objekt ; symbol: △",
+ body: "Det, handlingen rammer direkte. Spørg: 'verballed + hvem/hvad?'.",
  },
  {
- heading: "Hensynsled (indirekte objekt) ; symbol: □",
+ heading: "Indirekte objekt ; symbol: □",
  body: "Den, handlingen kommer til gode eller gives til. Spørg: 'til/for hvem?'.",
  },
  ],
- { examples: ["Peter (×) giver (○) Mia (□, hensynsled) bogen (△, genstandsled)."] }
+ { examples: ["Peter (×) giver (○) Mia (□, indirekte objekt) bogen (△, direkte objekt)."] }
  ),
  ck(
  "t-sled-ex-2",
  "saetningsled",
- "Klik på genstandsleddet (det direkte objekt) i sætningen.",
+ "Klik på det direkte objekt i sætningen.",
  "Læreren skriver ordene på tavlen",
  [2],
- "'Ordene' er det, handlingen 'skriver' går direkte ud over, og er derfor genstandsleddet."
+ "'Ordene' er det, handlingen 'skriver' går direkte ud over, og er derfor det direkte objekt."
  ),
  teach(
  "t-sled-4",
@@ -340,11 +340,11 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  heading: "Subjektsprædikat ; symbol: ⊗",
- body: "Siger noget om grundleddet. Optræder efter kopulaverber som 'er', 'bliver', 'hedder', 'virker'.",
+ body: "Siger noget om subjektet. Optræder efter kopulaverber som 'er', 'bliver', 'hedder', 'virker'.",
  },
  {
- heading: "Objektsprædikat ; symbol: cirkel med trekant",
- body: "Siger noget om genstandsleddet. Optræder efter verber som 'kalde', 'gøre', 'vælge', 'udnævne'.",
+ heading: "Objektsprædikat ; eget symbol (kryds det op på Symboler-siden)",
+ body: "Siger noget om det direkte objekt. Optræder efter verber som 'kalde', 'gøre', 'vælge', 'udnævne'.",
  },
  {
  heading: "Huskeregel",
@@ -357,9 +357,9 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "t-sled-ex-3",
  "saetningsled",
  "'Mette bliver lærer.' Hvad er 'lærer' for et led?",
- ["Genstandsled", "Subjektsprædikat", "Hensynsled"],
+ ["Direkte objekt", "Subjektsprædikat", "Indirekte objekt"],
  1,
- "'Lærer' siger noget om grundleddet 'Mette' efter kopulaverbet 'bliver' ; det er derfor subjektsprædikat (⊗)."
+ "'Lærer' siger noget om subjektet 'Mette' efter kopulaverbet 'bliver' ; det er derfor subjektsprædikat (⊗)."
  ),
  info(
  "t-sled-table",
@@ -367,13 +367,13 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Alle 7 symboler samlet",
  "Du har nu mødt alle 7 sætningsled. Du kan altid finde denne oversigt igen under fanen 'Symboler' i bunden af appen.",
  [
- { label: "Grundled", value: "× ; hvem/hvad + verbum?" },
- { label: "Udsagnsled", value: "○ ; det bøjede verbum" },
- { label: "Genstandsled", value: "△ ; verbum + hvem/hvad?" },
- { label: "Hensynsled", value: "□ ; til/for hvem?" },
+ { label: "Subjekt", value: "× ; hvem/hvad + verbum?" },
+ { label: "Verballed", value: "○ ; det bøjede verbum" },
+ { label: "Direkte objekt", value: "△ ; verbum + hvem/hvad?" },
+ { label: "Indirekte objekt", value: "□ ; til/for hvem?" },
  { label: "Adverbial", value: "〰 ; hvornår/hvor/hvordan/hvorfor?" },
- { label: "Subjektsprædikat", value: "⊗ ; hvad ER/BLIVER grundleddet?" },
- { label: "Objektsprædikat", value: "cirkel m. trekant ; hvad kaldes/gøres genstandsleddet til?" },
+ { label: "Subjektsprædikat", value: "⊗ ; hvad ER/BLIVER subjektet?" },
+ { label: "Objektsprædikat", value: "eget symbol ; hvad kaldes/gøres det direkte objekt til?" },
  ],
  "Videre til opgaverne →"
  ),
@@ -514,7 +514,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Dansk er et 'V2-sprog': det bøjede verbum (udsagnsleddet) skal altid stå som sætningens andet led ; uanset hvad der står først.",
+ "Dansk er et 'V2-sprog': det bøjede verbum (verballeddet) skal altid stå som sætningens andet led ; uanset hvad der står først.",
  },
  ],
  {

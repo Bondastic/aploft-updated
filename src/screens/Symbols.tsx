@@ -8,10 +8,10 @@ export default function SymbolsPage({ progress }: { progress: Progress }) {
     <div className="app-page space-y-6">
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Sætningsled-symboler</h1>
-        <p className="text-sm text-ink/50">Alle 7 officielle symboler til at analysere sætningsled. Brug dem, når du løser analyse-opgaver.</p>
+        <p className="text-sm text-ink/50">Alle 7 officielle symboler til at analysere sætningsled. De latinske navne (subjekt, verballed, direkte og indirekte objekt) er dem, du bruger til eksamen; de danske står i parentes som hjælp.</p>
       </div>
 
-      <Mascot pose="explain" size="md" speech="Nu er alle 7 symboler med: hensynsled og begge omsagnsled." reduceMotion={progress.settings.reduceMotion} />
+      <Mascot pose="explain" size="md" speech="Nu er alle 7 symboler med: også indirekte objekt og begge prædikater." reduceMotion={progress.settings.reduceMotion} />
 
       <div className="grid gap-3 sm:grid-cols-2">
         {SYMBOLS.map((s) => (
@@ -35,7 +35,7 @@ export default function SymbolsPage({ progress }: { progress: Progress }) {
         <p className="mb-1 font-bold text-ink">Sådan bruger du symbolerne</p>
         <p>
           I opgaverne under &quot;Sætningsled&quot; skal du klikke på hvert stykke af sætningen og vælge det symbol, der passer til leddets
-          funktion. Start altid med at finde udsagnsleddet (○). Det gør det nemmere at finde de andre led ud fra spørgsmålene
+          funktion. Start altid med at finde verballeddet (○). Det gør det nemmere at finde de andre led ud fra spørgsmålene
           hvem/hvad, til/for hvem og hvordan/hvornår/hvor.
         </p>
       </div>
