@@ -16,7 +16,7 @@ import {
   formatsForEducation,
   type SchoolExamFormat,
 } from "../../data/hhx/examFormats";
-import { getSchool } from "../../data/schools";
+import { SCHOOL_EXAM_LABELS, getSchool } from "../../data/schools";
 import { getEducation } from "../../lib/education";
 import { cn } from "../../utils/cn";
 import { CategoryIcon, XIcon } from "../icons";
@@ -77,6 +77,25 @@ export default function ExamFormatSheet({
             <FormatCard key={f.id} format={f} />
           ))}
         </div>
+
+        {/* Prøverne er skoleopdelte: sig tydeligt, om skolens egen
+            eksamensprøve findes i appen. */}
+        {school && (
+          <p className="mt-3 rounded-2xl bg-ink/[0.03] px-4 py-3 text-xs leading-relaxed text-ink/60">
+            {school.exams.length > 0 ? (
+              <>
+                <span className="font-bold text-ink">Prøver for {school.name}: </span>
+                {school.exams.map((ex) => SCHOOL_EXAM_LABELS[ex].title).join(" · ")} : den finder du under fanen Prøve.
+              </>
+            ) : (
+              <>
+                <span className="font-bold text-ink">Prøver for {school.name}: </span>
+                vi har endnu ikke bygget en eksamens-simulering til jeres form, så brug prøvegeneratoren under fanen Prøve. Den træner de samme
+                fagbegreber.
+              </>
+            )}
+          </p>
+        )}
 
         {!ownFormat && (
           <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">

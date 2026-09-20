@@ -42,36 +42,46 @@ export const EXAM_FORMATS: Record<string, SchoolExamFormat> = {
     educationLabel: "HHX",
     education: "hhx",
     status: "klar",
-    headline: "Sådan foregår AP-eksamen på HHX",
+    headline: "Sådan foregår AP-eksamen på HHX (Risskov)",
     summary:
-      "På Risskov afvikles AP-eksamen som en prøve med tekstgrundlag og faste spørgsmål: Du får en kort tekst (nyhedsstof, kronik, avis eller erhvervssprog) med et spørgsmålssæt, du skal besvare på 40 minutters forberedelse. Indholdet svarer til det, du træner i AP Klar: kommunikation, sproganalyse og genrer.",
+      "AP-eksamen er MUNDTLIG med skriftlig forberedelse. Du trækker en ukendt tekst med syv opgaver til, og du har 40 minutter i et forberedelseslokale til at løse dem. Derefter går du ind til eksamen i 12-15 minutter, hvor du besvarer de syv opgaver mundtligt for din lærer og en censor. Karakteren kommer på eksamensbeviset og tæller med i gennemsnittet.",
     facts: [
-      { label: "Prøveform", value: "Tekstsæt med spørgsmålssæt ; besvares skriftligt (i appen: blok-for-blok)" },
-      { label: "Forberedelse", value: "40 minutter ; herefter aflevering/gennemgang" },
-      { label: "Tekstgrundlag", value: "Kort, sammenhængende tekst ; typisk med erhvervs- eller samfundsrelateret vinkel" },
-      { label: "Du bliver eksamineret i", value: "Indhold & formål, kommunikation (afsender/modtager/situation), ordklasser, syntaktisk analyse med led-symboler, ledsætninger, argumentation, pragmatik og genre" },
-      { label: "Terminologi", value: "De latinske betegnelser er primære: subjekt, verballed, direkte og indirekte objekt (de danske må gerne nævnes som hjælp)" },
-      { label: "Bedømmelse", value: "Samlet vurdering efter de faglige mål ; karakter gives efter den gældende karakterskala" },
+      { label: "Prøveform", value: "Mundtlig eksamen med skriftlig forberedelse ; ukendt tekst + syv faste opgaver" },
+      { label: "Forberedelse", value: "40 minutter i et forberedelseslokale (muligvis flere elever i samme lokale) med en tilsynsførende" },
+      { label: "Eksamination", value: "12-15 minutter hos din lærer og en censor (en anden sproglærer fra skolen), derefter ca. 5 minutters votering" },
+      {
+        label: "De syv opgaver",
+        value:
+          "1) genretræk i teksten, 2) kommunikationssituationen, 3) sproglige særtræk, 4) morfologisk analyse, 5) sætningsanalyse, 6) verbaltider, 7) hoved- og ledsætninger",
+      },
+      { label: "Hjælpemidler", value: "Egne noter, bøger fra undervisningen og ordbog (ordnet.dk) ; lav gerne et notepapir med dine svar, som du tager med ind. Ingen computer, medmindre det er aftalt med din lærer" },
+      { label: "Bedømmelse", value: "Én samlet karakter efter 7-trinsskalaen, givet ud fra din mundtlige besvarelse af de syv opgaver + uddybende spørgsmål" },
+      { label: "Terminologi", value: "De latinske betegnelser er primære: subjekt, verballed, direkte og indirekte objekt, adverbial, subjektsprædikat (de danske må gerne nævnes som hjælp)" },
     ],
     sections: [
       {
         heading: "Hele forløbet på ét blik",
         body:
-          "1) Du får teksten og spørgsmålene. 2) Du læser teksten og skriver/markerer i den i din forberedelse. 3) Du besvarer hvert spørgsmål, så du viser, at du kan bruge begreberne - ikke bare kende dem. 4) Aflevering : og husk, at du altid må henvise til konkrete steder i teksten, når du analyserer.",
+          "1) Du trækker en ukendt tekst med syv tilhørende opgaver. 2) Du løser opgaverne i forberedelseslokalet på 40 minutter og skriver dine svar ned på et notepapir. 3) Du går ind til eksamen, hvor din lærer og censor sidder. 4) Du besvarer de syv opgaver mundtligt (12-15 min). 5) Lærer og censor stiller måske uddybende spørgsmål. 6) Du sendes ud, mens de voterer i ca. 5 minutter. 7) Du kommer ind og får din karakter, som tæller på eksamensbeviset.",
+      },
+      {
+        heading: "Hvad de syv opgaver kræver",
+        body:
+          "Opgave 1-3 handler om teksten: genren (fx politisk tale, ejendomsannonce, opinionsartikel, informerende artikel eller reklame), kommunikationssituationen med Ciceros pentagram (afsender, emne, modtager, situation, sprog og formålet i midten) og de sproglige særtræk (ordklasser, semantiske felter, konkrete og abstrakte ord, konnotationer, stilleje og sætningskonstruktion). Opgave 4-7 er grammatikken: morfologisk analyse (rodmorfem, præfiks, suffiks, fleksiv, bindebogstav), syntaktisk analyse med led-symbolerne, verballeddets tid med omskrivning (præsens, præteritum, perfektum, pluskvamperfektum, futurum) og til sidst hoved- og ledsætninger med ikke-reglen.",
       },
       {
         heading: "Hvad lægges der vægt på?",
         body:
-          "At du bruger fagbegreberne korrekt (fx 'verballed' frem for 'udsagnsled', 'indirekte objekt' frem for 'hensynsled'), at dine påstande har belæg fra teksten, og at du forklarer HVAD sproget gør, ikke bare hvad det hedder. Ræsonnementet tæller ; huskelister gør det ikke.",
+          "I opgave 2 og 3 er der MANGE rigtige svar : det er meget individuelt, hvad der er værd at kommentere i netop din tekst, og hver skole gør den del på sin egen måde. Derfor tæller dokumentationen (citater fra teksten) og fagsproget mere end mængden. Opgave 4-7 har til gengæld præcise svar, og det er dem, eleverne typisk har sværest ved og bruger længst tid på at lære : morfologi, sætningsanalyse, omskrivning af verballeddets tid, hoved- og ledsætninger og de latinske begreber. Det er også dem, appen træner hårdest.",
       },
       {
         heading: "Sådan hænger det sammen med appen",
         body:
-          "Eksamenssættet i Prøve-fanen simulerer præcis dette format (40 min, tekst, spørgsmål, aflevering). Vælg det, når du vil prøve en ægte eksamen ; de almindelige prøvegeneratorer bruger du til at træne delelementerne.",
+          "Eksamensprøven i Prøve-fanen simulerer præcis dette format: ukendt tekst, syv opgaver, ur på 40 minutter, klokke og aflevering. Du skriver dine svar i felterne, ligesom du ville skrive dem på notepapiret : og under hver opgave er der delspørgsmål med faste svar, som appen kan rette, så du får en vejledende karakter. Den mundtlige del kan appen ikke bedømme, så brug prøven som forberedelse og kopiér dine skrevne svar over til en AI, hvis du vil have feedback på dem. De almindelige prøvegeneratorer bruger du til at træne delelementerne.",
       },
     ],
     note:
-      "Formen følger det, Risskov har meldt ud for det nuværende hold. Tjek altid hos din AP-lærer, hvis tidspunkt, hjælpemidler eller forløb er ændret.",
+      "Formen følger det, Risskov har meldt ud for det nuværende hold (eksamen ligger i uge 45). Tjek altid hos din AP-lærer, hvis tidspunkt, hjælpemidler eller forløb er ændret.",
   },
   "ega-stx": {
     id: "ega-stx",
@@ -117,6 +127,6 @@ export function formatForSchoolId(formatId: string | null | undefined): SchoolEx
 
 // Overskrift/indledning til arket.
 export const EXAM_FORMAT_INTRO =
-  "AP-eksamen er ikke den samme overalt: formerne er skolespecifikke. Her ser du den form, der gælder for din skole og dit spor.";
+  "AP-eksamen er ikke den samme overalt: formerne er skolespecifikke, og det gælder både forberedelsen, opgaverne og den mundtlige del. Her ser du den form, der gælder for din skole og dit spor.";
 export const EXAM_FORMAT_OTHER_NOTE =
   "Din skole er ikke på listen endnu. Vi arbejder på at få alle skolers former med ; indtil videre kan du se de beskrivelser, vi har for dit spor. Tjek altid den officielle melding hos din AP-lærer.";

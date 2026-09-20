@@ -100,3 +100,104 @@ Verifikation: midlertidig tsx-test mod det EKSISTERENDE `src/lib/progress.ts` me
 - `npm run build` : grøn.
 - `node --experimental-strip-types scripts/exam-data-check.mts` : "ALL CHECKS PASSED" for alle 6 sæt.
 - Migrationstest (6D) : 11/11 OK.
+
+---
+
+# RUNDE 3 : Eksamensprøven følger nu skolens RIGTIGE eksamensark (7 opgaver)
+
+Denne runde retter den fejl, at eksamensprøven var blevet til 10 multiple
+choice-spørgsmål. Den rigtige form på Risskov er:
+
+> Du trækker en ukendt tekst med **7 opgaver**. Du har **40 minutter** i et
+> forberedelseslokale (tilsynsførende, egne noter, bøger og ordbog/ordnet.dk,
+> notepapir med ind, ingen computer medmindre aftalt). Derefter **12-15
+> minutters mundtlig eksamen** hos læreren + en censor (en anden sproglærer),
+> uddybende spørgsmål, ca. 5 minutters votering, og karakteren kommer på
+> eksamensbeviset og tæller i gennemsnittet. Eksamen ligger i uge 45.
+>
+> De 7 opgaver: 1) genretræk, 2) kommunikationssituation (Ciceros pentagram),
+> 3) sproglige særtræk, 4) morfologisk analyse, 5) sætningsanalyse,
+> 6) verbaltider, 7) hoved- og ledsætninger.
+
+AP-lærerens melding er fulgt: **opgave 2 og 3 har mange rigtige svar** og er
+individuelle fra tekst til tekst, så de rettes aldrig automatisk (de er mærket
+`openEnded`), mens **opgave 4-7** (morfologi, syntaks, verballeddets tid,
+hoved-/ledsætninger og de latinske begreber) vægtes tungest i de opgaver,
+appen retter : mindst 6 af delspørgsmålene pr. sæt ligger i opgave 4-7, og
+datatjekket håndhæver det.
+
+## 9A. Hver opgave har to dele (fritekst + delspørgsmål)
+
+Kravet var både at kunne forberede sig som til den rigtige eksamen OG at få en
+karakter i appen. Derfor:
+
+1. **Fritekst-felt** pr. opgave ("Din besvarelse (den du skal kunne sige
+   mundtligt)") med opgavespecifik pladsholder. Den kan appen ikke rette, men
+   den kommer med i kopiér-teksten og i AI-prompten.
+2. **Delspørgsmål (`checks`)** under hver opgave: valg, multiple-valg,
+   ordklasse-taps og led-symboler (præcis de samme widgets som før).
+   **Karakteren bygger KUN på dem.**
+
+`?`-knappen ved hver opgave forklarer metoden trin for trin (fra skolens
+skabelon: genretrin, pentagrammet, lagene i sproglige særtræk, morfem-typerne,
+analysepilen, tiderne, ikke-reglen) og afslører aldrig facit.
+
+## 9B. Filer der er ændret
+
+| Fil | Ændring |
+|---|---|
+| `src/types.ts` | `ExamQuestionT` er erstattet af `ExamTaskT` (no 1-7, label, prompt, hint, placeholder, points[], modelAnswer, feedback, examTip, openEnded, checks[]) + `ExamCheckT` (choice/multi/wordclass/analysis med id, prompt, feedback). `ExamSatsT.questions` → `ExamSatsT.tasks`. |
+| `src/data/hhx/examSats.ts` | Skrevet om: de 6 tekster er BEHOLDT ordret, men hver har nu 7 opgaver i skolens rækkefølge. Fælles `METHOD`/`ADVICE`-konstanter (metode-hints + råd til den mundtlige eksamen) og fælles `SAT_INTRO`. De gamle spørgsmål er genbrugt som delspørgsmål under den rigtige opgave, og der er skrevet nye til morfologi, verbaltider, subjektsprædikat/objektsprædikat og hoved-/ledsætninger. 15-17 delspørgsmål pr. sæt. |
+| `src/screens/ExamSats.tsx` | Bygget om til opgavekort med fritekst + delspørgsmål. Delpoint (ordklasse- og led-opgaver koster ikke hele opgaven ved én fejl), mildere karakterskala (12 ≥ 85 %, 10 ≥ 72, 7 ≥ 56, 4 ≥ 40, 02 ≥ 28, 00 ≥ 14), resultatside med rammesætning → vejledende karakter → statistikbånd → gemme-panel → AI-panel → gennemgang med elevens eget svar, checkliste ("Ret dig selv"), modelsvar, rettede delspørgsmål og eksamensråd. Adgangsvagt indbygget. |
+| `src/data/hhx/examFormats.ts` | Risskov-beskrivelsen er skrevet om til den rigtige form (mundtlig eksamen med 40 min forberedelse, 7 opgaver, hjælpemidler, censor, votering, uge 45) + lærerens vægtning af opgave 2-3 vs. 4-7. |
+| `src/data/schools.ts` | NY prøve-opdeling: `SchoolExamId`, `HHX_EXAM_SATS_ID`, `SCHOOL_EXAM_LABELS`, `SchoolDef.exams[]`, `examsForSchool()`, `schoolCanTakeExam()`, `canTakeExamSats(schoolId, education)`, `schoolsWithExam()`. Risskov har `["hhx-ap-eksamensproeve"]`, Egå har `[]`. |
+| `src/screens/Exam.tsx` | Eksamensprøve-kortet vises kun ved `canTakeExamSats(...)`. Ellers et forklarende kort ("skolebestemt"), der siger hvilke skoler der har prøven, og hvad man kan bruge i stedet. Teksten om "delprøve 1" er rettet, da formen ikke er sådan. |
+| `src/components/onboarding/SchoolStep.tsx` | Hvert skolekort viser, om skolens eksamensprøve findes i appen ; "anden skole" får en amber-note om, at eksamensprøven ikke kan tages der. |
+| `src/components/exam/ExamFormatSheet.tsx` | Viser "Prøver for <skole>" under formen. |
+| `scripts/exam-data-check.mts` | Skrevet om: 7 opgaver i fast rækkefølge, unikke id'er, modelsvar/checkliste til stede, hint afslører ikke modelsvaret, citater i opgave- og delspørgsmålstekster SKAL stå i teksten (også når citatet springer noget over med ...), ord i "klik på ordene"-opgaver skal findes i teksten, og mindst 6 delspørgsmål i opgave 4-7. |
+
+## 9C. Skolerne er delt op efter, hvilke prøver de kan tage
+
+`SchoolDef.exams` er den nye kilde til sandhed. Reglen er, at en
+eksamenssimulering kun må vises for elever på den skole, hvis eksamensark den
+er bygget efter : eksamensformen er forskellig fra skole til skole, og en
+forkert simulering er værre end ingen.
+
+- **Risskov (HHX)**: har `hhx-ap-eksamensproeve` → kortet "Eksamensprøve" vises.
+- **Egå Gymnasium (STX)**: ingen prøver endnu → kun prøvegeneratoren.
+- **"Anden skole" / intet skolevalg**: ingen adgang, med forklaring i UI'et.
+
+Adgangen tjekkes to steder: i `Exam.tsx` (kortet vises ikke) og i
+`ExamSats.tsx` (defensiv vagt, hvis skærmen alligevel åbnes). Ny skole med
+samme form? Tilføj `HHX_EXAM_SATS_ID` i dens `exams` : intet andet skal røres.
+
+## 9D. Karakteren : mild, men fagligt sigende
+
+- Karakteren kommer KUN fra delspørgsmålene, og det står tydeligt tre steder
+  (intro, resultatets rammetekst og under selve karakteren).
+- Ordklasse-, multi- og led-opgaver giver **delpoint**, så én forkert
+  ordklasse ikke koster hele opgaven.
+- Skalaen er mildere end prøvegeneratorens (se 9B), men 12 skal stadig
+  fortjenes.
+- Resultatsiden siger eksplicit, at den mundtlige del ikke kan bedømmes, og at
+  fritekst-svarene skal til AI'en for at få feedback.
+- AI-prompten beskriver hele eksamensformen (7 opgaver, mundtlig eksamen) og
+  beder om en mild, men præcis vurdering + gennemgang opgave for opgave, og
+  den fortæller AI'en, at opgave 2 og 3 har mange rigtige svar.
+
+## 9E. Verifikation (kørt i denne session)
+
+- `npm run typecheck` : ren.
+- `npm run lint` : 7 fejl + 1 warning = **uændret upstream-baseline**
+  (GuidedTour 131/167, DarkModeToggle 18, AploftApp 56/69, Lynkursus 444 x2,
+  TaskRenderer exhaustive-deps). Intet nyt fra denne runde.
+- `npm run build` : grøn.
+- `node --experimental-strip-types scripts/exam-data-check.mts` :
+  **ALL CHECKS PASSED** (6 sæt, 7 opgaver hver, 15-17 delspørgsmål pr. sæt,
+  heraf 8 i grammatikdelen).
+- Kørt i browser (Playwright mod `next start`): HHX + Risskov kan starte
+  prøven, alle 7 opgaver har fritekst-felt + delspørgsmål, uret tæller,
+  aflevering giver rettefase, karakter, gemme-tekst, AI-panel og gennemgang.
+  Med skolen sat til "anden skole" vises det forklarende kort i stedet for
+  eksamensprøven. Ingen konsolfejl (ud over proxyens certifikat-advarsler for
+  eksterne fonte).
