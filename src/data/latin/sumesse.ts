@@ -115,7 +115,7 @@ export const SUMESSE_TASKS: Task[] = [
  "Magister bonus erat.",
  ["Magister", "bonus", "erat"],
  ["subjekt", "subjpred", "verbal"],
- "'Magister' = grundled (×, nominativ), 'bonus' = subjektsprædikat (⊗, siger noget om grundleddet), 'erat' = udsagnsled (○, datid af 'esse'). Sammenlign med nutidssætningen 'Magister bonus est' ; kun tempus er ændret.",
+ "'Magister' = subjekt (×, nominativ), 'bonus' = subjektsprædikat (⊗, siger noget om subjektet), 'erat' = verballed (○, datid af 'esse'). Sammenlign med nutidssætningen 'Magister bonus est' ; kun tempus er ændret.",
  ),
 
  // --- Trin 6: Endelser-huskereglen "o/m – s – t – mus – tis – nt" -----------

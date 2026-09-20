@@ -1,5 +1,6 @@
 import type { CategoryStat, Education, ExamAttempt, LessonResult, Progress, CategoryId } from "../types";
 import { getCategoryPath, isContentOnlyLesson } from "../data/paths";
+import { schoolMatchesEducation } from "../data/schools";
 
 const STORAGE_KEY = "aploft.progress.v4";
 
@@ -29,6 +30,9 @@ export function loadProgress(): Progress {
         ...parsed,
         education: parsed.education ?? "stx",
         onboarded: parsed.onboarded ?? true,
+        // Skolevalg er nyt i denne version: alle uden et gemt valg (både
+        // længe-brugere og folk der har slettet feltet) får skærmen op.
+        school: typeof parsed.school === "string" && parsed.school.length > 0 ? parsed.school : null,
         guideDone: parsed.guideDone ?? true,
         unlockedLessons: parsed.unlockedLessons ?? [],
         settings: { ...defaultProgress().settings, ...parsed.settings },
@@ -61,6 +65,7 @@ function defaultProgress(): Progress {
     nickname: "",
     education: "stx",
     onboarded: false,
+    school: null,
     guideDone: false,
     xp: 0,
     streakDays: 0,
@@ -84,14 +89,28 @@ export function saveProgress(p: Progress) {
   }
 }
 
-/** Sætter uddannelsen (bruges ved skift under Profil → Indstillinger). */
+/** Sætter uddannelsen (bruges ved skift under Profil → Indstillinger).
+ *  Skifter man spor, nulstilles et skolevalg, der ikke hører til det nye spor
+ *  (fx Egå Gymnasium ved skift til HHX) - så spørges eleven igen, denne gang
+ *  med de skolere, der gælder for det nye spor. */
 export function setEducation(p: Progress, education: Education): Progress {
-  return { ...p, education };
+  const school = schoolMatchesEducation(p.school, education) ? p.school : null;
+  return { ...p, education, school };
 }
 
-/** Marker, at velkomstskærmen er gennemført, og gem uddannelse + evt. kaldenavn. */
-export function completeOnboarding(p: Progress, education: Education, nickname: string): Progress {
-  return { ...p, education, nickname, onboarded: true };
+/** Gemmer skolvalget (id fra data/schools.ts eller UNKNOWN_SCHOOL_ID). */
+export function setSchool(p: Progress, school: string | null): Progress {
+  return { ...p, school };
+}
+
+/** Er skærmen nødvendig? Gamle brugere uden skolevalg møder ét skærmen. */
+export function needsSchoolChoice(p: Progress): boolean {
+  return p.onboarded && !p.school;
+}
+
+/** Marker, at velkomstskærmen er gennemført, og gem uddannelse + skole + evt. kaldenavn. */
+export function completeOnboarding(p: Progress, education: Education, nickname: string, school: string | null = null): Progress {
+  return { ...p, education, nickname, onboarded: true, school };
 }
 
 /** Marker, at spotlight-rundvisningen er gennemført (eller sprunget over). */

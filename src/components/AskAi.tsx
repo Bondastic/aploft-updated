@@ -4,9 +4,10 @@ import { useState } from "react";
 import type { Task } from "../types";
 import { SparklesIcon, XIcon } from "./icons";
 
-// "Spørg AI"-knap: åbner et ChatGPT-link med det aktuelle spørgsmål, så man
+// "Spørg AI"-knap: åbner et Copilot-link med det aktuelle spørgsmål, så man
 // kan få en intuitiv forklaring. Første gang bekræfter brugeren i en lille
 // dialog (med mulighed for "Vis ikke igen", gemt i localStorage).
+// Valget er Microsoft Copilot (gratis uden login) - ikke ChatGPT.
 const CONSENT_KEY = "aploft.askAi.consent";
 
 /** Finder den tekst, der beskriver det aktuelle spørgsmål. */
@@ -31,13 +32,13 @@ function questionText(task: Task): string {
   }
 }
 
-/** Bygger chatgpt.com/?q=...-linket med en rammesættende, dansk besked. */
+/** Bygger copilot.microsoft.com/?q=...-linket med en rammesættende, dansk besked. */
 export function buildAskAiHref(task: Task): string {
   const q = questionText(task);
   const prompt =
     `Jeg er en dansk gymnasieelev, der lærer Almen Sprogforståelse (AP) på gymnasiet. ` +
     `Forklar venligst på en intuitiv, venlig og letforståelig måde, som en god lærer ville gøre: ${q}`;
-  return `https://chatgpt.com/?q=${encodeURIComponent(prompt)}`;
+  return `https://copilot.microsoft.com/?q=${encodeURIComponent(prompt)}`;
 }
 
 function hasConsent(): boolean {
@@ -55,7 +56,7 @@ export default function AskAiButton({ task }: { task: Task }) {
   const href = buildAskAiHref(task);
 
   // Har brugeren allerede sagt "vis ikke igen", er knappen et helt almindeligt
-  // link til ChatGPT i en ny fane.
+  // link til Copilot i en ny fane.
   if (consented) {
     return (
       <a
@@ -97,7 +98,7 @@ export default function AskAiButton({ task }: { task: Task }) {
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
           role="dialog"
           aria-modal="true"
-          aria-label="Åbn ChatGPT"
+          aria-label="Åbn Copilot"
           onClick={() => setOpen(false)}
         >
           <div
@@ -105,7 +106,7 @@ export default function AskAiButton({ task }: { task: Task }) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-1 flex items-start justify-between gap-3">
-              <h3 className="font-display text-lg font-extrabold text-ink">Spørg AI om hjælp?</h3>
+              <h3 className="font-display text-lg font-extrabold text-ink">Spørg Copilot om hjælp?</h3>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Luk"
@@ -115,7 +116,7 @@ export default function AskAiButton({ task }: { task: Task }) {
               </button>
             </div>
             <p className="text-sm text-ink/60">
-              Denne knap tager dig til <span className="font-semibold text-ink">chatgpt.com</span>, hvor du kan få en
+              Denne knap tager dig til <span className="font-semibold text-ink">Microsoft Copilot</span>, hvor du kan få en
               intuitiv og letforståelig forklaring af spørgsmålet. Du åbner siden i en ny fane.
             </p>
             <p className="mt-2 rounded-xl bg-purple/5 px-3 py-2 text-xs italic text-ink/50">
@@ -142,7 +143,7 @@ export default function AskAiButton({ task }: { task: Task }) {
                 className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-purple to-purple-dark py-2.5 text-sm font-bold text-white shadow-md shadow-purple/30"
               >
                 <SparklesIcon className="h-4 w-4" aria-hidden="true" />
-                Gå til ChatGPT
+                Gå til Copilot
               </button>
             </div>
           </div>

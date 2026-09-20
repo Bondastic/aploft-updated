@@ -61,8 +61,8 @@ const CATEGORY_LESSON_TITLES: Record<CategoryId, string[]> = {
     "Ordklasser: Sværere blandet træning",
   ],
   saetningsled: [
-    "Sætningsled: Grundled & udsagnsled",
-    "Sætningsled: Genstandsled & hensynsled",
+    "Sætningsled: Subjekt & verballed",
+    "Sætningsled: Direkte objekt & indirekte objekt",
     "Sætningsled: Adverbial & prædikater",
     "Sætningsled: Sværere blandet analyse",
   ],

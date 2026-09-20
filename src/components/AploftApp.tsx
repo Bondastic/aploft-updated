@@ -9,12 +9,14 @@ import {
   completeOnboarding,
   finishGuide,
   loadProgress,
+  needsSchoolChoice,
   recordAnswer,
   recordExamAttempt,
   recordLessonResult,
   resetProgress,
   saveProgress,
   setEducation,
+  setSchool,
   unlockLessonsThrough,
 } from "../lib/progress";
 import { lockViewportZoom } from "../utils/viewport";
@@ -23,6 +25,8 @@ import BottomNav, { type NavPage } from "./BottomNav";
 import GuidedTour, { type TourPage } from "./GuidedTour";
 import ErrorBoundary from "./ErrorBoundary";
 import WelcomePage from "../screens/Welcome";
+import SchoolGatePage from "../screens/SchoolGate";
+import { clearExamSatsUsage } from "../lib/examSatsStorage";
 import HomePage from "../screens/Home";
 import PracticePage from "../screens/Practice";
 import ExamPage from "../screens/Exam";
@@ -37,6 +41,10 @@ export default function AploftApp() {
   const [progress, setProgress] = useState<Progress>(() => loadProgress());
   const [page, setPage] = useState<AppPage>("home");
   const [hydrated, setHydrated] = useState(false);
+  // "Er du sikker"-vagten: mens en opgave/prove er i gang, advarer appen for
+  // navigation vaek, fordi fremdriften i netop den session gaar tabt.
+  const [sessionActive, setSessionActive] = useState(false);
+  const [pendingNav, setPendingNav] = useState<AppPage | null>(null);
   // Spotlight-rundvisningen for nye brugere (starter på Profil lige efter
   // velkomstskærmen og gennemgår hele appen).
   const [guideActive, setGuideActive] = useState(false);
@@ -77,6 +85,27 @@ export default function AploftApp() {
 
   const handleTourNavigate = useCallback((p: TourPage) => setPage(p), []);
 
+  // Navigation med session-vagt: i en igangvaerende opgave/prove skal brugeren
+  // bekræfte, at fremdriften i sessionen forsvinder, hvis de gaar vaek.
+  const requestNavigate = useCallback(
+    (target: AppPage) => {
+      if (sessionActive && target !== page) {
+        setPendingNav(target);
+        return;
+      }
+      setPage(target);
+      window.scrollTo({ top: 0, behavior: progress.settings.reduceMotion ? "auto" : "smooth" });
+    },
+    [sessionActive, page, progress.settings.reduceMotion]
+  );
+
+  function confirmLeaveSession() {
+    if (pendingNav) setPage(pendingNav);
+    setPendingNav(null);
+    setSessionActive(false);
+    window.scrollTo({ top: 0, behavior: progress.settings.reduceMotion ? "auto" : "smooth" });
+  }
+
   // Før hydration kender vi ikke brugerens rigtige tilstand (uddannelse,
   // onboarded, XP): den ligger i localStorage. For at undgå en hydration-
   // mismatch mellem server- og klient-rendering viser vi derfor en tom,
@@ -95,8 +124,8 @@ export default function AploftApp() {
         <div className="min-h-screen bg-[#faf8ff]">
           <WelcomePage
             reduceMotion={progress.settings.reduceMotion}
-            onComplete={(education, nickname) => {
-              setProgress((p) => completeOnboarding(p, education, nickname));
+            onComplete={(education, nickname, school) => {
+              setProgress((p) => completeOnboarding(p, education, nickname, school));
               setPage("profile");
               setGuideActive(true);
             }}
@@ -135,6 +164,26 @@ export default function AploftApp() {
     setProgress((p) => setEducation(p, education));
   }
 
+  // Eksisterende brugere (og brugere der skifter spor) uden skolevalg møder
+  // én skærm, indtil de har valgt skole - se data/schools.ts og progress.ts.
+  if (needsSchoolChoice(progress)) {
+    return (
+      <ErrorBoundary>
+        <div className="min-h-screen bg-[#faf8ff]">
+          <SchoolGatePage
+            education={progress.education}
+            reduceMotion={progress.settings.reduceMotion}
+            onDone={(school) => {
+              setProgress((p) => setSchool(p, school));
+              setPage("home");
+              window.scrollTo({ top: 0 });
+            }}
+          />
+        </div>
+      </ErrorBoundary>
+    );
+  }
+
   const education = progress.education;
 
   return (
@@ -156,7 +205,7 @@ export default function AploftApp() {
             exit={progress.settings.reduceMotion ? undefined : { opacity: 0, y: -8 }}
             transition={{ duration: 0.16, ease: "easeOut" }}
           >
-            {page === "home" && <HomePage progress={progress} onNavigate={(p) => setPage(p)} />}
+            {page === "home" && <HomePage progress={progress} onNavigate={(p) => requestNavigate(p)} />}
             {page === "practice" && (
               <PracticePage
                 education={education}
@@ -165,6 +214,7 @@ export default function AploftApp() {
                 onWrong={handleWrong}
                 onLessonComplete={handleLessonComplete}
                 onUnlockLessons={(ids) => setProgress((p) => unlockLessonsThrough(p, ids))}
+                onSessionChange={setSessionActive}
               />
             )}
             {page === "exam" && (
@@ -174,6 +224,7 @@ export default function AploftApp() {
                 onCorrect={handleCorrect}
                 onWrong={handleWrong}
                 onExamComplete={handleExamComplete}
+                onSessionChange={setSessionActive}
               />
             )}
             {page === "symbols" && <SymbolsPage progress={progress} />}
@@ -182,11 +233,15 @@ export default function AploftApp() {
             {page === "profile" && (
               <ProfilePage
                 progress={progress}
-                onNavigate={(p) => setPage(p)}
+                onNavigate={(p) => requestNavigate(p)}
                 onSetNickname={(name) => setProgress((p) => ({ ...p, nickname: name }))}
                 onSetReduceMotion={(v) => setProgress((p) => ({ ...p, settings: { ...p.settings, reduceMotion: v } }))}
                 onSetEducation={handleSetEducation}
-                onReset={() => setProgress(resetProgress())}
+                onSetSchool={(school) => setProgress((p) => setSchool(p, school))}
+                onReset={() => {
+                  setProgress(resetProgress());
+                  clearExamSatsUsage();
+                }}
               />
             )}
           </motion.div>
@@ -194,8 +249,34 @@ export default function AploftApp() {
       </main>
       <BottomNav
         page={(["home", "practice", "exam", "symbols", "profile"] as NavPage[]).includes(page as NavPage) ? (page as NavPage) : "home"}
-        onNavigate={setPage}
+        onNavigate={requestNavigate}
       />
+
+      {pendingNav && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+          role="alertdialog"
+          aria-modal="true"
+          aria-label="Bekræft at du forlader en igangværende opgave"
+          onClick={() => setPendingNav(null)}
+        >
+          <div className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <h3 className="font-display text-lg font-extrabold text-ink">Du er midt i en opgave</h3>
+            <p className="text-sm text-ink/60">
+              Går du væk nu, forlader du den igangværende opgave eller prøve : <span className="font-bold text-ink">fremdriften i netop den
+              session bliver ikke gemt</span>, og den skal startes forfra. Dine gemte resultater og dit XP er selvfølgelig sikre.
+            </p>
+            <div className="flex gap-2">
+              <button onClick={() => setPendingNav(null)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                Bliv i opgaven
+              </button>
+              <button onClick={confirmLeaveSession} className="flex-1 rounded-full bg-rose-600 py-2.5 text-sm font-bold text-white shadow-md">
+                Gå alligevel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <GuidedTour
         active={guideActive}
         onNavigate={handleTourNavigate}

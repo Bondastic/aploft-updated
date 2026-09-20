@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import type { CategoryId, CategoryStat, Education, IconName, MascotPose, Progress, SavedAnswer, Task } from "../types";
 import { generateExam, estimateMinutes, poolForTrack, ALL_TASKS, ALL_HHX_TASKS, type ExamTrack } from "../lib/examGenerator";
@@ -10,7 +10,14 @@ import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import { cn } from "../utils/cn";
 import SessionNav from "../components/SessionNav";
-import { CategoryIcon, ClockIcon, ExamIcon } from "../components/icons";
+import { CategoryIcon, ClockIcon, ExamIcon, InfoIcon } from "../components/icons";
+import ExamSatsPage from "./ExamSats";
+import ExamFormatSheet from "../components/exam/ExamFormatSheet";
+import { formatForSchoolId } from "../data/hhx/examFormats";
+import { getSchool } from "../data/schools";
+import { buildQuizAiPrompt } from "../lib/examCopy";
+import { CheckIcon, SparklesIcon } from "../components/icons";
+import { copyTextToClipboard } from "../lib/examCopy";
 
 type Outcome = { ok: boolean; answer?: SavedAnswer } | null;
 
@@ -36,12 +43,15 @@ export default function ExamPage({
   onCorrect,
   onWrong,
   onExamComplete,
+  onSessionChange,
 }: {
   education: Education;
   progress: Progress;
   onCorrect: (category: CategoryId) => void;
   onWrong: (category: CategoryId) => void;
   onExamComplete: (track: ExamTrack, correct: number, total: number, byCategory: Record<string, CategoryStat>) => void;
+  /** Melder tilbage, om en prøve (quiz eller eksamenssæt) er i gang, så appen advarer ved navigation. */
+  onSessionChange?: (active: boolean) => void;
 }) {
   const [phase, setPhase] = useState<"setup" | "running" | "result">("setup");
   const [track, setTrack] = useState<ExamTrack>(education === "hhx" ? "hhx" : "fuld");
@@ -58,6 +68,59 @@ export default function ExamPage({
 
   const isHhx = education === "hhx";
   const theme = getEducation(education);
+  // Eksamenssæt (kun HHX) + "Sådan foregår eksamen"-arket (begge spor).
+  const [satsOpen, setSatsOpen] = useState(false);
+  const [satsActive, setSatsActive] = useState(false);
+  const [formatOpen, setFormatOpen] = useState(false);
+  const [confirmStart, setConfirmStart] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    onSessionChange?.(phase === "running" || (satsOpen && satsActive));
+  }, [phase, satsOpen, satsActive, onSessionChange]);
+
+  // Skolens egen eksamensform (valgt ved onboarding); ubekendt skole => sporets liste.
+  const schoolDef = getSchool(progress.school);
+  const myFormat = formatForSchoolId(schoolDef?.formatId);
+
+  // Bekræftelses-dialog der bruges både fra setup og fra "Prøv igen" på resultatet.
+  const startConfirmModal = confirmStart && (
+<div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+        role="alertdialog"
+        aria-modal="true"
+        aria-label="Bekræft start af prøven"
+        onClick={() => setConfirmStart(false)}
+      >
+        <motion.div
+          initial={reduceMotion ? false : { scale: 0.92, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 380, damping: 28 }}
+          className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-6 text-center shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-3xl" aria-hidden="true">
+            ⏱
+          </span>
+          <h3 className="font-display text-xl font-extrabold text-ink">Er du sikker på, at du vil starte prøven?</h3>
+          <p className="text-sm leading-relaxed text-ink/60">
+            Nu samler jeg {count} spørgsmål fra {TRACK_INFO[track].label.toLowerCase()}, og prøven tager cirka {estimateMinutes(count)} minutter.
+            Går du væk undervejs, <span className="font-bold text-ink">bliver din fremgang i denne prøve ikke gemt</span>.
+          </p>
+          <div className="flex gap-2">
+            <button onClick={() => setConfirmStart(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+              Jeg vil ikke starte endnu
+            </button>
+            <button
+              onClick={startExam}
+              className={cn("flex-1 rounded-full bg-gradient-to-r py-2.5 text-sm font-bold text-white shadow-md", isHhx ? "from-blue-500 to-indigo-600" : "from-purple to-purple-dark")}
+            >
+              Start nu
+            </button>
+          </div>
+        </motion.div>
+      </div>
+  );
   // På HHX er der kun én prøve (hele HHX-pensum); på STX kan man vælge spor.
   const tracks = isHhx ? (["hhx"] as ExamTrack[]) : (Object.keys(TRACK_INFO) as ExamTrack[]);
 
@@ -68,9 +131,15 @@ export default function ExamPage({
   const step = isUltimate ? 1 : 2;
   const categoryEntries = useMemo(() => Object.entries(byCategory), [byCategory]);
 
+  function requestStart() {
+    if (poolForTrack(track, education).length === 0) return;
+    setConfirmStart(true);
+  }
+
   function startExam() {
     const generated = generateExam(track, count, education);
     if (generated.length === 0) return;
+    setConfirmStart(false);
     setTasks(generated);
     setIndex(0);
     setReached(0);
@@ -129,6 +198,19 @@ export default function ExamPage({
     }
   }
 
+  // Eksamenssættet (kun HHX) fylder hele skærmen, indtil det lukkes igen.
+  if (satsOpen) {
+    return (
+      <ExamSatsPage
+        education={education}
+        progress={progress}
+        onClose={() => setSatsOpen(false)}
+        onExamComplete={onExamComplete}
+        onSessionChange={setSatsActive}
+      />
+    );
+  }
+
   if (phase === "setup") {
     return (
       <motion.div
@@ -146,6 +228,67 @@ export default function ExamPage({
               : "Vælg spor og hvor lang prøven skal være, så finder vi de bedste spørgsmål til dig."}
           </p>
         </div>
+
+        {/* EKSAMENSFORMEN: øverst og tydelig, så alle elever ved hvad de bliver
+            eksamineret i, og hvordan det foregår. De to skoler har hver sin form:
+            Egå Gymnasium (STX) og Risskov, Handelsskolen (HHX). */}
+        <button
+          type="button"
+          onClick={() => setFormatOpen(true)}
+          className={cn(
+            "flex w-full items-center gap-4 rounded-2xl border-2 bg-white p-4 text-left shadow-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+            isHhx ? "border-blue-500" : "border-red-500"
+          )}
+        >
+          <span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", isHhx ? theme.softBg : "bg-red-100 text-red-600")}>
+            <InfoIcon className="h-6 w-6" />
+          </span>
+          <span className="flex-1">
+            <span className="flex flex-wrap items-center gap-2">
+              <span className="font-bold text-ink">Sådan foregår din eksamen</span>
+              <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide", isHhx ? theme.accentChip : "bg-red-100 text-red-700")}>
+                {isHhx ? "HHX-formen er klar" : "STX-formen: under udarbejdelse"}
+              </span>
+            </span>
+            <span className="mt-0.5 block text-xs text-ink/50">
+              {myFormat
+                ? `Eksamensformen på ${myFormat.school}: ${myFormat.status === "klar" ? "se hele forløbet, tidsrammen og hvad du bliver eksamineret i." : "vi er ved at færdigbeskrive de sidste detaljer."}`
+                : schoolDef
+                  ? "Vi har endnu ikke en udfoldet beskrivelse af din skoles form : tryk ind og se de former, vi har for dit spor, og hvad vi generelt ved om AP-eksamen."
+                  : "Vælg din skole under Profil, så viser vi præcis den eksamensform, din skole bruger. Indtil videre kan du se formen for dit spor."}
+            </span>
+          </span>
+          <span className={cn("shrink-0 rounded-full px-3 py-1.5 text-xs font-bold text-white", isHhx ? theme.solidBg : "bg-red-600")}>
+            Læs formen
+          </span>
+        </button>
+
+        {/* Eksamensprøven: den format-tro eksamen simulering, kun for HHX (STX har
+            en anden eksamensform, og prøverne er derfor forskellige). */}
+        {isHhx && (
+          <button
+            type="button"
+            onClick={() => setSatsOpen(true)}
+            className={cn(
+              "flex w-full items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-left text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+            )}
+          >
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15">
+              <ExamIcon className="h-7 w-7" />
+            </span>
+            <span className="flex-1">
+              <span className="flex flex-wrap items-center gap-2">
+                <span className="font-display text-lg font-extrabold">Eksamensprøve</span>
+                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">40 min · rigtige-format</span>
+              </span>
+              <span className="mt-0.5 block text-xs leading-relaxed text-white/85">
+                Prøv den virkelige eksamen: tekst at læse og tusche, spørgsmålssæt med blokke, ur der matcher forberedelsen, aflevering og
+                AI-bedømmelse. Indholdet er det, du har trænet i appen.
+              </span>
+            </span>
+            <span className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-extrabold text-blue-600 shadow">Start →</span>
+          </button>
+        )}
 
         <Mascot pose="explain" size="md" speech="Vælg selv sværhedsgrad og længde. Jeg samler spørgsmålene til dig!" reduceMotion={reduceMotion} />
 
@@ -223,8 +366,9 @@ export default function ExamPage({
           )}
           {isHhx && (
             <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
-              HHX-prøven svarer til delprøve 1 i den interne AP-prøve: interaktive spørgsmål over grammatik, kommunikation,
-              sproghandlinger, semantik, pragmatik og sproghistorie.
+              HHX-prøven her svarer til delprøve 1 i den interne AP-prøve: interaktive spørgsmål over grammatik, kommunikation, sproghandlinger,
+              semantik, pragmatik og sproghistorie. Vil du træne til HELE eksamen som den ser ud på Risskov (tekst + spørgsmål + 40 min), så vælg
+              “Eksamensprøve” ovenfor.
             </p>
           )}
           <div className="mt-4 flex items-center gap-2 rounded-xl bg-ink/5 px-3 py-2 text-sm font-semibold text-ink/70">
@@ -234,7 +378,7 @@ export default function ExamPage({
         </div>
 
         <button
-          onClick={startExam}
+          onClick={requestStart}
           className={cn(
             "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3.5 text-base font-bold text-white shadow-lg",
             isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30"
@@ -243,6 +387,10 @@ export default function ExamPage({
           <ExamIcon className="h-5 w-5" />
           Start prøve
         </button>
+
+        {startConfirmModal}
+
+        {formatOpen && <ExamFormatSheet education={education} schoolId={progress.school} onClose={() => setFormatOpen(false)} />}
       </motion.div>
     );
   }
@@ -395,12 +543,40 @@ export default function ExamPage({
         })}
       </div>
 
+      {/* Krav: efter en gennemført prøve kan opgave + egne svar kopieres til en AI efter eget valg. */}
+      <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
+        <p className="flex items-center gap-2 font-bold text-ink">
+          <SparklesIcon className="h-4 w-4" /> Vil du have feedback på dine ordrette svar?
+        </p>
+        <p className="mt-1 text-sm leading-relaxed text-ink/60">
+          Kopiér prøvens opgaver og DINE svar som tekst : sæt ind i en AI efter eget valg (Copilot, ChatGPT, Claude, hvad du nu har) og bed om
+          retning og gode råd. Appen sender intet selv : teksten ligger kun i din udklipsholder.
+        </p>
+        <button
+          type="button"
+          onClick={async () => {
+            const ok = await copyTextToClipboard(buildQuizAiPrompt(`Prøve: ${TRACK_INFO[track].label} (${isHhx ? "HHX" : "STX"})`, tasks, results));
+            setCopied(ok);
+            window.setTimeout(() => setCopied(false), 2500);
+          }}
+          className={cn(
+            "mt-3 flex w-full items-center justify-center gap-2 rounded-full border-2 py-3 text-sm font-bold transition",
+            copied ? "border-emerald-400 bg-emerald-50 text-emerald-700" : "border-ink/15 bg-white text-ink hover:border-blue-400 hover:bg-blue-50"
+          )}
+        >
+          {copied ? <CheckIcon className="h-4 w-4" /> : null}
+          {copied ? "Opgaver og svar er kopieret" : "Kopiér opgaver + mine svar til AI'en"}
+        </button>
+      </div>
+
+      {startConfirmModal}
+
       <div className="flex justify-center gap-3">
         <button onClick={() => setPhase("setup")} className="rounded-full border-2 border-ink/15 px-5 py-2.5 text-sm font-semibold text-ink">
           Ny prøve
         </button>
         <button
-          onClick={startExam}
+          onClick={requestStart}
           className={cn(
             "rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md",
             isHhx ? "bg-blue-600 shadow-blue-500/30" : "bg-purple shadow-purple/30"
