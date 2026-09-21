@@ -88,11 +88,23 @@ for (const sats of HHX_EXAM_SATS) {
         }
         if (!w.split.includes("-")) bad(`${t.id}: "${w.word}" er ikke delt med bindestreger`);
         if (!w.ask.answer) bad(`${t.id}: "${w.word}" mangler facit til ${w.ask.label}`);
-        // Pladsholderen er et eksempel, ikke facit.
-        if (norm(w.splitPlaceholder.replace(/^fx\s*/i, "").replace(/\.\.\.$/, "")) === norm(w.split))
-          bad(`${t.id}: pladsholderen afslører opdelingen af "${w.word}"`);
-        if (norm(w.ask.placeholder.replace(/^fx\s*/i, "")) === norm(w.ask.answer))
-          bad(`${t.id}: pladsholderen afslører ${w.ask.label} for "${w.word}"`);
+        // Pladsholderen må hverken være facit eller ligne ordet: et eksempel
+        // som "Fx pension-..." røber jo første morfem i "pensionsordningen".
+        if (/^fx\b/i.test(w.splitPlaceholder.trim())) {
+          const ph = norm(w.splitPlaceholder.replace(/^fx:?\s*/i, "").replace(/(\.\.\.|…)$/, ""));
+          const first = norm(w.split.split("-")[0]);
+          if (ph === norm(w.split)) bad(`${t.id}: pladsholderen ER opdelingen af "${w.word}"`);
+          if (first.length >= 3 && ph.includes(first)) bad(`${t.id}: pladsholderen røber første morfem i "${w.word}"`);
+          if (ph.length >= 3 && norm(w.word).includes(ph.replace(/-/g, ""))) bad(`${t.id}: pladsholderen er en del af ordet "${w.word}"`);
+        }
+        // Kun pladsholdere, der er et EKSEMPEL ("Fx ..."), kan røbe noget ;
+        // en ren instruktion ("Skriv morfemet her") kan ikke.
+        if (/^fx\b/i.test(w.ask.placeholder.trim())) {
+          const askPh = norm(w.ask.placeholder.replace(/^fx:?\s*/i, "")).replace(/-/g, "");
+          const askAns = norm(w.ask.answer).replace(/-/g, "");
+          if (askPh.length > 0 && (askPh === askAns || askPh.includes(askAns) || askAns.includes(askPh)))
+            bad(`${t.id}: pladsholderen afslører ${w.ask.label} for "${w.word}"`);
+        }
         points += 2;
       }
     }
