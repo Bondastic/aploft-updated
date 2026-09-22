@@ -201,3 +201,63 @@ samme form? Tilføj `HHX_EXAM_SATS_ID` i dens `exams` : intet andet skal røres.
   Med skolen sat til "anden skole" vises det forklarende kort i stedet for
   eksamensprøven. Ingen konsolfejl (ud over proxyens certifikat-advarsler for
   eksterne fonte).
+
+
+---
+
+# RUNDE 4 : Opgaverne har nu hver sin svarform (skolens eget ark)
+
+Runde 3 gav alle syv opgaver det samme format (ét stort skrivefelt + løse
+multiple choice-delspørgsmål). Det er rettet: **hver opgave har nu sin egen
+svarform**, og sproget og begreberne følger skolens ark ordret.
+
+| Opgave | Svarform i appen |
+|---|---|
+| 1 · Genretræk: Hvilken genre er teksten? | Liste med de fem genrer (politisk tale, ejendomsannonce, opinionsartikel, informerende artikel, reklame) : **kun genrenavnet, ingen "fordi ..."-forklaring i valgmulighederne** : plus feltet "Hvordan kan du se det? (brug mindst én ting fra teksten)". |
+| 2 · Kommunikationssituationen (Ciceros pentagram) | Seks små felter: Afsender, Emne (indhold), Modtager, Situation (omstændigheder), Genre/Sprog og Formål (midten af pentagrammet), hver med hjælpetekst og "Skriv kort her...". |
+| 3 · Sproglige særtræk | Ét felt: "Dine observationer (husk citater fra teksten)". |
+| 4 · Morfologisk analyse | Fire ord fra teksten. Pr. ord: "Del ordet i morfemer (brug bindestreger)" + ét felt mere, hvor eleven trækker ÉT bestemt morfem ud (bøjningsendelsen, rodmorfemet, præfikset, suffikset eller bindebogstavet : det skifter fra ord til ord). |
+| 5 · Syntaktisk analyse (sætningsanalyse) | Som før: sætningens klumper med de syv led-symboler. |
+| 6 · Verballedets tid | To sætninger. Pr. sætning: "Hvilken tid står X i?" med knapperne Nutid / Datid / Førnutid / Førdatid / Fremtid + "Omskriv hele sætningen til <tid>". |
+| 7 · Hoved- og ledsætninger | Én sætning delt i sine dele, som markeres hovedsætning/ledsætning, + "Hvilken indleder har ledsætningen?" + "Hvilken funktion har ledsætningen i hovedsætningen?" (Subjekt, Objekt, Adverbial, Subjektsprædikat, Attribut). |
+
+## 10A. Datamodellen
+
+`src/types.ts`: `ExamTaskT.checks` er erstattet af `ExamTaskT.part`, som er én af
+`ExamGenrePartT`, `ExamFieldsPartT`, `ExamMorphologyPartT`, `ExamAnalysisPartT`,
+`ExamTensePartT` og `ExamClausePartT`. Nye id-typer: `ExamGenreId`,
+`ExamTenseId`, `ExamClauseFnId`. De faste lister ligger i
+`src/data/hhx/examSats.ts` som `EXAM_GENRES`, `EXAM_TENSES` og
+`EXAM_CLAUSE_FUNCTIONS` (+ `genreLabel`, `tenseLabel`, `tenseLatin`,
+`clauseFnLabel`).
+
+## 10B. Hvad der giver karakter
+
+Karakteren kommer fra det, der kan rettes entydigt: genren, de otte morfem-svar
+(fire ord x to felter), led-symbolerne, de to tidsvalg + to omskrivninger,
+markeringen af hoved-/ledsætning, indlederen og ledfunktionen. Det er 21-23
+point pr. sæt, og de ligger næsten alle i opgave 4-7, præcis som AP-læreren
+anbefalede. Opgave 2 og 3 rettes aldrig (mange rigtige svar) : de er mærket
+`openEnded` og sendes til AI-feedback sammen med resten.
+
+Rettelsen er mild med vilje: store og små bogstaver, mellemrum, tankestreger og
+tegnsætning er ligegyldige. Morfem-opdelinger accepterer flere gyldige
+varianter (`splitAccepts`), enkeltmorfemer accepteres med og uden bindestreg, og
+omskrivninger godkendes, når de rigtige verbumsformer er med (`rewriteKeys`).
+
+## 10C. Datatjek (scripts/exam-data-check.mts)
+
+Tjekker nu også, at svarformen passer til opgavenummeret, at alle fire
+morfem-opdelinger giver ordet igen, når bindestregerne fjernes, at ordene og
+sætningerne står i teksten, at omskrivningens nøgleord findes i facit OG ændrer
+sig i forhold til den oprindelige sætning, at sætningsdelene i opgave 7 samlet
+giver sætningen, at indlederen står i sætningen, og at **pladsholderne ikke
+afslører facit** (den fangede tre steder, hvor "Fx -en" var selve svaret).
+Resultat: ALL CHECKS PASSED for alle seks sæt.
+
+## 10D. Verifikation
+
+`npm run typecheck` ren · `npm run lint` uændret baseline (7 fejl + 1 warning) ·
+`npm run build` grøn · datatjek grønt · kørt i browser mod `next start`: alle
+syv opgavekort renderer med den rigtige svarform, aflevering giver karakter og
+gennemgang med facit pr. delsvar, og ingen konsolfejl.

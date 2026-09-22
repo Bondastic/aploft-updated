@@ -4,19 +4,17 @@
 // EKSAMENSPRØVE (kun HHX, og kun på skoler der har netop denne eksamensform).
 //
 // Prøven spejler AP-eksamen på Risskov: du trækker en ukendt tekst med SYV
-// opgaver og har 40 minutters skriftlig forberedelse. Flowet er:
-//   intro (informationstekst om eksamen og dens forløb)
-//     → selve prøven (tekst med markeringsværktøjer + de 7 opgaver, ur i siden)
-//     → Indsend (eller klokken ringer ved tidens udløb og beder om aflevering)
-//     → "Lingua retter prøven"-overgang
-//     → resultat: rammesætning først, derefter vejledende karakter, "gem din
-//       prøve"-kopiering, AI-bedømmelse via Copilot og gennemgang pr. opgave.
+// opgaver og har 40 minutters skriftlig forberedelse. Hver opgave har sin egen
+// svarform, præcis som på skolens ark:
+//   1 genre (vælg + begrund) · 2 Ciceros pentagram (seks felter) ·
+//   3 sproglige særtræk (ét felt) · 4 morfologi (fire ord: opdeling + ét
+//   morfem) · 5 syntaktisk analyse (led-symboler) · 6 verballedets tid (to
+//   sætninger: vælg tid + omskriv) · 7 hoved- og ledsætninger (opdel +
+//   indleder + funktion).
 //
-// Hver opgave besvares TO steder:
-//   1. fritekst-feltet (elevens eget svar, som notepapiret til eksamen). Det
-//      kan appen ikke rette ; det kopieres med over til AI-feedback.
-//   2. delspørgsmålene (valg, ordklasser, led-symboler). Dem retter appen, og
-//      KARAKTEREN bygger kun på dem.
+// Karakteren bygger på det, der kan rettes entydigt. Pentagrammet, de
+// sproglige observationer og begrundelserne rettes ALDRIG automatisk : de
+// følger med, når besvarelsen kopieres over til AI-feedback.
 // ---------------------------------------------------------------------------
 
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -24,17 +22,31 @@ import { motion } from "framer-motion";
 import type {
   CategoryStat,
   Education,
-  ExamAnalysisCheckT,
-  ExamCheckT,
-  ExamChoiceCheckT,
-  ExamMultiCheckT,
+  ExamAnalysisPartT,
+  ExamClauseFnId,
+  ExamClausePartT,
+  ExamFieldT,
+  ExamFieldsPartT,
+  ExamGenreId,
+  ExamGenrePartT,
+  ExamMorphologyPartT,
   ExamTaskT,
-  ExamWordClassCheckT,
-  ExamWordClassTag,
+  ExamTenseId,
+  ExamTensePartT,
   LedSymbol,
   Progress,
 } from "../types";
-import { pickNextExamSats, HHX_EXAM_SATS, EXAM_WORD_CLASS_TAGS, wordClassLabel } from "../data/hhx/examSats";
+import {
+  EXAM_CLAUSE_FUNCTIONS,
+  EXAM_GENRES,
+  EXAM_TENSES,
+  HHX_EXAM_SATS,
+  clauseFnLabel,
+  genreLabel,
+  pickNextExamSats,
+  tenseLabel,
+  tenseLatin,
+} from "../data/hhx/examSats";
 import { loadExamSatsUsage, markExamSatsUsed } from "../lib/examSatsStorage";
 import { canTakeExamSats, getSchool, schoolsWithExam, HHX_EXAM_SATS_ID } from "../data/schools";
 import { SYMBOLS, getSymbolDef } from "../data/symbols";
@@ -47,17 +59,25 @@ import { cn } from "../utils/cn";
 
 type Phase = "intro" | "running" | "grading" | "result";
 
-/** Svar på et lukket delspørgsmål (det er dem, appen retter). */
-type CheckAns =
-  | { kind: "choice"; selected: number }
-  | { kind: "multi"; selected: number[] }
-  | { kind: "wordclass"; tags: (ExamWordClassTag | null)[] }
-  | { kind: "analysis"; symbols: (LedSymbol | null)[] };
+/** Elevens svar på én opgave. Tomme felter betyder "ikke besvaret". */
+type Ans = {
+  genre?: ExamGenreId;
+  /** Alle skrivefelter i opgaven, nøglet på feltets id. */
+  text: Record<string, string>;
+  /** Opgave 5: ét symbol pr. led-klump. */
+  led?: (LedSymbol | null)[];
+  /** Opgave 6: valgt tid pr. sætning. */
+  tense?: Record<string, ExamTenseId>;
+  /** Opgave 7: hoved/led pr. sætningsdel + ledsætningens funktion. */
+  clause?: ("hoved" | "led" | null)[];
+  clauseFn?: ExamClauseFnId;
+};
 
-// Karakterskalaen. Den er en smule mildere end prøvegeneratorens, fordi
-// delspørgsmålene her sidder oven på en rigtig eksamensopgave: karakteren skal
-// kunne vise fagligt niveau uden at slå benene væk under en, der er ved at
-// lære stoffet. Den er stadig streng nok til at 12 skal fortjenes.
+const EMPTY: Ans = { text: {} };
+
+// Karakterskalaen. Den er en smule mildere end prøvegeneratorens, fordi den
+// sidder oven på en rigtig eksamensopgave: karakteren skal kunne vise fagligt
+// niveau uden at slå benene væk under en, der er ved at lære stoffet.
 const GRADE_SCALE: { grade: string; label: string; minPct: number }[] = [
   { grade: "12", label: "Fremragende", minPct: 85 },
   { grade: "10", label: "Fortrinligt", minPct: 72 },
@@ -72,7 +92,7 @@ function gradeFor(pct: number): { grade: string; label: string } {
   return GRADE_SCALE.find((g) => pct >= g.minPct) ?? GRADE_SCALE[GRADE_SCALE.length - 1];
 }
 
-/** Point med dansk decimalkomma (2,3 - ikke 2.3). */
+/** Point med dansk decimalkomma (2,5 - ikke 2.5). */
 function fmtPoints(n: number): string {
   return (Math.round(n * 10) / 10).toLocaleString("da-DK");
 }
@@ -81,6 +101,42 @@ function fmtTime(s: number): string {
   const m = Math.floor(s / 60);
   const sec = s % 60;
   return `${m}:${sec.toString().padStart(2, "0")}`;
+}
+
+// ---------------------------------------------------------------------------
+// Mild tekst-sammenligning. Eleven skal ikke straffes for mellemrum, store
+// bogstaver, tankestreger eller et punktum til sidst.
+// ---------------------------------------------------------------------------
+function norm(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFKC")
+    .replace(/[–—‐‑‒]/g, "-")
+    .replace(/[.,;:!?"'«»]/g, "")
+    .replace(/\s+/g, "")
+    .trim();
+}
+
+/** Morfem-opdeling: "impuls-køb-e-ne" (bindestreger betyder noget her). */
+function matchSplit(input: string, answer: string, accepts?: string[]): boolean {
+  const n = norm(input);
+  if (!n) return false;
+  return [answer, ...(accepts ?? [])].some((a) => norm(a) === n);
+}
+
+/** Ét enkelt morfem: her er bindestreger ligegyldige ("-en" = "en"). */
+function matchMorpheme(input: string, answer: string, accepts?: string[]): boolean {
+  const strip = (x: string) => norm(x).replace(/-/g, "");
+  const n = strip(input);
+  if (!n) return false;
+  return [answer, ...(accepts ?? [])].some((a) => strip(a) === n);
+}
+
+/** Omskrivning: de rigtige verbumsformer skal være med. */
+function matchRewrite(input: string, keys: string[]): boolean {
+  const n = " " + input.toLowerCase().normalize("NFKC").replace(/[.,;:!?"'«»]/g, " ").replace(/\s+/g, " ").trim() + " ";
+  if (n.trim().length === 0) return false;
+  return keys.every((k) => n.includes(" " + k.toLowerCase() + " "));
 }
 
 /** Lille WebAudio-"klokke": tre klanger. Ingen lydfil nødvendig. */
@@ -134,54 +190,111 @@ async function copyToClipboard(text: string): Promise<boolean> {
   }
 }
 
-function isCheckAnswered(a: CheckAns | undefined): boolean {
+// ---------------------------------------------------------------------------
+// Rettelse. Ét point pr. entydigt delsvar ; de åbne felter tæller ikke med.
+// ---------------------------------------------------------------------------
+type Scored = { label: string; got: string; facit: string; ok: boolean };
+
+function scoreTask(task: ExamTaskT, a: Ans | undefined): { rows: Scored[]; points: number; max: number } {
+  const ans = a ?? EMPTY;
+  const rows: Scored[] = [];
+  const p = task.part;
+
+  if (p.kind === "genre") {
+    rows.push({
+      label: "Genre",
+      got: ans.genre ? genreLabel(ans.genre) : "(ikke valgt)",
+      facit: genreLabel(p.correct),
+      ok: ans.genre === p.correct,
+    });
+  }
+
+  if (p.kind === "morphology") {
+    p.words.forEach((w, i) => {
+      const split = ans.text[`${i}-split`] ?? "";
+      const ask = ans.text[`${i}-ask`] ?? "";
+      rows.push({
+        label: `"${w.word}" : morfemer`,
+        got: split.trim() || "(tomt)",
+        facit: w.split,
+        ok: matchSplit(split, w.split, w.splitAccepts),
+      });
+      rows.push({
+        label: `"${w.word}" : ${w.ask.label.toLowerCase()}`,
+        got: ask.trim() || "(tomt)",
+        facit: w.ask.answer,
+        ok: matchMorpheme(ask, w.ask.answer, w.ask.accepts),
+      });
+    });
+  }
+
+  if (p.kind === "analysis") {
+    p.chunks.forEach((chunk, i) => {
+      const sym = ans.led?.[i] ?? null;
+      rows.push({
+        label: `«${chunk}»`,
+        got: sym ? getSymbolDef(sym).short : "(tomt)",
+        facit: getSymbolDef(p.correctMap[i]).short,
+        ok: sym === p.correctMap[i],
+      });
+    });
+  }
+
+  if (p.kind === "tense") {
+    p.items.forEach((it) => {
+      const picked = ans.tense?.[it.id];
+      rows.push({
+        label: `"${it.verb}" : tid`,
+        got: picked ? tenseLabel(picked) : "(ikke valgt)",
+        facit: tenseLabel(it.correct),
+        ok: picked === it.correct,
+      });
+      const rewrite = ans.text[`${it.id}-rewrite`] ?? "";
+      rows.push({
+        label: `Omskrivning til ${tenseLatin(it.rewriteTo)}`,
+        got: rewrite.trim() || "(tomt)",
+        facit: it.rewriteAnswer,
+        ok: matchRewrite(rewrite, it.rewriteKeys),
+      });
+    });
+  }
+
+  if (p.kind === "clause") {
+    p.parts.forEach((part, i) => {
+      const picked = ans.clause?.[i] ?? null;
+      rows.push({
+        label: `«${part.text}»`,
+        got: picked === "hoved" ? "Hovedsætning" : picked === "led" ? "Ledsætning" : "(ikke markeret)",
+        facit: part.type === "hoved" ? "Hovedsætning" : "Ledsætning",
+        ok: picked === part.type,
+      });
+    });
+    const ind = ans.text["indleder"] ?? "";
+    rows.push({
+      label: "Ledsætningens indleder",
+      got: ind.trim() || "(tomt)",
+      facit: p.indleder,
+      ok: matchMorpheme(ind, p.indleder, p.indlederAccepts),
+    });
+    rows.push({
+      label: "Ledsætningens funktion",
+      got: ans.clauseFn ? clauseFnLabel(ans.clauseFn) : "(ikke valgt)",
+      facit: clauseFnLabel(p.funktion),
+      ok: ans.clauseFn === p.funktion,
+    });
+  }
+
+  return { rows, points: rows.filter((r) => r.ok).length, max: rows.length };
+}
+
+/** Har eleven overhovedet rørt opgaven? (Bruges til status og aflevering.) */
+function taskTouched(task: ExamTaskT, a: Ans | undefined): boolean {
   if (!a) return false;
-  switch (a.kind) {
-    case "choice":
-      return true;
-    case "multi":
-      return a.selected.length > 0;
-    case "wordclass":
-      return a.tags.some((t) => t !== null);
-    case "analysis":
-      return a.symbols.some((s) => s !== null);
-  }
-}
-
-/**
- * Retter ét delspørgsmål og giver point mellem 0 og 1. Ordklasse- og
- * led-opgaver får DELPOINT (et forkert led koster ikke hele opgaven), fordi
- * de indeholder flere svar hver.
- */
-function scoreCheck(c: ExamCheckT, a: CheckAns | undefined): number {
-  if (!a) return 0;
-  switch (c.kind) {
-    case "choice":
-      return a.kind === "choice" && a.selected === c.correctIndex ? 1 : 0;
-    case "multi": {
-      if (a.kind !== "multi") return 0;
-      const hits = a.selected.filter((i) => c.correctIndexes.includes(i)).length;
-      const wrong = a.selected.filter((i) => !c.correctIndexes.includes(i)).length;
-      return Math.max(0, (hits - wrong) / c.correctIndexes.length);
-    }
-    case "wordclass": {
-      if (a.kind !== "wordclass") return 0;
-      const hits = c.words.filter((w, i) => a.tags[i] === w.correct).length;
-      return hits / c.words.length;
-    }
-    case "analysis": {
-      if (a.kind !== "analysis") return 0;
-      const hits = c.correctMap.filter((sym, i) => a.symbols[i] === sym).length;
-      return hits / c.correctMap.length;
-    }
-  }
-}
-
-function scoreLabel(score: number, answered: boolean): { text: string; tone: string } {
-  if (!answered) return { text: "Ikke besvaret", tone: "bg-ink/30" };
-  if (score >= 0.999) return { text: "Rigtigt", tone: "bg-emerald-500" };
-  if (score > 0) return { text: "Delvist rigtigt", tone: "bg-amber-500" };
-  return { text: "Forkert", tone: "bg-rose-500" };
+  if (a.genre || a.clauseFn) return true;
+  if (a.led?.some((s) => s !== null)) return true;
+  if (a.tense && Object.keys(a.tense).length > 0) return true;
+  if (a.clause?.some((c) => c !== null)) return true;
+  return Object.values(a.text).some((v) => v.trim().length > 0);
 }
 
 export default function ExamSatsPage({
@@ -198,8 +311,6 @@ export default function ExamSatsPage({
   /** Melder tilbage, når en prøve er IGANGVÆRENDE (bruges af app-skallens nav-vagt). */
   onSessionChange?: (active: boolean) => void;
 }) {
-  // Rotation: aldrig det samme sæt to gange i træk ; først når ALLE sæt er
-  // prøvet, blandes puljen igen (og introen forklarer hvorfor).
   const [usage, setUsage] = useState(() => loadExamSatsUsage());
   const [pick, setPick] = useState(() => pickNextExamSats(loadExamSatsUsage().usedIds, loadExamSatsUsage().lastId));
   const sats = pick.sats;
@@ -212,8 +323,7 @@ export default function ExamSatsPage({
   const mayTake = canTakeExamSats(progress.school, education);
 
   const [phase, setPhase] = useState<Phase>("intro");
-  const [checkAnswers, setCheckAnswers] = useState<Record<string, CheckAns>>({});
-  const [written, setWritten] = useState<Record<string, string>>({});
+  const [answers, setAnswers] = useState<Record<string, Ans>>({});
   const [marks, setMarks] = useState<Record<number, ExamMark>>({});
   const [secs, setSecs] = useState(sats.minutes * 60);
   const [confirmSubmit, setConfirmSubmit] = useState(false);
@@ -227,59 +337,35 @@ export default function ExamSatsPage({
   const [gradingTick, setGradingTick] = useState(0);
 
   const tasks = sats.tasks;
-  const allChecks = useMemo(() => tasks.flatMap((t) => t.checks), [tasks]);
-  const totalChecks = allChecks.length;
-  const writtenCount = useMemo(() => tasks.filter((t) => (written[t.id] ?? "").trim().length > 0).length, [tasks, written]);
-  const checkAnsweredCount = useMemo(
-    () => allChecks.filter((c) => isCheckAnswered(checkAnswers[c.id])).length,
-    [allChecks, checkAnswers]
-  );
+  const touchedCount = useMemo(() => tasks.filter((t) => taskTouched(t, answers[t.id])).length, [tasks, answers]);
+  const maxPoints = useMemo(() => tasks.reduce((n, t) => n + scoreTask(t, undefined).max, 0), [tasks]);
 
   const results = useMemo(() => {
     if (submittedAt === null) return null;
-    const perTask = tasks.map((t) => ({
-      task: t,
-      answer: (written[t.id] ?? "").trim(),
-      checks: t.checks.map((c) => {
-        const a = checkAnswers[c.id];
-        const answered = isCheckAnswered(a);
-        return { check: c, answer: a, answered, score: answered ? scoreCheck(c, a) : 0 };
-      }),
-    }));
-    const flat = perTask.flatMap((t) => t.checks);
-    const points = flat.reduce((sum, r) => sum + r.score, 0);
+    const perTask = tasks.map((t) => ({ task: t, ans: answers[t.id] ?? EMPTY, ...scoreTask(t, answers[t.id]) }));
+    const points = perTask.reduce((n, t) => n + t.points, 0);
     const byCategory: Record<string, CategoryStat> = {};
     for (const t of perTask) {
-      if (!t.task.category || t.checks.length === 0) continue;
-      const taskPoints = t.checks.reduce((sum, r) => sum + r.score, 0);
+      if (!t.task.category || t.max === 0) continue;
       const stat = byCategory[t.task.category] ?? { correct: 0, total: 0 };
-      byCategory[t.task.category] = {
-        correct: stat.correct + Math.round(taskPoints),
-        total: stat.total + t.checks.length,
-      };
+      byCategory[t.task.category] = { correct: stat.correct + t.points, total: stat.total + t.max };
     }
-    return { perTask, flat, points, byCategory };
-  }, [submittedAt, tasks, written, checkAnswers]);
+    return { perTask, points, byCategory };
+  }, [submittedAt, tasks, answers]);
 
-  const pct = results && totalChecks > 0 ? Math.round((results.points / totalChecks) * 100) : 0;
+  const pct = results && maxPoints > 0 ? Math.round((results.points / maxPoints) * 100) : 0;
   const grade = gradeFor(pct);
 
-  // App-skallen (AploftApp) skal vide, om en prøve er i gang, så navigation
-  // advarer, før fremdriften smides væk.
   useEffect(() => {
     onSessionChange?.(phase === "running" || phase === "grading");
   }, [phase, onSessionChange]);
 
-  // Nedtælling (kun mens prøven kører).
   useEffect(() => {
     if (phase !== "running") return;
-    const iv = window.setInterval(() => {
-      setSecs((s) => Math.max(0, s - 1));
-    }, 1000);
+    const iv = window.setInterval(() => setSecs((s) => Math.max(0, s - 1)), 1000);
     return () => window.clearInterval(iv);
   }, [phase]);
 
-  // "Lingua retter prøven"-overgang: et roligt øjeblik, før resultatet vises.
   useEffect(() => {
     if (phase !== "grading") return;
     const iv = window.setInterval(() => setGradingTick((t) => t + 1), 620);
@@ -290,13 +376,11 @@ export default function ExamSatsPage({
     };
   }, [phase, reduceMotion]);
 
-  // Tiden er gået: klokken ringer, og aflevering kræves med det samme.
   const timeUp = phase === "running" && secs === 0;
   useEffect(() => {
     if (timeUp) playExamBell();
   }, [timeUp]);
 
-  // Lås scroll når en dialog er åben (ligesom rundvisningen).
   useEffect(() => {
     const lock = timeUp || confirmSubmit || confirmAbort || confirmStart || aiModal !== null || showFormatHint;
     document.body.style.overflow = lock ? "hidden" : "";
@@ -304,6 +388,10 @@ export default function ExamSatsPage({
       document.body.style.overflow = "";
     };
   }, [timeUp, confirmSubmit, confirmAbort, confirmStart, aiModal, showFormatHint]);
+
+  const update = useCallback((taskId: string, patch: (prev: Ans) => Ans) => {
+    setAnswers((prev) => ({ ...prev, [taskId]: patch(prev[taskId] ?? { text: {} }) }));
+  }, []);
 
   const startExam = useCallback(() => {
     setConfirmStart(false);
@@ -314,58 +402,78 @@ export default function ExamSatsPage({
   }, [reduceMotion, sats.id]);
 
   const submit = useCallback(() => {
-    // Beregnes her (ikke i memo'en), fordi resultatet skal registreres straks.
     let points = 0;
     const byCat: Record<string, CategoryStat> = {};
     for (const t of tasks) {
-      if (t.checks.length === 0) continue;
-      let taskPoints = 0;
-      for (const c of t.checks) {
-        const a = checkAnswers[c.id];
-        const score = isCheckAnswered(a) ? scoreCheck(c, a) : 0;
-        taskPoints += score;
-      }
-      points += taskPoints;
-      if (t.category) {
+      const s = scoreTask(t, answers[t.id]);
+      points += s.points;
+      if (t.category && s.max > 0) {
         const stat = byCat[t.category] ?? { correct: 0, total: 0 };
-        byCat[t.category] = { correct: stat.correct + Math.round(taskPoints), total: stat.total + t.checks.length };
+        byCat[t.category] = { correct: stat.correct + s.points, total: stat.total + s.max };
       }
     }
     setSubmittedAt(Date.now());
     setUsedSecs(sats.minutes * 60 - secs);
     setConfirmSubmit(false);
     setPhase("grading");
-    onExamComplete("hhx", Math.round(points), totalChecks, byCat);
+    onExamComplete("hhx", points, maxPoints, byCat);
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
-  }, [checkAnswers, onExamComplete, reduceMotion, sats.minutes, secs, tasks, totalChecks]);
+  }, [answers, maxPoints, onExamComplete, reduceMotion, sats.minutes, secs, tasks]);
 
-  /** Elevens besvarelse som ren tekst (fritekst + valgte delsvar, aldrig facit). */
+  /** Elevens besvarelse som ren tekst (aldrig facit). */
   function buildCopyText(): string {
-    const lines: string[] = [];
-    lines.push(`AP-eksamensprøve (HHX) · ${sats.title}`);
-    lines.push(`Tekst: "${sats.article.title}" (${sats.article.byline})`);
-    lines.push(`Forberedelsestid: ${sats.minutes} minutter · ${tasks.length} opgaver`);
-    lines.push("");
-    tasks.forEach((t) => {
-      lines.push(`OPGAVE ${t.no} [${t.label}]: ${t.prompt}`);
-      const own = (written[t.id] ?? "").trim();
-      lines.push(`  Min besvarelse: ${own.length > 0 ? own : "(ikke besvaret)"}`);
-      if (t.checks.length > 0) {
-        lines.push("  Mine svar på delspørgsmålene:");
-        t.checks.forEach((c) => {
-          lines.push(`   - ${c.prompt}`);
-          lines.push(`     ${checkAnswerAsText(c, checkAnswers[c.id])}`);
+    const L: string[] = [];
+    L.push(`AP-eksamensprøve (HHX) · ${sats.title}`);
+    L.push(`Tekst: "${sats.article.title}" (${sats.article.byline})`);
+    L.push(`Forberedelsestid: ${sats.minutes} minutter · ${tasks.length} opgaver`);
+    L.push("");
+    for (const t of tasks) {
+      const a = answers[t.id] ?? EMPTY;
+      L.push(`OPGAVE ${t.no}: ${t.prompt}`);
+      const p = t.part;
+      if (p.kind === "genre") {
+        L.push(`  Genre: ${a.genre ? genreLabel(a.genre) : "(ikke valgt)"}`);
+        L.push(`  ${p.justify.label} ${(a.text["begrundelse"] ?? "").trim() || "(ikke besvaret)"}`);
+      }
+      if (p.kind === "fields") {
+        for (const f of p.fields) L.push(`  ${f.label}: ${(a.text[f.id] ?? "").trim() || "(ikke besvaret)"}`);
+      }
+      if (p.kind === "morphology") {
+        p.words.forEach((w, i) => {
+          L.push(`  "${w.word}"`);
+          L.push(`    Morfemer: ${(a.text[`${i}-split`] ?? "").trim() || "(ikke besvaret)"}`);
+          L.push(`    ${w.ask.label}: ${(a.text[`${i}-ask`] ?? "").trim() || "(ikke besvaret)"}`);
         });
       }
-      lines.push("");
-    });
+      if (p.kind === "analysis") {
+        L.push(`  Sætning: "${p.sentence}"`);
+        L.push("  " + p.chunks.map((c, i) => `${c} → ${a.led?.[i] ? getSymbolDef(a.led[i]!).short : "(ikke valgt)"}`).join(" ; "));
+      }
+      if (p.kind === "tense") {
+        for (const it of p.items) {
+          L.push(`  "${it.sentence}"`);
+          L.push(`    "${it.verb}" står i: ${a.tense?.[it.id] ? tenseLabel(a.tense[it.id]!) : "(ikke valgt)"}`);
+          L.push(`    Omskrevet til ${tenseLatin(it.rewriteTo)}: ${(a.text[`${it.id}-rewrite`] ?? "").trim() || "(ikke besvaret)"}`);
+        }
+      }
+      if (p.kind === "clause") {
+        L.push(`  Sætning: "${p.sentence}"`);
+        p.parts.forEach((part, i) => {
+          const v = a.clause?.[i];
+          L.push(`    "${part.text}" = ${v === "hoved" ? "hovedsætning" : v === "led" ? "ledsætning" : "(ikke markeret)"}`);
+        });
+        L.push(`    Indleder: ${(a.text["indleder"] ?? "").trim() || "(ikke besvaret)"}`);
+        L.push(`    Ledsætningens funktion: ${a.clauseFn ? clauseFnLabel(a.clauseFn) : "(ikke valgt)"}`);
+      }
+      L.push("");
+    }
     const m = countExamMarks(marks);
     if (m.hl + m.led + m.wc > 0) {
-      lines.push("Markeringer i teksten:");
-      lines.push(`- ${m.hl} tusch-markeringer, ${m.led} led-mærkater, ${m.wc} ordklasse-mærkater (mine noter i teksten).`);
-      lines.push("");
+      L.push("Markeringer i teksten:");
+      L.push(`- ${m.hl} tusch-markeringer, ${m.led} led-mærkater, ${m.wc} ordklasse-mærkater (mine noter i teksten).`);
+      L.push("");
     }
-    return lines.join("\n");
+    return L.join("\n");
   }
 
   function buildAiPrompt(): string {
@@ -400,15 +508,13 @@ export default function ExamSatsPage({
 
   function reset() {
     setPhase("intro");
-    setCheckAnswers({});
-    setWritten({});
+    setAnswers({});
     setMarks({});
     setSubmittedAt(null);
     setConfirmSubmit(false);
     setConfirmAbort(false);
     setAiModal(null);
     setConfirmStart(false);
-    // Rotation: næste sæt ALDRIG det, man lige har prøvet (se pickNextExamSats).
     const u = loadExamSatsUsage();
     setUsage(u);
     const next = pickNextExamSats(u.usedIds, sats.id);
@@ -417,7 +523,6 @@ export default function ExamSatsPage({
   }
 
   // --------------------------------------------------------------------------
-  // Adgangsvagt: skolen skal have netop denne eksamensform.
   if (!mayTake) {
     const schools = schoolsWithExam(HHX_EXAM_SATS_ID);
     return (
@@ -461,7 +566,7 @@ export default function ExamSatsPage({
               <ClockIcon className="h-4 w-4" /> {sats.minutes} minutters forberedelse
             </span>
             <span className="rounded-full bg-white/15 px-3 py-1.5">{tasks.length} opgaver</span>
-            <span className="rounded-full bg-white/15 px-3 py-1.5">Fritekst + delspørgsmål</span>
+            <span className="rounded-full bg-white/15 px-3 py-1.5">Mundtlig eksamen bagefter</span>
           </div>
           <p className="mt-3 text-xs font-semibold text-white/75">
             Sæt prøvet før : {Math.min(usage.usedIds.length, HHX_EXAM_SATS.length)} af {HHX_EXAM_SATS.length}
@@ -485,7 +590,7 @@ export default function ExamSatsPage({
             pose="explain"
             size="md"
             reduceMotion={reduceMotion}
-            speech="Tag det roligt. Læs teksten grundigt, skriv dine svar ned som på notepapiret ; husk at der ikke findes forkerte forsøg her."
+            speech="Tag det roligt. Læs teksten grundigt, og skriv svarene ned som på notepapiret ; her findes der ingen forkerte forsøg."
           />
           <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
             <p className="font-bold text-ink">Prøvens forløb</p>
@@ -502,18 +607,6 @@ export default function ExamSatsPage({
           </div>
 
           <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
-            <p className="font-bold text-ink">Det bliver du eksamineret i</p>
-            <div className="mt-3 grid gap-2.5 sm:grid-cols-3">
-              {sats.intro.examIn.map((it) => (
-                <div key={it.title} className="rounded-xl bg-ink/[0.03] p-3">
-                  <p className="text-sm font-bold text-ink">{it.title}</p>
-                  <p className="mt-1 text-xs text-ink/60">{it.body}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
             <p className="font-bold text-ink">De syv opgaver, du trækker</p>
             <ol className="mt-3 grid gap-1.5 sm:grid-cols-2">
               {tasks.map((t) => (
@@ -526,8 +619,9 @@ export default function ExamSatsPage({
               ))}
             </ol>
             <p className="mt-3 text-xs leading-relaxed text-ink/55">
-              Du skriver selv dine svar i felterne under hver opgave (dem bedømmer AI&apos;en bagefter), og under dem ligger et par
-              delspørgsmål med faste svar. Karakteren i appen kommer fra delspørgsmålene : det er dem, der kan rettes automatisk.
+              Hver opgave har sin egen svarform, præcis som på eksamensarket. Det, der kan rettes entydigt (genre, morfemer, led, tider,
+              omskrivninger, indleder og ledfunktion), retter appen, og det giver den vejledende karakter. Pentagrammet og dine sproglige
+              observationer rettes ikke : de sendes til AI&apos;en, hvis du vil have feedback på dem.
             </p>
           </div>
 
@@ -552,10 +646,7 @@ export default function ExamSatsPage({
           <button
             type="button"
             onClick={() => setConfirmStart(true)}
-            className={cn(
-              "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3.5 text-base font-bold text-white shadow-lg",
-              theme.gradient
-            )}
+            className={cn("flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3.5 text-base font-bold text-white shadow-lg", theme.gradient)}
           >
             <ClockIcon className="h-5 w-5" /> Start prøven ( {sats.minutes} min )
           </button>
@@ -588,7 +679,7 @@ export default function ExamSatsPage({
   if (phase === "grading") {
     const LINES = [
       "Læser dine besvarelser igennem …",
-      "Retter delspørgsmålene …",
+      "Retter morfemer, led og tider …",
       "Tæller point sammen …",
       "Pakker gennemgang og kopiér-tekst ind …",
     ];
@@ -596,7 +687,6 @@ export default function ExamSatsPage({
       <motion.div
         initial={reduceMotion ? false : { opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
-        exit={reduceMotion ? undefined : { opacity: 0, y: -8 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
         className="app-page-narrow flex min-h-[60vh] flex-col items-center justify-center text-center"
       >
@@ -635,7 +725,6 @@ export default function ExamSatsPage({
               <p className="text-xs font-semibold text-ink/50">
                 {sats.title} · {sats.schoolLabel}
               </p>
-              {/* Mobil-ur: ligger øverst ved siden af afbryd-knappen */}
               <span
                 className={cn(
                   "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-extrabold tabular-nums lg:hidden",
@@ -654,9 +743,7 @@ export default function ExamSatsPage({
               <div>
                 <h2 className="font-display text-xl font-extrabold text-ink">De {tasks.length} opgaver</h2>
                 <p className="text-xs text-ink/50">
-                  Skriv dit eget svar i feltet under hver opgave (det er det, du skal kunne sige mundtligt til eksamen), og besvar
-                  delspørgsmålene, som appen retter. Besvaret: {writtenCount} af {tasks.length} opgaver · {checkAnsweredCount} af{" "}
-                  {totalChecks} delspørgsmål.
+                  Besvar opgaverne, som du vil læse dem op til eksamen. Du er i gang med {touchedCount} af {tasks.length}.
                 </p>
               </div>
               {tasks.map((t) => (
@@ -664,36 +751,27 @@ export default function ExamSatsPage({
                   key={t.id}
                   task={t}
                   total={tasks.length}
-                  written={written[t.id] ?? ""}
-                  onWrite={(v) => setWritten((prev) => ({ ...prev, [t.id]: v }))}
-                  answers={checkAnswers}
-                  onAnswer={(id, a) => setCheckAnswers((prev) => ({ ...prev, [id]: a }))}
+                  ans={answers[t.id] ?? EMPTY}
+                  onChange={(patch) => update(t.id, patch)}
                 />
               ))}
 
               <button
                 type="button"
-                onClick={() => (writtenCount < tasks.length || checkAnsweredCount < totalChecks ? setConfirmSubmit(true) : submit())}
-                className={cn(
-                  "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-4 text-base font-extrabold text-white shadow-lg",
-                  theme.gradient
-                )}
+                onClick={() => (touchedCount < tasks.length ? setConfirmSubmit(true) : submit())}
+                className={cn("flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-4 text-base font-extrabold text-white shadow-lg", theme.gradient)}
               >
                 Indsend prøven
               </button>
             </div>
           </div>
 
-          {/* Ur + status i siden (desktop) */}
           <aside className="hidden lg:block">
             <div className="sticky top-4 space-y-3">
               <div className={cn("rounded-2xl border-2 bg-white p-4 text-center shadow-sm", critical ? "border-rose-400" : warning ? "border-amber-400" : "border-ink/10")}>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Forberedelse · {sats.minutes} min</p>
                 <p
-                  className={cn(
-                    "mt-1 font-display text-4xl font-extrabold tabular-nums",
-                    critical ? "animate-pulse text-rose-600" : warning ? "text-amber-600" : "text-ink"
-                  )}
+                  className={cn("mt-1 font-display text-4xl font-extrabold tabular-nums", critical ? "animate-pulse text-rose-600" : warning ? "text-amber-600" : "text-ink")}
                   aria-live="polite"
                 >
                   {fmtTime(secs)}
@@ -704,29 +782,20 @@ export default function ExamSatsPage({
                 <p className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Status</p>
                 <div className="mt-2 space-y-1.5">
                   {tasks.map((t) => {
-                    const hasText = (written[t.id] ?? "").trim().length > 0;
-                    const done = t.checks.filter((c) => isCheckAnswered(checkAnswers[c.id])).length;
+                    const done = taskTouched(t, answers[t.id]);
                     return (
                       <div key={t.id} className="flex items-center gap-2 text-xs">
-                        <span
-                          className={cn(
-                            "flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-extrabold",
-                            hasText && done === t.checks.length ? cn(theme.solidBg, "text-white") : "bg-ink/10 text-ink/40"
-                          )}
-                        >
+                        <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-extrabold", done ? cn(theme.solidBg, "text-white") : "bg-ink/10 text-ink/40")}>
                           {t.no}
                         </span>
-                        <span className={cn("flex-1 truncate", hasText ? "font-semibold text-ink" : "text-ink/40")}>{t.label}</span>
-                        <span className="tabular-nums text-[10px] text-ink/35">
-                          {done}/{t.checks.length}
-                        </span>
+                        <span className={cn("flex-1 truncate", done ? "font-semibold text-ink" : "text-ink/40")}>{t.label}</span>
                       </div>
                     );
                   })}
                 </div>
                 <button
                   type="button"
-                  onClick={() => (writtenCount < tasks.length || checkAnsweredCount < totalChecks ? setConfirmSubmit(true) : submit())}
+                  onClick={() => (touchedCount < tasks.length ? setConfirmSubmit(true) : submit())}
                   className={cn("mt-3 w-full rounded-full py-2.5 text-sm font-bold text-white shadow-md", theme.solidBg)}
                 >
                   Indsend
@@ -734,13 +803,12 @@ export default function ExamSatsPage({
               </div>
               <p className="px-1 text-[10px] leading-relaxed text-ink/40">
                 Timeren matcher forberedelsestiden til den virkelige eksamen ({sats.minutes} min). Brug markerings-værktøjerne i teksten som
-                dine eksamens-ridser, og skriv svarene, som du vil læse dem op.
+                dine eksamens-ridser.
               </p>
             </div>
           </aside>
         </div>
 
-        {/* Tiden er gået: klokken tvinger aflevering */}
         {timeUp && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/75 p-4">
             <motion.div
@@ -757,11 +825,7 @@ export default function ExamSatsPage({
               <p className="text-sm text-ink/60">
                 Klokken har ringet : præcis som i forberedelseslokalet. Nu beder vi dig om at aflevere din opgave med det samme.
               </p>
-              <button
-                type="button"
-                onClick={submit}
-                className={cn("w-full rounded-full bg-gradient-to-r py-3 text-sm font-extrabold text-white shadow-md", theme.gradient)}
-              >
+              <button type="button" onClick={submit} className={cn("w-full rounded-full bg-gradient-to-r py-3 text-sm font-extrabold text-white shadow-md", theme.gradient)}>
                 Aflevér besvarelsen nu
               </button>
               <p className="text-[11px] text-ink/40">Du kan ikke svare mere, mens uret er løbet ud.</p>
@@ -772,8 +836,8 @@ export default function ExamSatsPage({
         {confirmSubmit && (
           <Modal title="Vil du aflevere nu?" onClose={() => setConfirmSubmit(false)}>
             <p className="text-sm text-ink/60">
-              Du har besvaret {writtenCount} af {tasks.length} opgaver i skrivefelterne og {checkAnsweredCount} af {totalChecks}
-              delspørgsmål. Til den virkelige eksamen tæller det, at du forsøger alle syv opgaver : vil du aflevere alligevel?
+              Du er i gang med {touchedCount} af {tasks.length} opgaver. Til den virkelige eksamen tæller det, at du forsøger alle syv : vil du
+              aflevere alligevel?
             </p>
             <div className="mt-4 flex gap-2">
               <button type="button" onClick={() => setConfirmSubmit(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
@@ -806,10 +870,10 @@ export default function ExamSatsPage({
   // --------------------------------------------------------------------------
   // RESULTAT
   const perTask = results?.perTask ?? [];
-  const flat = results?.flat ?? [];
-  const fullyRight = flat.filter((r) => r.score >= 0.999).length;
-  const partly = flat.filter((r) => r.score > 0 && r.score < 0.999).length;
-  const wrong = flat.filter((r) => r.answered && r.score === 0).length;
+  const allRows = perTask.flatMap((t) => t.rows);
+  const right = allRows.filter((r) => r.ok).length;
+  const wrong = allRows.filter((r) => !r.ok).length;
+  const written = perTask.filter((t) => taskTouched(t.task, t.ans)).length;
 
   return (
     <motion.div initial={reduceMotion ? false : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="app-page space-y-5">
@@ -831,28 +895,28 @@ export default function ExamSatsPage({
         />
         <h1 className="mt-2 font-display text-2xl font-extrabold text-ink">Prøven er afleveret : her er overblikket</h1>
         <p className="mt-1 text-ink/60">
-          Du skrev en besvarelse i {perTask.filter((t) => t.answer.length > 0).length} af {tasks.length} opgaver og fik{" "}
-          {fmtPoints(results?.points ?? 0)} af {totalChecks} point i delspørgsmålene ({pct}%).
+          Du var i gang med {written} af {tasks.length} opgaver og fik {fmtPoints(results?.points ?? 0)} af {maxPoints} point i de opgaver, der
+          kan rettes ({pct}%).
         </p>
       </div>
 
-      {/* 1) Rammen om karakteren (står øverst, som bedt) */}
+      {/* 1) Rammen om karakteren (står øverst) */}
       <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 dark:border-amber-500/40 dark:bg-amber-500/10">
         <p className="text-sm font-semibold leading-relaxed text-amber-900 dark:text-amber-200">
           <span className="font-extrabold">Vigtigt at læse først:</span> Denne prøve er lavet for at forberede dig : ikke for at dømme dig. Til
           den virkelige eksamen besvarer du de syv opgaver MUNDTLIGT, og den del kan hverken appen eller en AI bedømme. Derfor er karakteren her
-          vejledende: den bygger kun på de lukkede delspørgsmål, og den kan godt være ligegyldig for din egentlige besvarelse. Bruger du den
-          rigtigt, kan den til gengæld vise dit faglige niveau : læg mærke til MØNSTRET i, hvad du mestrer, og hvad du skal vende tilbage til.
-          Dine skrevne svar får du feedback på ved at kopiere dem over til en AI længere nede.
+          vejledende: den bygger kun på det, der kan rettes entydigt (genre, morfemer, led, tider, omskrivninger, indleder og ledfunktion), og
+          den kan godt være ligegyldig for din egentlige besvarelse. Bruger du den rigtigt, kan den til gengæld vise dit faglige niveau : læg
+          mærke til MØNSTRET i, hvad du mestrer. Pentagrammet og dine sproglige observationer får du feedback på ved at kopiere besvarelsen over
+          til en AI længere nede.
         </p>
-        {/* 2) Karakteren står lige under teksten */}
         <div className={cn("mt-4 flex items-center justify-center gap-4 rounded-xl bg-white/70 px-4 py-3 text-ink dark:bg-white/5", "sm:justify-between")}>
           <div className="flex items-center gap-4">
             <span className={cn("font-display text-5xl font-extrabold", theme.accentText)}>{grade.grade}</span>
             <div>
               <p className="text-sm font-bold">{grade.label}</p>
               <p className="text-[11px] text-ink/50">
-                Vejledende karakter ud fra delspørgsmålene (7-trinsskalaen). Din fritekst tæller ikke med her ; den bedømmer AI&apos;en.
+                Vejledende karakter (7-trinsskalaen). Opgave 2 og 3 tæller ikke med : der er mange rigtige svar, og dem bedømmer AI&apos;en.
               </p>
             </div>
           </div>
@@ -860,12 +924,11 @@ export default function ExamSatsPage({
         </div>
       </div>
 
-      {/* 2b) Hurtigt overblik */}
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {[
-          { n: fullyRight, t: "Helt rigtige", c: "text-emerald-600 dark:text-emerald-400" },
-          { n: partly, t: "Delvist rigtige", c: "text-amber-600 dark:text-amber-400" },
-          { n: wrong, t: "Forkerte", c: "text-rose-600 dark:text-rose-400" },
+          { n: right, t: "Rigtige delsvar", c: "text-emerald-600 dark:text-emerald-400" },
+          { n: wrong, t: "Forkerte/tomme", c: "text-rose-600 dark:text-rose-400" },
+          { n: `${written}/${tasks.length}`, t: "Opgaver i gang", c: "text-ink" },
           { n: fmtTime(usedSecs), t: "Tid brugt", c: "text-ink" },
         ].map((it) => (
           <div key={it.t} className="rounded-2xl border border-ink/10 bg-white p-3.5 text-center shadow-sm">
@@ -879,8 +942,7 @@ export default function ExamSatsPage({
       <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
         <p className="font-bold text-ink">Vil du gemme din prøve? Kopier din besvarelse til tekst her! Husk at indsætte det i et dokument.</p>
         <p className="mt-1 text-xs text-ink/50">
-          Teksten indeholder alle syv opgaver, dine egne skrevne svar og dine svar på delspørgsmålene : altså det, du kan tage med ind som
-          notepapir.
+          Teksten indeholder alle syv opgaver og alle dine svar : altså det, du kan tage med ind som notepapir.
         </p>
         <button
           type="button"
@@ -901,9 +963,9 @@ export default function ExamSatsPage({
           <SparklesIcon className="h-4 w-4" /> Få feedback på dine skrevne svar
         </p>
         <p className="mt-1 text-sm text-ink/60">
-          Knappen herunder kopierer en færdig censor-prompt med alle syv opgaver, DINE skrevne svar, dine delsvar og hele tekstgrundlaget, og
-          åbner Copilot i en ny fane. Sæt ind (Ctrl/Cmd+V) og send : så får du en vejledende karakter og en gennemgang af hver opgave. Du kan
-          også bruge en anden AI : teksten ligger i udklipsholderen.
+          Knappen herunder kopierer en færdig censor-prompt med alle syv opgaver, DINE svar og hele tekstgrundlaget, og åbner Copilot i en ny
+          fane. Sæt ind (Ctrl/Cmd+V) og send : så får du en vejledende karakter og en gennemgang af hver opgave. Du kan også bruge en anden AI :
+          teksten ligger i udklipsholderen.
         </p>
         <button
           type="button"
@@ -918,88 +980,75 @@ export default function ExamSatsPage({
       {/* 5) Gennemgang af hver opgave */}
       <div className="space-y-3">
         <h2 className="font-display text-lg font-extrabold text-ink">Gennemgang: én opgave ad gangen</h2>
-        {perTask.map((r) => {
-          const taskPoints = r.checks.reduce((sum, c) => sum + c.score, 0);
-          return (
-            <div key={r.task.id} className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-extrabold text-white", theme.solidBg)}>
-                  {r.task.no}
+        {perTask.map((r) => (
+          <div key={r.task.id} className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-extrabold text-white", theme.solidBg)}>
+                {r.task.no}
+              </span>
+              <p className="text-xs font-bold uppercase tracking-wide text-ink/40">
+                Opgave {r.task.no} · {r.task.label}
+              </p>
+              {r.max > 0 ? (
+                <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold text-ink/60">
+                  {r.points} / {r.max} point
                 </span>
-                <p className="text-xs font-bold uppercase tracking-wide text-ink/40">Opgave {r.task.no} · {r.task.label}</p>
-                {r.checks.length > 0 && (
-                  <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold text-ink/60">
-                    {fmtPoints(taskPoints)} / {r.checks.length} point
-                  </span>
-                )}
-                {r.task.openEnded && (
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
-                    mange rigtige svar
-                  </span>
-                )}
-              </div>
-              <p className="mt-2 text-sm font-semibold text-ink">{r.task.prompt}</p>
-
-              {/* Elevens eget svar */}
-              <div className="mt-2 rounded-xl bg-ink/[0.03] p-3">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Din besvarelse</p>
-                {r.answer.length > 0 ? (
-                  <p className="mt-1 whitespace-pre-wrap text-sm text-ink/80">{r.answer}</p>
-                ) : (
-                  <p className="mt-1 text-sm italic text-ink/40">Du skrev ikke noget i denne opgave.</p>
-                )}
-              </div>
-
-              {/* Checkliste: hvad et stærkt svar rammer */}
-              <div className="mt-2 rounded-xl border border-ink/10 p-3">
-                <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Ret dig selv: det bør svaret ramme</p>
-                <ul className="mt-1.5 space-y-1">
-                  {r.task.points.map((p, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-ink/70">
-                      <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-ink/25" />
-                      <span>{p}</span>
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-2 text-sm leading-relaxed text-ink/70">
-                  <span className="font-bold text-ink">Sådan kunne et stærkt svar lyde: </span>
-                  {r.task.modelAnswer}
-                </p>
-              </div>
-
-              {/* Delspørgsmålene med rettelse */}
-              {r.checks.length > 0 && (
-                <div className="mt-2 space-y-2">
-                  <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Delspørgsmål (dem gav karakteren)</p>
-                  {r.checks.map((c) => {
-                    const lab = scoreLabel(c.score, c.answered);
-                    return (
-                      <div key={c.check.id} className="rounded-xl border border-ink/10 p-3">
-                        <div className="flex flex-wrap items-center gap-2">
-                          <span className={cn("inline-flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-extrabold text-white", lab.tone)}>
-                            {c.score >= 0.999 ? <CheckIcon className="h-3 w-3" /> : c.answered ? <XIcon className="h-3 w-3" /> : "·"}
-                            {lab.text}
-                          </span>
-                        </div>
-                        <p className="mt-1.5 text-sm font-medium text-ink">{c.check.prompt}</p>
-                        <CheckAnswerSummary check={c.check} answer={c.answer} />
-                        <p className="mt-1.5 text-xs leading-relaxed text-ink/60">{c.check.feedback}</p>
-                      </div>
-                    );
-                  })}
-                </div>
+              ) : (
+                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+                  mange rigtige svar : rettes ikke
+                </span>
               )}
+            </div>
+            <p className="mt-2 text-sm font-semibold text-ink">{r.task.prompt}</p>
 
-              <p className="mt-2 rounded-xl bg-ink/[0.03] p-3 text-sm leading-relaxed text-ink/70">{r.task.feedback}</p>
-              <p className="mt-2 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
-                <LightbulbIcon className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>
-                  <span className="font-bold">Til selve eksamen:</span> {r.task.examTip}
-                </span>
+            <ReviewAnswer task={r.task} ans={r.ans} />
+
+            {r.rows.length > 0 && (
+              <div className="mt-2 space-y-1.5">
+                {r.rows.map((row, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-2 text-xs",
+                      row.ok ? "border-emerald-200 bg-emerald-50/60" : "border-rose-200 bg-rose-50/60"
+                    )}
+                  >
+                    <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full text-white", row.ok ? "bg-emerald-500" : "bg-rose-500")}>
+                      {row.ok ? <CheckIcon className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
+                    </span>
+                    <span className="font-bold text-ink">{row.label}</span>
+                    <span className="text-ink/70">Dit svar: {row.got}</span>
+                    {!row.ok && <span className="font-semibold text-ink/60">Facit: {row.facit}</span>}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <div className="mt-2 rounded-xl border border-ink/10 p-3">
+              <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Ret dig selv: det bør svaret ramme</p>
+              <ul className="mt-1.5 space-y-1">
+                {r.task.points.map((p, i) => (
+                  <li key={i} className="flex gap-2 text-sm text-ink/70">
+                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-ink/25" />
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-2 text-sm leading-relaxed text-ink/70">
+                <span className="font-bold text-ink">Sådan kunne et stærkt svar lyde: </span>
+                {r.task.modelAnswer}
               </p>
             </div>
-          );
-        })}
+
+            <p className="mt-2 rounded-xl bg-ink/[0.03] p-3 text-sm leading-relaxed text-ink/70">{r.task.feedback}</p>
+            <p className="mt-2 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+              <LightbulbIcon className="mt-0.5 h-4 w-4 shrink-0" />
+              <span>
+                <span className="font-bold">Til selve eksamen:</span> {r.task.examTip}
+              </span>
+            </p>
+          </div>
+        ))}
       </div>
 
       <div className="flex justify-center gap-3 pb-2">
@@ -1038,36 +1087,31 @@ export default function ExamSatsPage({
 }
 
 // ---------------------------------------------------------------------------
-// Ét opgavekort: hint-knap (?), fritekst-felt og de lukkede delspørgsmål.
+// Ét opgavekort: nummer, opgavetekst, "?"-knap og opgavens egen svarform.
 // ---------------------------------------------------------------------------
 function TaskCard({
   task,
   total,
-  written,
-  onWrite,
-  answers,
-  onAnswer,
+  ans,
+  onChange,
 }: {
   task: ExamTaskT;
   total: number;
-  written: string;
-  onWrite: (v: string) => void;
-  answers: Record<string, CheckAns>;
-  onAnswer: (checkId: string, a: CheckAns) => void;
+  ans: Ans;
+  onChange: (patch: (prev: Ans) => Ans) => void;
 }) {
   const [hintOpen, setHintOpen] = useState(false);
-  const hasText = written.trim().length > 0;
-  const doneChecks = task.checks.filter((c) => isCheckAnswered(answers[c.id])).length;
-  const complete = hasText && doneChecks === task.checks.length;
+  const touched = taskTouched(task, ans);
 
   return (
-    <div className={cn("rounded-3xl border-2 bg-white p-4 shadow-sm sm:p-5", complete ? "border-emerald-200" : "border-ink/10")}>
-      <div className="flex items-center justify-between gap-2">
-        <p className="flex flex-wrap items-center gap-2 text-xs font-extrabold uppercase tracking-wide text-ink/45">
-          Opgave {task.no} / {total}
-          <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-ink/60">{task.label}</span>
-          {complete && <CheckIcon className="h-3.5 w-3.5 text-emerald-500" />}
-        </p>
+    <div className={cn("rounded-3xl border-2 bg-white p-4 shadow-sm sm:p-5", touched ? "border-emerald-200" : "border-ink/10")}>
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2.5">
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 font-display text-sm font-extrabold text-blue-600">
+            {task.no}
+          </span>
+          <h3 className="font-display text-lg font-extrabold leading-tight text-ink">{task.prompt}</h3>
+        </div>
         <button
           type="button"
           onClick={() => setHintOpen((v) => !v)}
@@ -1081,6 +1125,9 @@ function TaskCard({
           ?
         </button>
       </div>
+      <p className="sr-only">
+        Opgave {task.no} af {total}
+      </p>
 
       {hintOpen && (
         <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
@@ -1088,189 +1135,154 @@ function TaskCard({
         </div>
       )}
 
-      <p className="mt-2 text-[15px] font-semibold leading-relaxed text-ink">{task.prompt}</p>
-
       {task.openEnded && (
-        <p className="mt-1.5 text-[11px] font-semibold text-ink/45">
-          Her er der mange rigtige svar : det er dokumentationen (citater) og fagsproget, der tæller. Dit skrevne svar rettes ikke automatisk.
+        <p className="mt-2 text-[11px] font-semibold text-ink/45">
+          Her er der mange rigtige svar : det er dokumentationen (citater) og fagsproget, der tæller. Svaret rettes ikke automatisk.
         </p>
       )}
 
-      {/* 1) Elevens egen besvarelse (som notepapiret til eksamen) */}
       <div className="mt-3">
-        <label htmlFor={`svar-${task.id}`} className="text-[11px] font-bold uppercase tracking-wide text-ink/40">
-          Din besvarelse (den du skal kunne sige mundtligt)
-        </label>
-        <textarea
-          id={`svar-${task.id}`}
-          value={written}
-          onChange={(e) => onWrite(e.target.value)}
-          rows={4}
-          placeholder={task.placeholder}
-          className="mt-1 w-full rounded-xl border border-ink/15 bg-ink/[0.02] px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
-        />
+        {task.part.kind === "genre" && <GenrePart part={task.part} ans={ans} onChange={onChange} />}
+        {task.part.kind === "fields" && <FieldsPart part={task.part} ans={ans} onChange={onChange} />}
+        {task.part.kind === "morphology" && <MorphologyPart part={task.part} ans={ans} onChange={onChange} />}
+        {task.part.kind === "analysis" && <AnalysisPart part={task.part} ans={ans} onChange={onChange} />}
+        {task.part.kind === "tense" && <TensePart part={task.part} ans={ans} onChange={onChange} />}
+        {task.part.kind === "clause" && <ClausePart part={task.part} ans={ans} onChange={onChange} />}
       </div>
-
-      {/* 2) Delspørgsmål: dem retter appen, og de giver karakteren */}
-      {task.checks.length > 0 && (
-        <div className="mt-4 rounded-2xl border border-ink/10 bg-ink/[0.02] p-3 sm:p-4">
-          <p className="flex flex-wrap items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-ink/45">
-            Delspørgsmål : dem retter appen
-            <span className="rounded-full bg-white px-2 py-0.5 text-[10px] font-bold normal-case tracking-normal text-ink/50">
-              {doneChecks} af {task.checks.length} besvaret
-            </span>
-          </p>
-          <div className="mt-3 space-y-4">
-            {task.checks.map((c) => (
-              <div key={c.id}>
-                <p className="text-sm font-medium leading-relaxed text-ink">{c.prompt}</p>
-                <div className="mt-2">
-                  {c.kind === "choice" && <ChoiceBlocks check={c} answer={answers[c.id]} onChange={(a) => onAnswer(c.id, a)} />}
-                  {c.kind === "multi" && <MultiBlocks check={c} answer={answers[c.id]} onChange={(a) => onAnswer(c.id, a)} />}
-                  {c.kind === "wordclass" && <WordClassBlocks check={c} answer={answers[c.id]} onChange={(a) => onAnswer(c.id, a)} />}
-                  {c.kind === "analysis" && <AnalysisBlocks check={c} answer={answers[c.id]} onChange={(a) => onAnswer(c.id, a)} />}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function ChoiceBlocks({ check, answer, onChange }: { check: ExamChoiceCheckT; answer: CheckAns | undefined; onChange: (a: CheckAns) => void }) {
-  const sel = answer && answer.kind === "choice" ? answer.selected : -1;
+type PartProps<T> = { part: T; ans: Ans; onChange: (patch: (prev: Ans) => Ans) => void };
+
+function setText(id: string, value: string) {
+  return (prev: Ans): Ans => ({ ...prev, text: { ...prev.text, [id]: value } });
+}
+
+/** Lille skrivefelt med label + hjælpetekst, som på skolens ark. */
+function FieldBox({ field, value, onChange }: { field: ExamFieldT; value: string; onChange: (v: string) => void }) {
   return (
-    <div className="grid gap-2">
-      {check.options.map((opt, i) => (
-        <button
-          key={i}
-          type="button"
-          onClick={() => onChange({ kind: "choice", selected: i })}
-          className={cn(
-            "flex items-start gap-3 rounded-2xl border-2 px-3.5 py-3 text-left text-sm transition",
-            sel === i ? "border-blue-500 bg-blue-50 font-semibold text-ink shadow-sm" : "border-ink/10 bg-white text-ink/70 hover:border-blue-300 hover:bg-blue-50/40"
-          )}
-        >
-          <span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold", sel === i ? "bg-blue-500 text-white" : "bg-ink/10 text-ink/50")}>
-            {String.fromCharCode(65 + i)}
-          </span>
-          <span className="pt-0.5">{opt}</span>
-        </button>
+    <div>
+      <label htmlFor={`f-${field.id}`} className="text-sm font-bold text-ink">
+        {field.label} {field.help && <span className="font-medium text-ink/40">{field.help}</span>}
+      </label>
+      <textarea
+        id={`f-${field.id}`}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        rows={field.rows ?? 2}
+        placeholder={field.placeholder}
+        className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+      />
+    </div>
+  );
+}
+
+/** Opgave 1: de fem genrer + begrundelsen. */
+function GenrePart({ part, ans, onChange }: PartProps<ExamGenrePartT>) {
+  return (
+    <div className="space-y-3">
+      <div className="grid gap-2">
+        {EXAM_GENRES.map((g) => {
+          const on = ans.genre === g.id;
+          return (
+            <button
+              key={g.id}
+              type="button"
+              onClick={() => onChange((prev) => ({ ...prev, genre: g.id }))}
+              aria-pressed={on}
+              className={cn(
+                "flex items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left text-sm font-bold transition",
+                on ? "border-blue-500 bg-blue-50 text-ink shadow-sm" : "border-ink/10 bg-white text-ink/80 hover:border-blue-300 hover:bg-blue-50/40"
+              )}
+            >
+              <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2", on ? "border-blue-500 bg-blue-500" : "border-ink/25 bg-white")}>
+                {on && <span className="h-2 w-2 rounded-full bg-white" />}
+              </span>
+              {g.label}
+            </button>
+          );
+        })}
+      </div>
+      <FieldBox field={part.justify} value={ans.text[part.justify.id] ?? ""} onChange={(v) => onChange(setText(part.justify.id, v))} />
+    </div>
+  );
+}
+
+/** Opgave 2 og 3: kun skrivefelter. */
+function FieldsPart({ part, ans, onChange }: PartProps<ExamFieldsPartT>) {
+  return (
+    <div className="space-y-3">
+      {part.fields.map((f) => (
+        <FieldBox key={f.id} field={f} value={ans.text[f.id] ?? ""} onChange={(v) => onChange(setText(f.id, v))} />
       ))}
     </div>
   );
 }
 
-function MultiBlocks({ check, answer, onChange }: { check: ExamMultiCheckT; answer: CheckAns | undefined; onChange: (a: CheckAns) => void }) {
-  const sel = answer && answer.kind === "multi" ? answer.selected : [];
-  function toggle(i: number) {
-    const next = sel.includes(i) ? sel.filter((x) => x !== i) : [...sel, i];
-    onChange({ kind: "multi", selected: next });
-  }
-  return (
-    <div className="grid gap-2">
-      <p className="text-[11px] font-semibold text-ink/45">Flere kan være rigtige : klik alle de muligheder, der passer (valgt: {sel.length})</p>
-      {check.options.map((opt, i) => {
-        const on = sel.includes(i);
-        return (
-          <button
-            key={i}
-            type="button"
-            onClick={() => toggle(i)}
-            className={cn(
-              "flex items-start gap-3 rounded-2xl border-2 px-3.5 py-3 text-left text-sm transition",
-              on ? "border-blue-500 bg-blue-50 font-semibold text-ink shadow-sm" : "border-ink/10 bg-white text-ink/70 hover:border-blue-300 hover:bg-blue-50/40"
-            )}
-          >
-            <span className={cn("mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2", on ? "border-blue-500 bg-blue-500" : "border-ink/20 bg-white")}>
-              {on && <CheckIcon className="h-3.5 w-3.5 text-white" />}
-            </span>
-            <span className="pt-0.5">{opt}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-function WordClassBlocks({ check, answer, onChange }: { check: ExamWordClassCheckT; answer: CheckAns | undefined; onChange: (a: CheckAns) => void }) {
-  const tags = answer && answer.kind === "wordclass" ? answer.tags : check.words.map(() => null);
-  const [open, setOpen] = useState<number | null>(null);
-
-  function pick(i: number, tag: ExamWordClassTag | null) {
-    const next = [...tags];
-    next[i] = tag;
-    onChange({ kind: "wordclass", tags: next });
-    setOpen(null);
-  }
-
+/** Opgave 4: fire ord : opdeling i morfemer + ét bestemt morfem. */
+function MorphologyPart({ part, ans, onChange }: PartProps<ExamMorphologyPartT>) {
   return (
     <div className="space-y-3">
-      <div className="flex flex-wrap gap-2">
-        {check.words.map((w, i) => (
-          <button
-            key={i}
-            type="button"
-            onClick={() => setOpen(open === i ? null : i)}
-            className={cn(
-              "flex items-center gap-2 rounded-xl border-2 px-3 py-2 text-sm font-medium transition",
-              open === i ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200" : tags[i] ? "border-emerald-300 bg-emerald-50 text-ink" : "border-ink/15 bg-white text-ink hover:border-blue-300"
-            )}
-            aria-haspopup="listbox"
-            aria-expanded={open === i}
-          >
-            <span className="italic">“{w.word}”</span>
-            <span className="text-[10px] font-bold uppercase tracking-wide text-ink/35">→</span>
-            <span className={cn("rounded-full px-2 py-0.5 text-[11px] font-bold", tags[i] ? "bg-emerald-500 text-white" : "bg-ink/10 text-ink/40")}>
-              {tags[i] ? wordClassLabel(tags[i]!) : "vælg ordklasse"}
-            </span>
-          </button>
-        ))}
-      </div>
-      {open !== null && (
-        <div className="grid grid-cols-2 gap-1.5 rounded-2xl border border-ink/10 bg-white p-3 shadow-md sm:grid-cols-3" role="listbox" aria-label={`Ordklasse for ${check.words[open]?.word}`}>
-          {EXAM_WORD_CLASS_TAGS.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              role="option"
-              aria-selected={tags[open] === t.id}
-              onClick={() => pick(open, t.id)}
-              className={cn(
-                "rounded-lg border px-2 py-1.5 text-left text-xs font-semibold transition",
-                tags[open] === t.id ? "border-blue-500 bg-blue-50" : "border-ink/10 hover:border-blue-300 hover:bg-blue-50/50"
-              )}
-            >
-              {t.label}
-            </button>
-          ))}
-          <button type="button" onClick={() => pick(open, null)} className="rounded-lg border border-rose-200 px-2 py-1.5 text-left text-xs font-semibold text-rose-600 hover:bg-rose-50">
-            Fjern valg
-          </button>
+      {part.words.map((w, i) => (
+        <div key={w.word} className="rounded-2xl bg-ink/[0.03] p-3.5">
+          <p className="font-display text-sm font-extrabold text-ink">&ldquo;{w.word}&rdquo;</p>
+          <div className="mt-2 space-y-2.5">
+            <div>
+              <label htmlFor={`m-${i}-split`} className="text-sm font-bold text-ink">
+                Del ordet i morfemer <span className="font-medium text-ink/40">(brug bindestreger)</span>
+              </label>
+              <input
+                id={`m-${i}-split`}
+                type="text"
+                value={ans.text[`${i}-split`] ?? ""}
+                onChange={(e) => onChange(setText(`${i}-split`, e.target.value))}
+                placeholder={w.splitPlaceholder}
+                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+              />
+            </div>
+            <div>
+              <label htmlFor={`m-${i}-ask`} className="text-sm font-bold text-ink">
+                {w.ask.label}
+              </label>
+              <input
+                id={`m-${i}-ask`}
+                type="text"
+                value={ans.text[`${i}-ask`] ?? ""}
+                onChange={(e) => onChange(setText(`${i}-ask`, e.target.value))}
+                placeholder={w.ask.placeholder}
+                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+              />
+            </div>
+          </div>
         </div>
-      )}
+      ))}
     </div>
   );
 }
 
-function AnalysisBlocks({ check, answer, onChange }: { check: ExamAnalysisCheckT; answer: CheckAns | undefined; onChange: (a: CheckAns) => void }) {
-  const symbols = answer && answer.kind === "analysis" ? answer.symbols : check.chunks.map(() => null);
+/** Opgave 5: led-symboler på sætningens klumper (samme som i resten af appen). */
+function AnalysisPart({ part, ans, onChange }: PartProps<ExamAnalysisPartT>) {
+  const symbols = ans.led ?? part.chunks.map(() => null);
   const [active, setActive] = useState<number | null>(null);
 
   function assign(i: number, sym: LedSymbol | null) {
     const next = [...symbols];
     next[i] = sym;
-    onChange({ kind: "analysis", symbols: next });
+    onChange((prev) => ({ ...prev, led: next }));
     setActive(null);
   }
 
   return (
     <div className="space-y-3">
-      <p className="rounded-xl bg-ink/5 px-3.5 py-2.5 text-sm italic text-ink/70">“{check.sentence}”</p>
+      <p className="text-sm font-bold text-ink">
+        Sætningen: <span className="font-medium italic text-ink/70">&ldquo;{part.sentence}&rdquo;</span>
+      </p>
+      <p className="text-xs text-ink/45">
+        Tryk på et led og vælg det rigtige symbol (følg analysepilen: verballed først, så subjekt, objekter, adverbialer og prædikater).
+      </p>
       <div className="flex flex-wrap gap-2">
-        {check.chunks.map((chunk, i) => {
+        {part.chunks.map((chunk, i) => {
           const sym = symbols[i];
           return (
             <button
@@ -1301,7 +1313,7 @@ function AnalysisBlocks({ check, answer, onChange }: { check: ExamAnalysisCheckT
       </div>
       {active !== null && (
         <div className="rounded-2xl border border-ink/10 bg-white p-3 shadow-md" role="menu" aria-label="Vælg symbol for leddet">
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-ink/40">Led for «{check.chunks[active]}»</p>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-ink/40">Led for «{part.chunks[active]}»</p>
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
             {SYMBOLS.map((sym) => (
               <button
@@ -1338,94 +1350,162 @@ function AnalysisBlocks({ check, answer, onChange }: { check: ExamAnalysisCheckT
   );
 }
 
-// ---------------------------------------------------------------------------
-// Elevens delsvar som ren tekst (bruges i kopiér-teksten).
-// ---------------------------------------------------------------------------
-function checkAnswerAsText(c: ExamCheckT, a: CheckAns | undefined): string {
-  if (!a) return "Svar: (ikke besvaret)";
-  switch (c.kind) {
-    case "choice":
-      return a.kind === "choice" ? `Svar: ${c.options[a.selected]}` : "Svar: (ikke besvaret)";
-    case "multi":
-      if (a.kind !== "multi" || a.selected.length === 0) return "Svar: (ikke besvaret)";
-      return "Svar: " + [...a.selected].sort((x, y) => x - y).map((i) => c.options[i]).join(" ; ");
-    case "wordclass":
-      if (a.kind !== "wordclass") return "Svar: (ikke besvaret)";
-      return "Svar: " + c.words.map((w, i) => `${w.word} = ${a.tags[i] ? wordClassLabel(a.tags[i]!) : "(ikke valgt)"}`).join(" ; ");
-    case "analysis":
-      if (a.kind !== "analysis") return "Svar: (ikke besvaret)";
-      return "Svar: " + c.chunks.map((ch, i) => `${ch} → ${a.symbols[i] ? getSymbolDef(a.symbols[i]!).short : "(ikke valgt)"}`).join(" ; ");
+/** Opgave 6: to sætninger : vælg tid + omskriv. */
+function TensePart({ part, ans, onChange }: PartProps<ExamTensePartT>) {
+  return (
+    <div className="space-y-3">
+      {part.items.map((it) => (
+        <div key={it.id} className="rounded-2xl bg-ink/[0.03] p-3.5">
+          <p className="text-sm italic text-ink/70">&ldquo;{it.sentence}&rdquo;</p>
+          <p className="mt-2 text-xs font-semibold text-ink/55">Hvilken tid står &ldquo;{it.verb}&rdquo; i?</p>
+          <div className="mt-1.5 flex flex-wrap gap-1.5">
+            {EXAM_TENSES.map((t) => {
+              const on = ans.tense?.[it.id] === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => onChange((prev) => ({ ...prev, tense: { ...(prev.tense ?? {}), [it.id]: t.id } }))}
+                  aria-pressed={on}
+                  className={cn(
+                    "rounded-full border-2 px-3.5 py-1.5 text-sm font-bold transition",
+                    on ? "border-blue-500 bg-blue-500 text-white shadow-sm" : "border-ink/15 bg-white text-ink hover:border-blue-300 hover:bg-blue-50"
+                  )}
+                >
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+          <label htmlFor={`t-${it.id}`} className="mt-3 block text-sm font-bold text-ink">
+            Omskriv hele sætningen til {tenseLatin(it.rewriteTo)}
+          </label>
+          <input
+            id={`t-${it.id}`}
+            type="text"
+            value={ans.text[`${it.id}-rewrite`] ?? ""}
+            onChange={(e) => onChange(setText(`${it.id}-rewrite`, e.target.value))}
+            placeholder="Skriv hele sætningen med verbet i den nye tid..."
+            className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/** Opgave 7: del sætningen op, find indlederen og ledsætningens funktion. */
+function ClausePart({ part, ans, onChange }: PartProps<ExamClausePartT>) {
+  const marks = ans.clause ?? part.parts.map(() => null);
+
+  function cycle(i: number) {
+    const next = [...marks];
+    next[i] = next[i] === null ? "hoved" : next[i] === "hoved" ? "led" : null;
+    onChange((prev) => ({ ...prev, clause: next }));
   }
+
+  return (
+    <div className="space-y-3">
+      <p className="text-sm font-bold text-ink">
+        Sætningen: <span className="font-medium italic text-ink/70">&ldquo;{part.sentence}&rdquo;</span>
+      </p>
+      <p className="text-xs text-ink/45">
+        Test med ikke-reglen: Hovedsætning: ikke EFTER verballedet. Ledsætning: ikke MELLEM subjekt og verballed. Tryk på hver del for at
+        markere den.
+      </p>
+      <div className="space-y-2">
+        {part.parts.map((p, i) => {
+          const v = marks[i];
+          return (
+            <button
+              key={i}
+              type="button"
+              onClick={() => cycle(i)}
+              className={cn(
+                "flex w-full flex-wrap items-center justify-between gap-2 rounded-2xl border-2 px-4 py-3 text-left text-sm transition",
+                v === "hoved"
+                  ? "border-blue-500 bg-blue-50"
+                  : v === "led"
+                    ? "border-purple-400 bg-purple-50"
+                    : "border-ink/15 bg-white hover:border-blue-300"
+              )}
+            >
+              <span className="text-ink">{p.text}</span>
+              <span
+                className={cn(
+                  "rounded-full px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide",
+                  v === "hoved" ? "bg-blue-500 text-white" : v === "led" ? "bg-purple-500 text-white" : "bg-ink/10 text-ink/45"
+                )}
+              >
+                {v === "hoved" ? "Hovedsætning" : v === "led" ? "Ledsætning" : "tryk for at vælge"}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      <div>
+        <label htmlFor="indleder" className="text-sm font-bold text-ink">
+          Hvilken indleder har ledsætningen?
+        </label>
+        <input
+          id="indleder"
+          type="text"
+          value={ans.text["indleder"] ?? ""}
+          onChange={(e) => onChange(setText("indleder", e.target.value))}
+          placeholder="Fx at, fordi, når, hvis, som eller der"
+          className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+        />
+      </div>
+
+      <div>
+        <p className="text-sm font-bold text-ink">Hvilken funktion har ledsætningen i hovedsætningen?</p>
+        <div className="mt-1.5 flex flex-wrap gap-1.5">
+          {EXAM_CLAUSE_FUNCTIONS.map((f) => {
+            const on = ans.clauseFn === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => onChange((prev) => ({ ...prev, clauseFn: f.id }))}
+                aria-pressed={on}
+                className={cn(
+                  "rounded-full border-2 px-3.5 py-1.5 text-sm font-bold transition",
+                  on ? "border-blue-500 bg-blue-500 text-white shadow-sm" : "border-ink/15 bg-white text-ink hover:border-blue-300 hover:bg-blue-50"
+                )}
+              >
+                {f.label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // ---------------------------------------------------------------------------
-// Resumé på resultatsiden: hvad eleven valgte, og hvad der var korrekt.
+// Gennemgangen: elevens egne SKREVNE svar (dem appen ikke retter).
 // ---------------------------------------------------------------------------
-function CheckAnswerSummary({ check, answer }: { check: ExamCheckT; answer: CheckAns | undefined }) {
-  let body: React.ReactNode = <p className="italic text-ink/40">Ikke besvaret</p>;
+function ReviewAnswer({ task, ans }: { task: ExamTaskT; ans: Ans }) {
+  const p = task.part;
+  const rows: { label: string; value: string }[] = [];
 
-  if (check.kind === "choice" && answer && answer.kind === "choice") {
-    const ok = answer.selected === check.correctIndex;
-    body = (
-      <div className="space-y-1 text-sm">
-        <p className={ok ? "text-emerald-700 dark:text-emerald-400" : "text-rose-700 dark:text-rose-400"}>Dit svar: «{check.options[answer.selected]}»</p>
-        {!ok && <p className="text-ink/60">Korrekt: «{check.options[check.correctIndex]}»</p>}
-      </div>
-    );
-  }
+  if (p.kind === "genre") rows.push({ label: p.justify.label, value: ans.text[p.justify.id] ?? "" });
+  if (p.kind === "fields") for (const f of p.fields) rows.push({ label: f.label, value: ans.text[f.id] ?? "" });
+  if (rows.length === 0) return null;
 
-  if (check.kind === "multi" && answer && answer.kind === "multi" && answer.selected.length > 0) {
-    body = (
-      <div className="flex flex-wrap gap-1.5">
-        {check.options.map((opt, i) => {
-          const picked = answer.selected.includes(i);
-          const correct = check.correctIndexes.includes(i);
-          if (!picked && !correct) return null;
-          const tone = picked && correct ? "bg-emerald-100 text-emerald-700" : picked ? "bg-rose-100 text-rose-700" : "bg-ink/5 text-ink/50";
-          return (
-            <span key={i} className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold", tone)}>
-              {opt} {picked && correct ? "✓" : picked ? "✗" : "(manglede)"}
-            </span>
-          );
-        })}
-      </div>
-    );
-  }
-
-  if (check.kind === "wordclass" && answer && answer.kind === "wordclass") {
-    body = (
-      <div className="flex flex-wrap gap-1.5">
-        {check.words.map((w, i) => {
-          const tag = answer.tags[i];
-          const ok = tag === w.correct;
-          return (
-            <span key={i} className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-bold", ok ? "bg-emerald-100 text-emerald-700" : "bg-rose-100 text-rose-700")}>
-              “{w.word}” = {tag ? wordClassLabel(tag) : "(tomt)"} {ok ? "✓" : `✗ (korrekt: ${wordClassLabel(w.correct)})`}
-            </span>
-          );
-        })}
-      </div>
-    );
-  }
-
-  if (check.kind === "analysis" && answer && answer.kind === "analysis") {
-    body = (
-      <div className="flex flex-wrap gap-1.5">
-        {check.chunks.map((ch, i) => {
-          const sym = answer.symbols[i];
-          const ok = sym === check.correctMap[i];
-          return (
-            <span key={i} className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-1 text-[11px] font-bold", ok ? "border-emerald-300 bg-emerald-50 text-emerald-700" : "border-rose-300 bg-rose-50 text-rose-700")}>
-              {ch} → {sym ? getSymbolDef(sym).short : "(tomt)"}{" "}
-              {!ok && <span className="font-semibold text-ink/50">(korrekt: {getSymbolDef(check.correctMap[i]).short})</span>}
-            </span>
-          );
-        })}
-      </div>
-    );
-  }
-
-  return <div className="mt-1.5 rounded-xl bg-ink/[0.03] p-2.5">{body}</div>;
+  return (
+    <div className="mt-2 space-y-1.5 rounded-xl bg-ink/[0.03] p-3">
+      <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Dine skrevne svar (dem bedømmer AI&apos;en)</p>
+      {rows.map((r) => (
+        <p key={r.label} className="text-sm">
+          <span className="font-bold text-ink">{r.label}: </span>
+          {r.value.trim() ? <span className="whitespace-pre-wrap text-ink/80">{r.value}</span> : <span className="italic text-ink/40">ikke besvaret</span>}
+        </p>
+      ))}
+    </div>
+  );
 }
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
