@@ -13,18 +13,10 @@ export function ErrorFallback({
 }) {
   return (
     <div className="mx-auto flex min-h-[60vh] max-w-md flex-col items-center justify-center px-4 py-16 text-center">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/mascot/surprise.webp"
-        alt=""
-        className="mb-4 h-28 w-28 rounded-full object-cover shadow-lg ring-4 ring-white"
-      />
-      <h1 className="font-display text-2xl font-extrabold text-ink">{title}</h1>
-      <p className="mt-2 text-sm leading-relaxed text-ink/60">{message}</p>
-      <button
-        onClick={onReset}
-        className="mt-6 rounded-full bg-ink px-6 py-2.5 text-sm font-bold text-white shadow-md"
-      >
+      <p className="eyebrow">Fejl</p>
+      <h1 className="page-title mt-2">{title}</h1>
+      <p className="mt-3 text-sm leading-relaxed text-ink/60">{message}</p>
+      <button onClick={onReset} className="btn btn-primary mt-6 px-6 py-2.5">
         Prøv igen
       </button>
     </div>

@@ -90,35 +90,32 @@ export default function ExamPage({
   // Bekræftelses-dialog der bruges både fra setup og fra "Prøv igen" på resultatet.
   const startConfirmModal = confirmStart && (
 <div
-        className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"
         role="alertdialog"
         aria-modal="true"
         aria-label="Bekræft start af prøven"
         onClick={() => setConfirmStart(false)}
       >
         <motion.div
-          initial={reduceMotion ? false : { scale: 0.92, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ type: "spring", stiffness: 380, damping: 28 }}
-          className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-6 text-center shadow-2xl"
+          initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.15, ease: "easeOut" }}
+          className="modal w-full max-w-sm space-y-3 p-6 text-center"
           onClick={(e) => e.stopPropagation()}
         >
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-3xl" aria-hidden="true">
-            ⏱
+          <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-sm bg-ochre-soft text-ochre-base" aria-hidden="true">
+            <ClockIcon className="h-5 w-5" />
           </span>
-          <h3 className="font-display text-xl font-extrabold text-ink">Er du sikker på, at du vil starte prøven?</h3>
+          <h3 className="section-title">Er du sikker på, at du vil starte prøven?</h3>
           <p className="text-sm leading-relaxed text-ink/60">
             Nu samler jeg {count} spørgsmål fra {TRACK_INFO[track].label.toLowerCase()}, og prøven tager cirka {estimateMinutes(count)} minutter.
             Går du væk undervejs, <span className="font-bold text-ink">bliver din fremgang i denne prøve ikke gemt</span>.
           </p>
           <div className="flex gap-2">
-            <button onClick={() => setConfirmStart(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+            <button onClick={() => setConfirmStart(false)} className="btn btn-outline flex-1">
               Jeg vil ikke starte endnu
             </button>
-            <button
-              onClick={startExam}
-              className={cn("flex-1 rounded-full bg-gradient-to-r py-2.5 text-sm font-bold text-white shadow-md", isHhx ? "from-blue-500 to-indigo-600" : "from-purple to-purple-dark")}
-            >
+            <button onClick={startExam} className={cn("btn flex-1", isHhx ? "bg-hhx-base text-white" : "bg-purple text-white")}>
               Start nu
             </button>
           </div>
@@ -225,14 +222,15 @@ export default function ExamPage({
         transition={{ duration: 0.18, ease: "easeOut" }}
         className="app-page space-y-6"
       >
-        <div>
-          <h1 className="font-display text-2xl font-extrabold text-ink">Tag en prøve</h1>
-          <p className="text-sm text-ink/50">
+        <header className={cn("border-t-4 pt-5", isHhx ? "border-hhx-base" : "border-stx-base")}>
+          <p className="eyebrow">Prøve</p>
+          <h1 className="page-title mt-1">Tag en prøve</h1>
+          <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/60">
             {isHhx
               ? `Vælg hvor lang prøven skal være. Den trækker fra hele HHX-pensum (${ALL_HHX_TASKS.length} spørgsmål).`
               : "Vælg spor og hvor lang prøven skal være, så finder vi de bedste spørgsmål til dig."}
           </p>
-        </div>
+        </header>
 
         {/* EKSAMENSFORMEN: øverst og tydelig, så alle elever ved hvad de bliver
             eksamineret i, og hvordan det foregår. De to skoler har hver sin form:
@@ -241,17 +239,17 @@ export default function ExamPage({
           type="button"
           onClick={() => setFormatOpen(true)}
           className={cn(
-            "flex w-full items-center gap-4 rounded-2xl border-2 bg-white p-4 text-left shadow-sm transition hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
-            isHhx ? "border-blue-500" : "border-red-500"
+            "flex w-full items-center gap-4 rounded-md border border-ink/12 bg-card p-4 text-left transition-colors hover:border-ink/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+            isHhx ? "border-l-4 border-l-hhx-base" : "border-l-4 border-l-stx-base"
           )}
         >
-          <span className={cn("flex h-11 w-11 shrink-0 items-center justify-center rounded-xl", isHhx ? theme.softBg : "bg-red-100 text-red-600")}>
-            <InfoIcon className="h-6 w-6" />
+          <span className={cn("shrink-0", isHhx ? theme.softBg : "text-stx-base")}>
+            <InfoIcon className="h-5 w-5" />
           </span>
           <span className="flex-1">
             <span className="flex flex-wrap items-center gap-2">
               <span className="font-bold text-ink">Sådan foregår din eksamen</span>
-              <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide", isHhx ? theme.accentChip : "bg-red-100 text-red-700")}>
+              <span className={cn("chip", isHhx ? theme.accentChip : "bg-stx-soft text-stx-deep")}>
                 {isHhx ? "HHX-formen er klar" : "STX-formen: under udarbejdelse"}
               </span>
             </span>
@@ -263,7 +261,7 @@ export default function ExamPage({
                   : "Vælg din skole under Profil, så viser vi præcis den eksamensform, din skole bruger. Indtil videre kan du se formen for dit spor."}
             </span>
           </span>
-          <span className={cn("shrink-0 rounded-full px-3 py-1.5 text-xs font-bold text-white", isHhx ? theme.solidBg : "bg-red-600")}>
+          <span className={cn("chip shrink-0", isHhx ? theme.solidBg : "bg-stx-base text-white")}>
             Læs formen
           </span>
         </button>
@@ -277,16 +275,16 @@ export default function ExamPage({
             type="button"
             onClick={() => setSatsOpen(true)}
             className={cn(
-              "flex w-full items-center gap-4 overflow-hidden rounded-2xl bg-gradient-to-r from-blue-500 to-indigo-600 p-5 text-left text-white shadow-lg shadow-blue-500/30 transition hover:-translate-y-0.5 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-500"
+              "flex w-full items-center gap-4 rounded-md bg-hhx-base p-5 text-left text-white transition-colors hover:bg-hhx-deep focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             )}
           >
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-white/15">
-              <ExamIcon className="h-7 w-7" />
+            <span className="shrink-0 text-white/85">
+              <ExamIcon className="h-6 w-6" />
             </span>
             <span className="flex-1">
               <span className="flex flex-wrap items-center gap-2">
-                <span className="font-display text-lg font-extrabold">Eksamensprøve</span>
-                <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">
+                <span className="text-base font-extrabold">Eksamensprøve</span>
+                <span className="chip bg-white/15 text-white">
                   7 opgaver · 40 min forberedelse
                 </span>
               </span>
@@ -296,15 +294,15 @@ export default function ExamPage({
                 feedback : {schoolDef ? `formen er ${schoolDef.name}s egen.` : "formen er din skoles egen."}
               </span>
             </span>
-            <span className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-extrabold text-blue-600 shadow">Start →</span>
+            <span className="chip shrink-0 bg-white text-hhx-deep">Start →</span>
           </button>
         )}
 
         {isHhx && !maySats && (
-          <div className="rounded-2xl border-2 border-dashed border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+          <div className="rounded-md border border-dashed border-ochre-base/50 bg-ochre-soft p-4 text-sm leading-relaxed text-ochre-base">
             <p className="flex flex-wrap items-center gap-2 font-bold">
               <InfoIcon className="h-4 w-4" /> {SCHOOL_EXAM_LABELS[HHX_EXAM_SATS_ID].short}: ikke for din skole endnu
-              <span className="rounded-full bg-amber-200/70 px-2 py-0.5 text-[10px] font-extrabold uppercase tracking-wide">skolebestemt</span>
+              <span className="chip bg-white/50 text-ochre-base">skolebestemt</span>
             </p>
             <p className="mt-1 leading-relaxed">
               Eksamensprøven er bygget 1:1 efter ét skole-eksamensark, og AP-eksamen afvikles forskelligt fra skole til skole. Derfor kan den
@@ -322,7 +320,9 @@ export default function ExamPage({
           </div>
         )}
 
-        <Mascot pose="explain" size="md" speech="Vælg selv sværhedsgrad og længde. Jeg samler spørgsmålene til dig!" reduceMotion={reduceMotion} />
+        <p className="border-l-2 border-ink/20 py-1 pl-3 text-sm italic leading-relaxed text-ink/55">
+          Vælg selv sværhedsgrad og længde. Jeg samler spørgsmålene til dig.
+        </p>
 
         <div className="space-y-3">
           {tracks.map((t) => (
@@ -336,40 +336,36 @@ export default function ExamPage({
                 setCount(t === "ultimativ" ? newMin : Math.min(Math.max(count, newMin), newMax));
               }}
               className={cn(
-                "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
+                "flex w-full items-center gap-4 rounded-md border p-4 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2",
                 track === t
-                  ? cn("bg-ink/5", isHhx ? "border-blue-500" : "border-purple")
-                  : "border-ink/10 bg-white hover:border-ink/25"
+                  ? cn("border-l-4", isHhx ? "border-hhx-base bg-hhx-soft" : "border-purple bg-purple/5")
+                  : "border-ink/12 bg-card hover:border-ink/30"
               )}
             >
-              <div
-                className={cn(
-                  "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
-                  isHhx ? theme.softBg : "bg-purple/10 text-purple"
-                )}
-              >
-                <CategoryIcon name={TRACK_INFO[t].icon} className="h-6 w-6" />
-              </div>
+              <span className={cn("shrink-0", isHhx ? theme.softBg : "text-purple")}>
+                <CategoryIcon name={TRACK_INFO[t].icon} className="h-5 w-5" />
+              </span>
               <div className="flex-1">
                 <p className="font-bold text-ink">{TRACK_INFO[t].label}</p>
-                <p className="text-xs text-ink/50">{TRACK_INFO[t].desc}</p>
+                <p className="mt-0.5 text-xs leading-relaxed text-ink/50">{TRACK_INFO[t].desc}</p>
               </div>
+              {/* Kvadratisk radio-markering */}
               <div
                 className={cn(
-                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2",
-                  track === t ? cn(isHhx ? "border-blue-500 bg-blue-500" : "border-purple bg-purple") : "border-ink/20"
+                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border",
+                  track === t ? cn(isHhx ? "border-hhx-base bg-hhx-base" : "border-purple bg-purple") : "border-ink/25"
                 )}
               >
-                {track === t && <div className="h-2 w-2 rounded-full bg-white" />}
+                {track === t && <CheckIcon className="h-3.5 w-3.5 text-white" />}
               </div>
             </button>
           ))}
         </div>
 
-        <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
+        <div className="card p-5">
           <div className="mb-3 flex items-center justify-between">
             <p className="font-bold text-ink">Antal spørgsmål</p>
-            <span className={cn("rounded-full px-3 py-1 text-sm font-bold", isHhx ? theme.accentChip : "bg-purple/10 text-purple")}>
+            <span className={cn("chip px-2 py-1 text-xs tabular-nums", isHhx ? theme.accentChip : "bg-purple/10 text-purple")}>
               {count}
             </span>
           </div>
@@ -384,26 +380,26 @@ export default function ExamPage({
             step={step}
             value={count}
             onChange={(e) => setCount(Number(e.target.value))}
-            className={cn("w-full", isHhx ? "accent-blue-600" : "accent-purple")}
+            className={cn("w-full", isHhx ? "accent-hhx-base" : "accent-purple")}
           />
           <div className="mt-1 flex justify-between text-[11px] text-ink/40">
             <span>{minCount} spørgsmål</span>
             <span>{maxCount} spørgsmål</span>
           </div>
           {isUltimate && (
-            <p className="mt-3 rounded-xl bg-amber-50 px-3 py-2 text-xs text-amber-700">
+            <p className="mt-3 rounded-md bg-ochre-soft px-3 py-2 text-xs leading-relaxed text-ochre-base">
               Den ultimative test trækker fra alle {poolSize}  spørgsmål i hele banken (almen + latin). Du kan altid trykke
               &quot;Afslut prøven nu&quot; undervejs for at se dit resultat baseret på de spørgsmål, du nåede.
             </p>
           )}
           {isHhx && (
-            <p className="mt-3 rounded-xl bg-blue-50 px-3 py-2 text-xs text-blue-700">
+            <p className="mt-3 rounded-md bg-hhx-soft px-3 py-2 text-xs leading-relaxed text-hhx-deep">
               HHX-prøven her er prøvegeneratoren: interaktive spørgsmål over grammatik, kommunikation, sproghandlinger, semantik, pragmatik og
               sproghistorie, som du kan tage så mange gange du vil. Vil du træne HELE eksamen, som den afvikles (ukendt tekst, syv opgaver, 40
               minutters forberedelse og mundtlig eksamination bagefter), så brug “Eksamensprøve”{maySats ? " ovenfor" : ", når din skole er med"}.
             </p>
           )}
-          <div className="mt-4 flex items-center gap-2 rounded-xl bg-ink/5 px-3 py-2 text-sm font-semibold text-ink/70">
+          <div className="mt-4 flex items-center gap-2 rounded-md bg-ink/[0.05] px-3 py-2 text-sm font-semibold text-ink/70">
             <ClockIcon className="h-4 w-4" />
             Estimeret tid: ≈ {estimateMinutes(count)} min
           </div>
@@ -411,10 +407,7 @@ export default function ExamPage({
 
         <button
           onClick={requestStart}
-          className={cn(
-            "flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3.5 text-base font-bold text-white shadow-lg",
-            isHhx ? "from-blue-500 to-indigo-600 shadow-blue-500/30" : "from-purple to-purple-dark shadow-purple/30"
-          )}
+          className={cn("btn w-full py-3", isHhx ? "bg-hhx-base text-white" : "bg-purple text-white")}
         >
           <ExamIcon className="h-5 w-5" />
           Start prøve
@@ -433,9 +426,9 @@ export default function ExamPage({
       return (
         <div className="app-page-narrow space-y-5 pt-10 text-center">
           <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
-          <h2 className="font-display text-2xl font-extrabold text-ink">Prøven kunne ikke startes</h2>
+          <h2 className="page-title">Prøven kunne ikke startes</h2>
           <p className="text-sm text-ink/60">Der var ingen spørgsmål at trække. Prøv en anden længde eller et andet spor.</p>
-          <button onClick={() => setPhase("setup")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+          <button onClick={() => setPhase("setup")} className="btn btn-primary">
             Tilbage
           </button>
         </div>
@@ -453,7 +446,7 @@ export default function ExamPage({
           <button
             type="button"
             onClick={() => setConfirmAbort(true)}
-            className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink hover:border-rose-300 hover:text-rose-600"
+            className="btn btn-danger px-3 py-1.5 text-xs"
           >
             Afbryd prøve
           </button>
@@ -465,7 +458,7 @@ export default function ExamPage({
         <p className="text-center text-sm font-semibold text-ink/50" aria-live="polite">
           Spørgsmål {index + 1} af {tasks.length}
         </p>
-        <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={tasks.length}>
+        <div className="h-1 w-full overflow-hidden rounded-full bg-ink/10" role="progressbar" aria-valuenow={index} aria-valuemin={0} aria-valuemax={tasks.length}>
           <div className={cn("h-full rounded-full transition-all", isHhx ? theme.bar : "bg-purple")} style={{ width: `${(index / tasks.length) * 100}%` }} />
         </div>
         <SessionNav
@@ -483,7 +476,7 @@ export default function ExamPage({
           initial={reduceMotion ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.16, ease: "easeOut" }}
-          className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm"
+          className="card p-5"
         >
           <TaskRenderer
             key={`exam-${index}-${task.id}`}
@@ -496,24 +489,24 @@ export default function ExamPage({
           />
         </motion.div>
         {answered && !isReview && (
-          <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
+          <button onClick={next} className="btn btn-primary w-full py-3">
             {index + 1 >= tasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}
         <button
           type="button"
           onClick={finishNow}
-          className="w-full rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/70 hover:border-rose-300 hover:text-rose-600"
+          className="btn btn-danger w-full"
         >
           Afslut prøven nu og se resultat
         </button>
         {confirmAbort && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4">
-            <div className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-5 shadow-2xl" role="dialog" aria-modal="true">
-              <h3 className="font-display text-lg font-extrabold text-ink">Afbryd prøven?</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4">
+            <div className="modal w-full max-w-sm space-y-3 p-5" role="dialog" aria-modal="true">
+              <h3 className="section-title">Afbryd prøven?</h3>
               <p className="text-sm text-ink/70">Du kan gå tilbage til opsætningen. Det, du har svaret indtil nu, bliver ikke gemt som et prøveresultat.</p>
               <div className="flex gap-2">
-                <button onClick={() => setConfirmAbort(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                <button onClick={() => setConfirmAbort(false)} className="btn btn-outline flex-1">
                   Fortsæt
                 </button>
                 <button
@@ -521,7 +514,7 @@ export default function ExamPage({
                     setConfirmAbort(false);
                     setPhase("setup");
                   }}
-                  className="flex-1 rounded-full bg-ink py-2.5 text-sm font-bold text-white"
+                  className="btn btn-danger-solid flex-1"
                 >
                   Afbryd
                 </button>
@@ -547,13 +540,13 @@ export default function ExamPage({
     >
       <Mascot pose={pct >= 70 ? "celebrate" : pct >= 40 ? "thumbsup" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
       <div>
-        <h2 className="font-display text-2xl font-extrabold text-ink">Prøven er afsluttet!</h2>
+        <h2 className="page-title">Prøven er afsluttet!</h2>
         <p className="mt-1 text-ink/60">
           Du fik <span className={cn("font-bold", isHhx ? theme.accentText : "text-purple")}>{correctCount}</span> ud af {totalAnswered} rigtige. Det giver {pct}%.
         </p>
       </div>
 
-      <div className="space-y-2 rounded-2xl border border-ink/10 bg-white p-5 text-left shadow-sm">
+      <div className="card space-y-2 p-5 text-left">
         <p className="mb-2 text-sm font-bold text-ink">Resultat pr. kategori</p>
         {categoryEntries.map(([catId, stat]) => {
           const cat = getCategory(catId, education);
@@ -564,7 +557,7 @@ export default function ExamPage({
                 <CategoryIcon name={cat?.icon ?? "almen"} className="h-4 w-4 shrink-0" />
                 <span className="truncate">{cat?.short ?? catId}</span>
               </span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/10">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-ink/10">
                 <div className={cn("h-full rounded-full", isHhx ? theme.bar : "bg-purple")} style={{ width: `${p}%` }} />
               </div>
               <span className="w-14 shrink-0 text-right text-xs font-semibold text-ink/50">
@@ -576,7 +569,7 @@ export default function ExamPage({
       </div>
 
       {/* Krav: efter en gennemført prøve kan opgave + egne svar kopieres til en AI efter eget valg. */}
-      <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
+      <div className="card p-5">
         <p className="flex items-center gap-2 font-bold text-ink">
           <SparklesIcon className="h-4 w-4" /> Vil du have feedback på dine ordrette svar?
         </p>
@@ -592,8 +585,8 @@ export default function ExamPage({
             window.setTimeout(() => setCopied(false), 2500);
           }}
           className={cn(
-            "mt-3 flex w-full items-center justify-center gap-2 rounded-full border-2 py-3 text-sm font-bold transition",
-            copied ? "border-emerald-400 bg-emerald-50 text-emerald-700" : "border-ink/15 bg-white text-ink hover:border-blue-400 hover:bg-blue-50"
+            "btn mt-3 w-full py-3",
+            copied ? "border border-pine-base/50 bg-pine-soft text-pine-base" : "btn-outline"
           )}
         >
           {copied ? <CheckIcon className="h-4 w-4" /> : null}
@@ -604,16 +597,10 @@ export default function ExamPage({
       {startConfirmModal}
 
       <div className="flex justify-center gap-3">
-        <button onClick={() => setPhase("setup")} className="rounded-full border-2 border-ink/15 px-5 py-2.5 text-sm font-semibold text-ink">
+        <button onClick={() => setPhase("setup")} className="btn btn-outline">
           Ny prøve
         </button>
-        <button
-          onClick={requestStart}
-          className={cn(
-            "rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md",
-            isHhx ? "bg-blue-600 shadow-blue-500/30" : "bg-purple shadow-purple/30"
-          )}
-        >
+        <button onClick={requestStart} className={cn("btn", isHhx ? "bg-hhx-base text-white" : "bg-purple text-white")}>
           Prøv igen
         </button>
       </div>

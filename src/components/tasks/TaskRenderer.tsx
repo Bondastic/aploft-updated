@@ -76,7 +76,7 @@ export default function TaskRenderer({
       {showSheet && (
         <button
           onClick={() => setSheetOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-full border border-amber-300 bg-amber-50 px-3 py-1.5 text-xs font-semibold text-amber-800 transition hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500"
+          className="btn btn-outline border-ochre-base/45 px-3 py-1.5 text-xs text-ochre-base hover:bg-ochre-soft"
         >
           <ScrollIcon className="h-3.5 w-3.5" aria-hidden="true" />
           Oversættelsesark
@@ -110,11 +110,11 @@ export default function TaskRenderer({
 
       {checking && (
         <div
-          className="absolute -inset-5 z-10 flex items-center justify-center rounded-3xl bg-white/90 backdrop-blur-sm dark:bg-[#241d38]/92"
+          className="absolute -inset-5 z-10 flex items-center justify-center rounded-lg bg-card/92 backdrop-blur-sm"
           aria-live="polite"
         >
-          <div className="flex items-center gap-2.5 rounded-full border border-ink/10 bg-white px-4 py-2.5 shadow-md">
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-purple border-t-transparent" aria-hidden="true" />
+          <div className="popover flex items-center gap-2.5 px-4 py-2.5">
+            <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-ink/40 border-t-transparent" aria-hidden="true" />
             <span className="text-sm font-semibold text-ink/70">Lingua tænker…</span>
           </div>
         </div>
@@ -127,8 +127,8 @@ export default function TaskRenderer({
           role="status"
           aria-live="polite"
           className={cn(
-            "rounded-2xl border-2 p-4 text-sm",
-            wasCorrect ? "border-emerald-300 bg-emerald-50 text-emerald-800" : "border-rose-300 bg-rose-50 text-rose-800"
+            "rounded-md border-l-4 p-4 text-sm leading-relaxed",
+            wasCorrect ? "border-pine-base bg-pine-soft text-pine-base" : "border-rust-base bg-rust-soft text-rust-base"
           )}
         >
           <div className="mb-1 flex items-center gap-2 font-semibold">
@@ -147,22 +147,22 @@ export default function TaskRenderer({
 function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }>; onContinue?: () => void }) {
   return (
     <div className="space-y-4">
-      <div className="flex items-start gap-2">
-        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-purple/10 text-purple">
-          <LightbulbIcon className="h-4.5 w-4.5" />
+      <div className="flex items-start gap-2.5 border-t-[3px] border-ink pt-3">
+        <span className="mt-0.5 shrink-0 text-purple">
+          <LightbulbIcon className="h-5 w-5" />
         </span>
-        <h3 className="pt-1 text-lg font-extrabold text-ink">{task.title}</h3>
+        <h3 className="text-lg font-extrabold tracking-tight text-ink">{task.title}</h3>
       </div>
       <div className="space-y-3">
         {task.sections.map((s, i) => (
           <div key={i}>
-            {s.heading && <p className="mb-0.5 text-xs font-bold uppercase tracking-wide text-purple">{s.heading}</p>}
+            {s.heading && <p className="eyebrow mb-1">{s.heading}</p>}
             <p className="text-[15px] leading-relaxed text-ink/80">{s.body}</p>
           </div>
         ))}
       </div>
       {task.examples && task.examples.length > 0 && (
-        <div className="space-y-1.5 rounded-xl bg-ink/5 p-3">
+        <div className="space-y-1.5 rounded-md bg-ink/[0.05] p-3">
           {task.examples.map((ex, i) => (
             <p key={i} className="text-sm italic text-ink/70">
               {ex}
@@ -171,16 +171,14 @@ function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }
         </div>
       )}
       {task.tip && (
-        <div className="rounded-xl border-2 border-amber-300 bg-amber-50 px-3 py-2 text-sm font-semibold text-amber-800">
-          💡 {task.tip}
+        <div className="flex gap-2 rounded-md border-l-4 border-ochre-base bg-ochre-soft px-3 py-2 text-sm font-semibold leading-relaxed text-ochre-base">
+          <LightbulbIcon className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>{task.tip}</span>
         </div>
       )}
       {onContinue && (
-        <button
-          onClick={onContinue}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
-        >
-          {task.continueLabel ?? "Forstået, fortsæt →"}
+        <button onClick={onContinue} className="btn btn-primary">
+          {task.continueLabel ?? "Forstået, fortsæt"}
         </button>
       )}
     </div>
@@ -190,13 +188,13 @@ function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }
 function InfoTask({ task, onContinue }: { task: Extract<Task, { type: "info" }>; onContinue?: () => void }) {
   return (
     <div className="space-y-4">
-      <h3 className="text-lg font-extrabold text-ink">{task.title}</h3>
+      <h3 className="border-t-[3px] border-ink pt-3 text-lg font-extrabold tracking-tight text-ink">{task.title}</h3>
       <p className="text-[15px] leading-relaxed text-ink/80">{task.intro}</p>
-      <div className="overflow-x-auto rounded-xl border border-ink/10">
+      <div className="overflow-x-auto rounded-md border border-ink/10">
         <table className="w-full min-w-[280px] border-collapse text-left text-sm">
           <tbody>
             {task.rows.map((row, i) => (
-              <tr key={i} className="odd:bg-white even:bg-ink/[0.03]">
+              <tr key={i} className="odd:bg-card even:bg-ink/[0.03]">
                 <td className="border-b border-ink/5 px-3 py-2 font-semibold text-ink/70 last:border-0">{row.label}</td>
                 <td className="border-b border-ink/5 px-3 py-2 font-bold text-ink last:border-0">{row.value}</td>
               </tr>
@@ -205,11 +203,8 @@ function InfoTask({ task, onContinue }: { task: Extract<Task, { type: "info" }>;
         </table>
       </div>
       {onContinue && (
-        <button
-          onClick={onContinue}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
-        >
-          {task.continueLabel ?? "Videre →"}
+        <button onClick={onContinue} className="btn btn-primary">
+          {task.continueLabel ?? "Videre"}
         </button>
       )}
     </div>
@@ -233,11 +228,11 @@ function OptionButton({
       disabled={disabled}
       aria-pressed={state === "selected"}
       className={cn(
-        "w-full rounded-xl border-2 px-4 py-3 text-left text-sm font-medium transition disabled:cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
-        state === "idle" && "border-ink/10 bg-white hover:border-purple/40 hover:bg-purple/5",
-        state === "selected" && "border-purple bg-purple/10",
-        state === "correct" && "border-emerald-400 bg-emerald-50 text-emerald-800",
-        state === "wrong" && "border-rose-400 bg-rose-50 text-rose-800"
+        "w-full rounded-md border px-4 py-3 text-left text-sm font-medium transition-colors disabled:cursor-default focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
+        state === "idle" && "border-ink/12 bg-card hover:border-ink/35",
+        state === "selected" && "border-l-4 border-l-purple border-purple/40 bg-purple/5",
+        state === "correct" && "border-pine-base/50 bg-pine-soft text-pine-base",
+        state === "wrong" && "border-rust-base/50 bg-rust-soft text-rust-base"
       )}
     >
       <span className="inline-flex items-center gap-2">
@@ -295,7 +290,7 @@ function ChoiceTask({
         <button
           onClick={check}
           disabled={selected === null}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-dark"
+          className="btn btn-primary"
         >
           Tjek svar
         </button>
@@ -339,16 +334,16 @@ function ClickWordTask({
   return (
     <div className="space-y-4">
       <p className="text-lg font-semibold text-ink">{task.instruction}</p>
-      <div className="flex flex-wrap gap-2 rounded-2xl border-2 border-ink/10 bg-white p-4">
+      <div className="flex flex-wrap gap-2 rounded-md border border-ink/12 bg-card p-4">
         {task.tokens.map((token, i) => {
           const isSelected = selected.has(i);
           const isCorrectIdx = task.correctIndexes.includes(i);
-          let cls = "border-ink/15 bg-white text-ink hover:border-purple/50";
+          let cls = "border-ink/15 bg-card text-ink hover:border-ink/40";
           if (answered) {
-            if (isCorrectIdx) cls = "border-emerald-400 bg-emerald-50 text-emerald-800";
-            else if (isSelected) cls = "border-rose-400 bg-rose-50 text-rose-800";
+            if (isCorrectIdx) cls = "border-pine-base/50 bg-pine-soft text-pine-base";
+            else if (isSelected) cls = "border-rust-base/50 bg-rust-soft text-rust-base";
           } else if (isSelected) {
-            cls = "border-purple bg-purple/10 text-purple";
+            cls = "border-l-4 border-l-purple border-purple/40 bg-purple/5 text-purple";
           }
           return (
             <button
@@ -356,7 +351,7 @@ function ClickWordTask({
               onClick={() => toggle(i)}
               disabled={answered}
               aria-pressed={isSelected}
-              className={cn("rounded-lg border-2 px-3 py-1.5 text-base font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple", cls)}
+              className={cn("rounded-md border px-3 py-1.5 text-base font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink", cls)}
             >
               {token}
             </button>
@@ -367,7 +362,7 @@ function ClickWordTask({
         <button
           onClick={check}
           disabled={selected.size === 0}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
+          className="btn btn-primary"
         >
           Tjek svar
         </button>
@@ -464,7 +459,7 @@ function AnalysisTask({
   return (
     <div className="space-y-4">
       <p className="text-lg font-semibold text-ink">{task.instruction}</p>
-      <p className="rounded-xl bg-ink/5 px-4 py-3 text-base italic text-ink/70">&quot;{task.sentence}&quot;</p>
+      <p className="rounded-md bg-ink/[0.05] px-4 py-3 text-base italic text-ink/70">&quot;{task.sentence}&quot;</p>
       <div className="flex flex-wrap gap-2">
         {task.chunks.map((chunk, i) => {
           const assigned = assignments[i];
@@ -482,11 +477,11 @@ function AnalysisTask({
                 aria-expanded={activeChunk === i}
                 aria-label={`${chunk}: ${assigned ? getSymbolDef(assigned).short : "intet symbol valgt endnu"}`}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-xl border-2 px-3 py-2 text-sm font-medium transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
-                  isCorrect && "border-emerald-400 bg-emerald-50 text-emerald-800",
-                  isWrong && "border-rose-400 bg-rose-50 text-rose-800",
-                  !answered && activeChunk === i && "border-purple bg-purple/5 ring-2 ring-purple/20",
-                  !answered && activeChunk !== i && "border-ink/15 bg-white hover:border-purple/50"
+                  "flex flex-col items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
+                  isCorrect && "border-pine-base/50 bg-pine-soft text-pine-base",
+                  isWrong && "border-rust-base/50 bg-rust-soft text-rust-base",
+                  !answered && activeChunk === i && "border-l-4 border-l-purple border-purple/40 bg-purple/5",
+                  !answered && activeChunk !== i && "border-ink/15 bg-card hover:border-ink/40"
                 )}
               >
                 <span>{chunk}</span>
@@ -510,7 +505,7 @@ function AnalysisTask({
       </div>
       <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-xs text-ink/50">
         {SYMBOLS.map((s) => (
-          <span key={s.symbol} className="inline-flex items-center gap-1 rounded-full bg-ink/5 px-2 py-1">
+          <span key={s.symbol} className="chip bg-ink/[0.05] text-ink/55 normal-case tracking-normal">
             <LedGlyph symbol={s.symbol} className="h-3.5 w-3.5" /> {s.short}
           </span>
         ))}
@@ -519,7 +514,7 @@ function AnalysisTask({
         <button
           onClick={check}
           disabled={!allAssigned}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
+          className="btn btn-primary"
         >
           Tjek svar
         </button>
@@ -531,7 +526,7 @@ function AnalysisTask({
           style={pickerStyle}
           role="menu"
           aria-label="Vælg symbol"
-          className="z-40 grid grid-cols-4 gap-1.5 rounded-2xl border border-ink/10 bg-white p-2 shadow-xl"
+          className="popover z-40 grid grid-cols-4 gap-1.5 p-2"
         >
           {SYMBOLS.map((s) => (
             <button
@@ -539,7 +534,7 @@ function AnalysisTask({
               onClick={() => assign(activeChunk, s.symbol)}
               title={`${s.short} (${getSymbolDef(s.symbol).name})`}
               aria-label={`${s.short}: ${getSymbolDef(s.symbol).name}`}
-              className="flex aspect-square items-center justify-center rounded-xl border border-ink/10 text-ink transition hover:border-purple/50 hover:bg-purple/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
+              className="flex aspect-square items-center justify-center rounded-md border border-ink/10 text-ink transition-colors hover:border-ink/35 hover:bg-ink/[0.05] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
             >
               <LedGlyph symbol={s.symbol} className="h-7 w-7" />
             </button>
@@ -635,7 +630,7 @@ function BuildSentenceTask({
   return (
     <div className="space-y-4">
       <p className="text-lg font-semibold text-ink">{task.instruction}</p>
-      <div className="min-h-14 rounded-xl border-2 border-dashed border-ink/20 bg-white p-3">
+      <div className="min-h-14 rounded-md border border-dashed border-ink/25 bg-card p-3">
         <div className="flex flex-wrap gap-2">
           {builtDisplay.length === 0 && <span className="text-sm text-ink/30">Klik på ordene nedenfor for at bygge sætningen</span>}
           {builtDisplay.map((word, pos) => (
@@ -643,7 +638,7 @@ function BuildSentenceTask({
               key={pos}
               onClick={() => removeWord(pos)}
               disabled={answered}
-              className="rounded-lg bg-purple/10 px-3 py-1.5 text-sm font-medium text-purple ring-1 ring-purple/30"
+              className="rounded-sm border border-purple/30 bg-purple/5 px-3 py-1.5 text-sm font-medium text-purple"
             >
               {word}
             </button>
@@ -656,7 +651,7 @@ function BuildSentenceTask({
             key={idx}
             onClick={() => addWord(idx)}
             disabled={answered || chosen.includes(idx)}
-            className="rounded-lg border-2 border-ink/15 bg-white px-3 py-1.5 text-sm font-medium text-ink transition hover:border-purple/50 disabled:opacity-30"
+            className="rounded-sm border border-ink/15 bg-card px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink/40 disabled:opacity-30"
           >
             {word}
           </button>
@@ -665,7 +660,7 @@ function BuildSentenceTask({
       {answered && task.wordOrderFree && orderDiffers && (
         <div
           role="status"
-          className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 text-sm text-amber-800"
+          className="rounded-md border-l-4 border-ochre-base bg-ochre-soft p-4 text-sm leading-relaxed text-ochre-base"
         >
           <p className="mb-1 font-semibold">Bemærk: latin har fri ordstilling</p>
           <p>
@@ -684,7 +679,7 @@ function BuildSentenceTask({
         <button
           onClick={check}
           disabled={chosen.length !== task.words.length}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
+          className="btn btn-primary"
         >
           Tjek svar
         </button>
@@ -742,7 +737,7 @@ function TableFillTask({
   return (
     <div className="space-y-4">
       <p className="text-lg font-semibold text-ink">{task.instruction}</p>
-      <div className="overflow-x-auto rounded-xl border border-ink/10">
+      <div className="overflow-x-auto rounded-md border border-ink/10">
         <p className="border-b border-ink/10 bg-ink/5 px-3 py-1.5 text-xs font-bold text-ink/70">{task.tableTitle}</p>
         <table className="w-full min-w-[260px] border-collapse text-left text-sm">
           <tbody>
@@ -752,7 +747,7 @@ function TableFillTask({
               const isCorrect = answered && isBlank && value === row.value;
               const isWrong = answered && isBlank && value !== row.value;
               return (
-                <tr key={i} className="odd:bg-white even:bg-ink/[0.03]">
+                <tr key={i} className="odd:bg-card even:bg-ink/[0.03]">
                   <td className="border-b border-ink/5 px-3 py-2 font-semibold text-ink/70 last:border-0">{row.label}</td>
                   <td className="border-b border-ink/5 px-3 py-2 last:border-0">
                     {isBlank ? (
@@ -760,11 +755,11 @@ function TableFillTask({
                         onClick={() => !answered && setActiveBlank(activeBlank === i ? null : i)}
                         disabled={answered}
                         className={cn(
-                          "min-w-[4.5rem] rounded-lg border-2 px-2.5 py-1 text-sm font-bold transition",
-                          isCorrect && "border-emerald-400 bg-emerald-50 text-emerald-800",
-                          isWrong && "border-rose-400 bg-rose-50 text-rose-800",
-                          !answered && activeBlank === i && "border-purple bg-purple/5",
-                          !answered && activeBlank !== i && "border-dashed border-ink/25 bg-white text-ink/40 hover:border-purple/50"
+                          "min-w-[4.5rem] rounded-sm border px-2.5 py-1 text-sm font-bold transition-colors",
+                          isCorrect && "border-pine-base/50 bg-pine-soft text-pine-base",
+                          isWrong && "border-rust-base/50 bg-rust-soft text-rust-base",
+                          !answered && activeBlank === i && "border-l-4 border-l-purple border-purple/40 bg-purple/5",
+                          !answered && activeBlank !== i && "border-dashed border-ink/25 bg-card text-ink/40 hover:border-ink/45"
                         )}
                       >
                         {value ?? "?"}
@@ -791,7 +786,7 @@ function TableFillTask({
                 key={`${word}-${i}`}
                 onClick={() => pick(word)}
                 disabled={disabled}
-                className="rounded-lg border-2 border-ink/15 bg-white px-3 py-1.5 text-sm font-medium text-ink transition hover:border-purple/50 disabled:opacity-30"
+                className="rounded-sm border border-ink/15 bg-card px-3 py-1.5 text-sm font-medium text-ink transition-colors hover:border-ink/40 disabled:opacity-30"
               >
                 {word}
               </button>
@@ -806,7 +801,7 @@ function TableFillTask({
         <button
           onClick={check}
           disabled={!allFilled}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
+          className="btn btn-primary"
         >
           Tjek svar
         </button>
@@ -836,7 +831,7 @@ function WriteTask({
   return (
     <div className="space-y-4">
       <p className="text-lg font-semibold text-ink">{task.instruction}</p>
-      <p className="rounded-xl bg-ink/5 px-4 py-3 text-base text-ink/80">{task.prompt}</p>
+      <p className="rounded-md bg-ink/[0.05] px-4 py-3 text-base text-ink/80">{task.prompt}</p>
       <label htmlFor={`write-${task.id}`} className="sr-only">
         Dit svar
       </label>
@@ -853,12 +848,7 @@ function WriteTask({
         autoComplete="off"
         autoCapitalize="off"
         spellCheck={false}
-        className={cn(
-          "w-full rounded-xl border-2 px-4 py-3 text-base outline-none transition disabled:opacity-70",
-          answered
-            ? "border-ink/10 bg-ink/5"
-            : "border-ink/15 bg-white focus:border-purple"
-        )}
+        className={cn("field w-full", answered ? "opacity-70" : "")}
       />
       {answered && (
         <p className="text-sm text-ink/60">
@@ -869,7 +859,7 @@ function WriteTask({
         <button
           onClick={check}
           disabled={value.trim().length === 0}
-          className="rounded-full bg-purple px-6 py-2.5 text-sm font-semibold text-white shadow-md shadow-purple/30 transition active:scale-[0.97] disabled:opacity-40"
+          className="btn btn-primary"
         >
           Tjek svar
         </button>

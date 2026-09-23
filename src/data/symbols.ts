@@ -25,7 +25,7 @@ export const SYMBOLS: SymbolDef[] = [
     description:
       "Den eller det, der udfører handlingen, eller som sætningen handler om. Spørg: hvem/hvad + verballed?",
     example: "Katten sover på sofaen.",
-    colorClasses: "bg-blue-100 text-blue-700 border-blue-300",
+    colorClasses: "bg-slate-soft text-slate-base border-slate-base/40",
   },
   {
     symbol: "verbal",
@@ -34,7 +34,7 @@ export const SYMBOLS: SymbolDef[] = [
     description:
       "Det finitte verbum i sætningen. Det fortæller, hvad subjektet gør, eller hvad der sker.",
     example: "Katten sover på sofaen.",
-    colorClasses: "bg-red-100 text-red-700 border-red-300",
+    colorClasses: "bg-rust-soft text-rust-base border-rust-base/40",
   },
   {
     symbol: "objekt",
@@ -42,7 +42,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Direkte objekt",
     description: "Det, som handlingen går ud over. Spørg: verballed + hvem/hvad?",
     example: "Peter læser bogen.",
-    colorClasses: "bg-emerald-100 text-emerald-700 border-emerald-300",
+    colorClasses: "bg-pine-soft text-pine-base border-pine-base/40",
   },
   {
     symbol: "dativ",
@@ -51,7 +51,7 @@ export const SYMBOLS: SymbolDef[] = [
     description:
       "Den, som handlingen kommer til gode eller går ud over (skaber dativ). Spørg: til/for hvem?",
     example: "Peter giver Mia bogen.",
-    colorClasses: "bg-teal-100 text-teal-700 border-teal-300",
+    colorClasses: "bg-sea-soft text-sea-base border-sea-base/40",
   },
   {
     symbol: "adverbial",
@@ -60,7 +60,7 @@ export const SYMBOLS: SymbolDef[] = [
     description:
       "Fortæller om tid, sted, måde eller grad: omstændighederne omkring handlingen.",
     example: "Peter læser bogen i går aftes.",
-    colorClasses: "bg-amber-100 text-amber-700 border-amber-300",
+    colorClasses: "bg-ochre-soft text-ochre-base border-ochre-base/40",
   },
   {
     symbol: "subjpred",
@@ -69,7 +69,7 @@ export const SYMBOLS: SymbolDef[] = [
     description:
       "Siger noget om subjektet og optræder ofte efter et kopulaverbum (er, bliver, hedder, kaldes).",
     example: "Peter er glad.",
-    colorClasses: "bg-purple-100 text-purple-700 border-purple-300",
+    colorClasses: "bg-plum-soft text-plum-base border-plum-base/40",
   },
   {
     symbol: "objpred",
@@ -78,7 +78,7 @@ export const SYMBOLS: SymbolDef[] = [
     description:
       "Siger noget om det direkte objekt og optræder ofte efter verber som kalde, gøre, nævne, vælge.",
     example: "Vi kalder hunden Fido.",
-    colorClasses: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-300",
+    colorClasses: "bg-mulberry-soft text-mulberry-base border-mulberry-base/40",
   },
 ];
 

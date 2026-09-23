@@ -530,8 +530,8 @@ export default function ExamSatsPage({
         <button type="button" onClick={onClose} className="text-sm font-semibold text-ink/50 transition hover:text-ink">
           ← Tilbage til prøver
         </button>
-        <div className="rounded-3xl border-2 border-amber-300 bg-amber-50 p-6 text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
-          <p className="flex items-center gap-2 font-display text-xl font-extrabold">
+        <div className="rounded-md border-l-4 border-ochre-base bg-ochre-soft p-6 text-ochre-base">
+          <p className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
             <InfoIcon className="h-5 w-5" /> Eksamensprøven findes ikke for din skole endnu
           </p>
           <p className="mt-2 text-sm leading-relaxed">
@@ -557,16 +557,16 @@ export default function ExamSatsPage({
           ← Tilbage til prøver
         </button>
 
-        <div className={cn("rounded-3xl bg-gradient-to-br p-6 text-white shadow-lg", theme.gradient)}>
+        <div className={cn("rounded-md p-6 text-white", theme.solidBg)}>
           <p className="text-[11px] font-extrabold uppercase tracking-widest text-white/70">{sats.schoolLabel} · Eksamensprøve</p>
-          <h1 className="mt-1 font-display text-2xl font-extrabold sm:text-3xl">{sats.intro.heading}</h1>
+          <h1 className="mt-1 text-2xl font-extrabold tracking-tight sm:text-3xl">{sats.intro.heading}</h1>
           <p className="mt-2 text-sm text-white/85">{sats.intro.lead}</p>
           <div className="mt-4 flex flex-wrap items-center gap-2 text-xs font-bold">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5">
+            <span className="chip bg-white/15 text-white">
               <ClockIcon className="h-4 w-4" /> {sats.minutes} minutters forberedelse
             </span>
-            <span className="rounded-full bg-white/15 px-3 py-1.5">{tasks.length} opgaver</span>
-            <span className="rounded-full bg-white/15 px-3 py-1.5">Mundtlig eksamen bagefter</span>
+            <span className="chip bg-white/15 text-white">{tasks.length} opgaver</span>
+            <span className="chip bg-white/15 text-white">Mundtlig eksamen bagefter</span>
           </div>
           <p className="mt-3 text-xs font-semibold text-white/75">
             Sæt prøvet før : {Math.min(usage.usedIds.length, HHX_EXAM_SATS.length)} af {HHX_EXAM_SATS.length}
@@ -575,7 +575,7 @@ export default function ExamSatsPage({
         </div>
 
         {allUsed && (
-          <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
+          <div className="rounded-md border-l-4 border-ochre-base bg-ochre-soft p-4 text-sm leading-relaxed text-ochre-base">
             <p className="font-extrabold">Alle sæt er prøvet : nu blandes puljen igen</p>
             <p className="mt-1">
               Derfor kan du godt genkende en tekst eller en opgave denne gang : appen må nemlig ikke give dig det sæt, du lige har haft, men når
@@ -592,12 +592,12 @@ export default function ExamSatsPage({
             reduceMotion={reduceMotion}
             speech="Tag det roligt. Læs teksten grundigt, og skriv svarene ned som på notepapiret ; her findes der ingen forkerte forsøg."
           />
-          <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
+          <div className="card p-5">
             <p className="font-bold text-ink">Prøvens forløb</p>
             <ol className="mt-3 space-y-2.5">
               {sats.intro.steps.map((step, i) => (
                 <li key={i} className="flex gap-3 text-sm text-ink/70">
-                  <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-extrabold text-white", theme.solidBg)}>
+                  <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-sm text-xs font-extrabold text-white", theme.solidBg)}>
                     {i + 1}
                   </span>
                   <span className="pt-0.5">{step}</span>
@@ -606,12 +606,12 @@ export default function ExamSatsPage({
             </ol>
           </div>
 
-          <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
+          <div className="card p-5">
             <p className="font-bold text-ink">De syv opgaver, du trækker</p>
             <ol className="mt-3 grid gap-1.5 sm:grid-cols-2">
               {tasks.map((t) => (
-                <li key={t.id} className="flex items-center gap-2 rounded-xl bg-ink/[0.03] px-3 py-2 text-sm">
-                  <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] font-extrabold text-white", theme.solidBg)}>
+                <li key={t.id} className="flex items-center gap-2 rounded-md bg-ink/[0.04] px-3 py-2 text-sm">
+                  <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-sm text-[11px] font-extrabold text-white", theme.solidBg)}>
                     {t.no}
                   </span>
                   <span className="font-semibold text-ink">{t.label}</span>
@@ -625,7 +625,7 @@ export default function ExamSatsPage({
             </p>
           </div>
 
-          <div className={cn("rounded-2xl border-2 p-4 text-sm", theme.borderActive, "bg-white")}>
+          <div className={cn("card border-l-4 p-4 text-sm", theme.borderActive)}>
             <p className="font-bold text-ink">Eksamensformen på din skole</p>
             <p className="mt-1 text-ink/60">
               {school
@@ -635,7 +635,7 @@ export default function ExamSatsPage({
             <button
               type="button"
               onClick={() => setShowFormatHint(true)}
-              className="mt-2 rounded-full border-2 border-ink/15 px-3.5 py-1.5 text-xs font-bold text-ink transition hover:border-blue-400 hover:bg-blue-50"
+              className="btn btn-outline mt-2 px-3.5 py-1.5 text-xs"
             >
               Læs hele eksamensformen (forløb, indhold og bedømmelse)
             </button>
@@ -646,7 +646,7 @@ export default function ExamSatsPage({
           <button
             type="button"
             onClick={() => setConfirmStart(true)}
-            className={cn("flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3.5 text-base font-bold text-white shadow-lg", theme.gradient)}
+            className={cn("btn w-full py-3", theme.solidBg)}
           >
             <ClockIcon className="h-5 w-5" /> Start prøven ( {sats.minutes} min )
           </button>
@@ -662,10 +662,10 @@ export default function ExamSatsPage({
               gengæld kan du altid fortryde, indtil du trykker &lsquo;Start nu&rsquo;.
             </p>
             <div className="mt-4 flex gap-2">
-              <button type="button" onClick={() => setConfirmStart(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+              <button type="button" onClick={() => setConfirmStart(false)} className="btn btn-outline flex-1">
                 Jeg vil ikke starte endnu
               </button>
-              <button type="button" onClick={startExam} className={cn("flex-1 rounded-full bg-gradient-to-r py-2.5 text-sm font-bold text-white shadow-md", theme.gradient)}>
+              <button type="button" onClick={startExam} className={cn("btn flex-1", theme.solidBg)}>
                 Start nu : uret går
               </button>
             </div>
@@ -691,9 +691,9 @@ export default function ExamSatsPage({
         className="app-page-narrow flex min-h-[60vh] flex-col items-center justify-center text-center"
       >
         <Mascot pose="explain" size="lg" reduceMotion={reduceMotion} speech="Jeg er næsten færdig med at se på din besvarelse…" />
-        <p className="mt-5 font-display text-xl font-extrabold text-ink">Lingua retter prøven</p>
+        <p className="mt-5 text-xl font-extrabold tracking-tight text-ink">Lingua retter prøven</p>
         <p className="mt-1 h-5 text-sm font-semibold text-ink/55">{LINES[gradingTick % LINES.length]}</p>
-        <div className="mt-5 h-2.5 w-56 overflow-hidden rounded-full bg-ink/10">
+        <div className="mt-5 h-1 w-56 overflow-hidden rounded-full bg-ink/10">
           <motion.div
             className={cn("h-full rounded-full", theme.bar)}
             initial={reduceMotion ? false : { width: "6%" }}
@@ -714,11 +714,11 @@ export default function ExamSatsPage({
       <div className="app-page lg:max-w-5xl">
         <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px]">
           <div className="min-w-0 space-y-6">
-            <div className="sticky top-0 z-30 -mx-4 flex flex-wrap items-center justify-between gap-2 bg-[#faf8ff]/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-[#faf8ff]/80">
+            <div className="sticky top-0 z-30 -mx-4 flex flex-wrap items-center justify-between gap-2 bg-paper/95 px-4 py-2 backdrop-blur supports-[backdrop-filter]:bg-paper/80">
               <button
                 type="button"
                 onClick={() => setConfirmAbort(true)}
-                className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink transition hover:border-rose-300 hover:text-rose-600"
+                className="btn btn-danger px-3 py-1.5 text-xs"
               >
                 Afbryd prøve
               </button>
@@ -727,8 +727,8 @@ export default function ExamSatsPage({
               </p>
               <span
                 className={cn(
-                  "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-extrabold tabular-nums lg:hidden",
-                  critical ? "animate-pulse bg-rose-100 text-rose-700" : warning ? "bg-amber-100 text-amber-800" : cn(theme.accentChip)
+                  "chip px-2.5 py-1.5 text-sm normal-case tracking-normal tabular-nums lg:hidden",
+                  critical ? "animate-pulse bg-rust-soft text-rust-base" : warning ? "bg-ochre-soft text-ochre-base" : cn(theme.accentChip)
                 )}
                 aria-live="polite"
               >
@@ -741,7 +741,7 @@ export default function ExamSatsPage({
 
             <div className="space-y-4">
               <div>
-                <h2 className="font-display text-xl font-extrabold text-ink">De {tasks.length} opgaver</h2>
+                <h2 className="section-title">De {tasks.length} opgaver</h2>
                 <p className="text-xs text-ink/50">
                   Besvar opgaverne, som du vil læse dem op til eksamen. Du er i gang med {touchedCount} af {tasks.length}.
                 </p>
@@ -759,7 +759,7 @@ export default function ExamSatsPage({
               <button
                 type="button"
                 onClick={() => (touchedCount < tasks.length ? setConfirmSubmit(true) : submit())}
-                className={cn("flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-4 text-base font-extrabold text-white shadow-lg", theme.gradient)}
+                className={cn("btn w-full py-3", theme.solidBg)}
               >
                 Indsend prøven
               </button>
@@ -768,24 +768,24 @@ export default function ExamSatsPage({
 
           <aside className="hidden lg:block">
             <div className="sticky top-4 space-y-3">
-              <div className={cn("rounded-2xl border-2 bg-white p-4 text-center shadow-sm", critical ? "border-rose-400" : warning ? "border-amber-400" : "border-ink/10")}>
+              <div className={cn("card p-4 text-center", critical ? "border-rust-base" : warning ? "border-ochre-base" : "border-ink/12")}>
                 <p className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Forberedelse · {sats.minutes} min</p>
                 <p
-                  className={cn("mt-1 font-display text-4xl font-extrabold tabular-nums", critical ? "animate-pulse text-rose-600" : warning ? "text-amber-600" : "text-ink")}
+                  className={cn("font-display mt-1 text-4xl font-extrabold tabular-nums", critical ? "animate-pulse text-rust-base" : warning ? "text-ochre-base" : "text-ink")}
                   aria-live="polite"
                 >
                   {fmtTime(secs)}
                 </p>
                 <p className="mt-1 text-[11px] text-ink/45">Ringeklokken lyder, når tiden er gået ; så afleverer du med det samme.</p>
               </div>
-              <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Status</p>
+              <div className="card p-4">
+                <p className="eyebrow">Status</p>
                 <div className="mt-2 space-y-1.5">
                   {tasks.map((t) => {
                     const done = taskTouched(t, answers[t.id]);
                     return (
                       <div key={t.id} className="flex items-center gap-2 text-xs">
-                        <span className={cn("flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-extrabold", done ? cn(theme.solidBg, "text-white") : "bg-ink/10 text-ink/40")}>
+                        <span className={cn("flex h-5 w-5 items-center justify-center rounded-sm text-[10px] font-extrabold", done ? cn(theme.solidBg, "text-white") : "bg-ink/10 text-ink/40")}>
                           {t.no}
                         </span>
                         <span className={cn("flex-1 truncate", done ? "font-semibold text-ink" : "text-ink/40")}>{t.label}</span>
@@ -796,7 +796,7 @@ export default function ExamSatsPage({
                 <button
                   type="button"
                   onClick={() => (touchedCount < tasks.length ? setConfirmSubmit(true) : submit())}
-                  className={cn("mt-3 w-full rounded-full py-2.5 text-sm font-bold text-white shadow-md", theme.solidBg)}
+                  className={cn("btn mt-3 w-full", theme.solidBg)}
                 >
                   Indsend
                 </button>
@@ -810,22 +810,22 @@ export default function ExamSatsPage({
         </div>
 
         {timeUp && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/75 p-4">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
             <motion.div
-              initial={reduceMotion ? false : { scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-6 text-center shadow-2xl"
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
               role="alertdialog"
               aria-modal="true"
             >
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-amber-100 text-3xl" aria-hidden="true">
-                🔔
+              <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-sm bg-ochre-soft text-ochre-base" aria-hidden="true">
+                <ClockIcon className="h-5 w-5" />
               </span>
-              <h3 className="font-display text-xl font-extrabold text-ink">Tiden er gået!</h3>
+              <h3 className="section-title">Tiden er gået!</h3>
               <p className="text-sm text-ink/60">
                 Klokken har ringet : præcis som i forberedelseslokalet. Nu beder vi dig om at aflevere din opgave med det samme.
               </p>
-              <button type="button" onClick={submit} className={cn("w-full rounded-full bg-gradient-to-r py-3 text-sm font-extrabold text-white shadow-md", theme.gradient)}>
+              <button type="button" onClick={submit} className={cn("btn w-full", theme.solidBg)}>
                 Aflevér besvarelsen nu
               </button>
               <p className="text-[11px] text-ink/40">Du kan ikke svare mere, mens uret er løbet ud.</p>
@@ -840,10 +840,10 @@ export default function ExamSatsPage({
               aflevere alligevel?
             </p>
             <div className="mt-4 flex gap-2">
-              <button type="button" onClick={() => setConfirmSubmit(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+              <button type="button" onClick={() => setConfirmSubmit(false)} className="btn btn-outline flex-1">
                 Svar færdig først
               </button>
-              <button type="button" onClick={submit} className={cn("flex-1 rounded-full py-2.5 text-sm font-bold text-white", theme.solidBg)}>
+              <button type="button" onClick={submit} className={cn("btn flex-1", theme.solidBg)}>
                 Aflevér alligevel
               </button>
             </div>
@@ -854,10 +854,10 @@ export default function ExamSatsPage({
           <Modal title="Afbryd eksamensprøven?" onClose={() => setConfirmAbort(false)}>
             <p className="text-sm text-ink/60">Dine svar og markeringer gemmes ikke. Prøven starter forfra næste gang.</p>
             <div className="mt-4 flex gap-2">
-              <button type="button" onClick={() => setConfirmAbort(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+              <button type="button" onClick={() => setConfirmAbort(false)} className="btn btn-outline flex-1">
                 Bliv i prøven
               </button>
-              <button type="button" onClick={reset} className="flex-1 rounded-full bg-ink py-2.5 text-sm font-bold text-white">
+              <button type="button" onClick={reset} className="btn btn-danger-solid flex-1">
                 Afbryd
               </button>
             </div>
@@ -893,7 +893,7 @@ export default function ExamSatsPage({
                   : "Godt gået at gennemføre hele prøven : nu er det gennemgangen, der gør dig skarpere."
           }
         />
-        <h1 className="mt-2 font-display text-2xl font-extrabold text-ink">Prøven er afleveret : her er overblikket</h1>
+        <h1 className="page-title mt-2">Prøven er afleveret : her er overblikket</h1>
         <p className="mt-1 text-ink/60">
           Du var i gang med {written} af {tasks.length} opgaver og fik {fmtPoints(results?.points ?? 0)} af {maxPoints} point i de opgaver, der
           kan rettes ({pct}%).
@@ -901,8 +901,8 @@ export default function ExamSatsPage({
       </div>
 
       {/* 1) Rammen om karakteren (står øverst) */}
-      <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 dark:border-amber-500/40 dark:bg-amber-500/10">
-        <p className="text-sm font-semibold leading-relaxed text-amber-900 dark:text-amber-200">
+      <div className="rounded-md border-l-4 border-ochre-base bg-ochre-soft p-5">
+        <p className="text-sm font-semibold leading-relaxed text-ochre-base">
           <span className="font-extrabold">Vigtigt at læse først:</span> Denne prøve er lavet for at forberede dig : ikke for at dømme dig. Til
           den virkelige eksamen besvarer du de syv opgaver MUNDTLIGT, og den del kan hverken appen eller en AI bedømme. Derfor er karakteren her
           vejledende: den bygger kun på det, der kan rettes entydigt (genre, morfemer, led, tider, omskrivninger, indleder og ledfunktion), og
@@ -910,9 +910,9 @@ export default function ExamSatsPage({
           mærke til MØNSTRET i, hvad du mestrer. Pentagrammet og dine sproglige observationer får du feedback på ved at kopiere besvarelsen over
           til en AI længere nede.
         </p>
-        <div className={cn("mt-4 flex items-center justify-center gap-4 rounded-xl bg-white/70 px-4 py-3 text-ink dark:bg-white/5", "sm:justify-between")}>
+        <div className={cn("mt-4 flex items-center justify-center gap-4 rounded-md bg-card/70 px-4 py-3 text-ink", "sm:justify-between")}>
           <div className="flex items-center gap-4">
-            <span className={cn("font-display text-5xl font-extrabold", theme.accentText)}>{grade.grade}</span>
+            <span className={cn("font-display text-5xl font-extrabold leading-none", theme.accentText)}>{grade.grade}</span>
             <div>
               <p className="text-sm font-bold">{grade.label}</p>
               <p className="text-[11px] text-ink/50">
@@ -920,26 +920,26 @@ export default function ExamSatsPage({
               </p>
             </div>
           </div>
-          <span className={cn("rounded-full px-3 py-1 text-xs font-extrabold", theme.accentChip)}>{pct}%</span>
+          <span className={cn("chip px-2 py-1 text-xs tabular-nums", theme.accentChip)}>{pct}%</span>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
         {[
-          { n: right, t: "Rigtige delsvar", c: "text-emerald-600 dark:text-emerald-400" },
-          { n: wrong, t: "Forkerte/tomme", c: "text-rose-600 dark:text-rose-400" },
+          { n: right, t: "Rigtige delsvar", c: "text-pine-base" },
+          { n: wrong, t: "Forkerte/tomme", c: "text-rust-base" },
           { n: `${written}/${tasks.length}`, t: "Opgaver i gang", c: "text-ink" },
           { n: fmtTime(usedSecs), t: "Tid brugt", c: "text-ink" },
         ].map((it) => (
-          <div key={it.t} className="rounded-2xl border border-ink/10 bg-white p-3.5 text-center shadow-sm">
-            <p className={cn("font-display text-xl font-extrabold tabular-nums", it.c)}>{it.n}</p>
+          <div key={it.t} className="rounded-md border border-ink/10 bg-card p-3.5 text-center">
+            <p className={cn("text-xl font-extrabold tabular-nums", it.c)}>{it.n}</p>
             <p className="mt-0.5 text-[11px] font-bold uppercase tracking-wide text-ink/45">{it.t}</p>
           </div>
         ))}
       </div>
 
       {/* 3) "Vil du gemme din prøve?" - LIGE før aflevering til AI */}
-      <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
+      <div className="card p-5">
         <p className="font-bold text-ink">Vil du gemme din prøve? Kopier din besvarelse til tekst her! Husk at indsætte det i et dokument.</p>
         <p className="mt-1 text-xs text-ink/50">
           Teksten indeholder alle syv opgaver og alle dine svar : altså det, du kan tage med ind som notepapir.
@@ -948,8 +948,8 @@ export default function ExamSatsPage({
           type="button"
           onClick={copyAnswer}
           className={cn(
-            "mt-3 flex w-full items-center justify-center gap-2 rounded-full border-2 py-3 text-sm font-bold transition",
-            copied ? "border-emerald-400 bg-emerald-50 text-emerald-700" : "border-ink/15 bg-white text-ink hover:border-blue-400 hover:bg-blue-50"
+            "btn mt-3 w-full py-3",
+            copied ? "border border-pine-base/50 bg-pine-soft text-pine-base" : "btn-outline"
           )}
         >
           {copied ? <CheckIcon className="h-4 w-4" /> : null}
@@ -958,7 +958,7 @@ export default function ExamSatsPage({
       </div>
 
       {/* 4) Aflevér til AI */}
-      <div className={cn("rounded-2xl border-2 bg-white p-5 shadow-sm", theme.borderActive)}>
+      <div className={cn("card border-l-4 p-5", theme.borderActive)}>
         <p className="flex items-center gap-2 font-bold text-ink">
           <SparklesIcon className="h-4 w-4" /> Få feedback på dine skrevne svar
         </p>
@@ -970,7 +970,7 @@ export default function ExamSatsPage({
         <button
           type="button"
           onClick={handInToAi}
-          className={cn("mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r py-3 text-sm font-bold text-white shadow-md", theme.gradient)}
+          className={cn("btn mt-3 w-full py-3", theme.solidBg)}
         >
           <SparklesIcon className="h-4 w-4" /> Aflevér din opgave til AI-bedømmelse
         </button>
@@ -979,22 +979,22 @@ export default function ExamSatsPage({
 
       {/* 5) Gennemgang af hver opgave */}
       <div className="space-y-3">
-        <h2 className="font-display text-lg font-extrabold text-ink">Gennemgang: én opgave ad gangen</h2>
+        <h2 className="section-title">Gennemgang: én opgave ad gangen</h2>
         {perTask.map((r) => (
-          <div key={r.task.id} className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+          <div key={r.task.id} className="card p-4">
             <div className="flex flex-wrap items-center gap-2">
-              <span className={cn("flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-extrabold text-white", theme.solidBg)}>
+              <span className={cn("flex h-6 w-6 items-center justify-center rounded-sm text-[11px] font-extrabold text-white", theme.solidBg)}>
                 {r.task.no}
               </span>
               <p className="text-xs font-bold uppercase tracking-wide text-ink/40">
                 Opgave {r.task.no} · {r.task.label}
               </p>
               {r.max > 0 ? (
-                <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold text-ink/60">
+                <span className="chip bg-ink/[0.06] text-ink/60">
                   {r.points} / {r.max} point
                 </span>
               ) : (
-                <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
+                <span className="chip bg-ochre-soft text-ochre-base">
                   mange rigtige svar : rettes ikke
                 </span>
               )}
@@ -1009,11 +1009,11 @@ export default function ExamSatsPage({
                   <div
                     key={i}
                     className={cn(
-                      "flex flex-wrap items-center gap-x-2 gap-y-1 rounded-xl border px-3 py-2 text-xs",
-                      row.ok ? "border-emerald-200 bg-emerald-50/60" : "border-rose-200 bg-rose-50/60"
+                      "flex flex-wrap items-center gap-x-2 gap-y-1 rounded-md border px-3 py-2 text-xs",
+                      row.ok ? "border-pine-base/30 bg-pine-soft/60" : "border-rust-base/30 bg-rust-soft/60"
                     )}
                   >
-                    <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full text-white", row.ok ? "bg-emerald-500" : "bg-rose-500")}>
+                    <span className={cn("inline-flex h-5 w-5 items-center justify-center rounded-full text-white", row.ok ? "bg-pine-base" : "bg-rust-base")}>
                       {row.ok ? <CheckIcon className="h-3 w-3" /> : <XIcon className="h-3 w-3" />}
                     </span>
                     <span className="font-bold text-ink">{row.label}</span>
@@ -1024,7 +1024,7 @@ export default function ExamSatsPage({
               </div>
             )}
 
-            <div className="mt-2 rounded-xl border border-ink/10 p-3">
+            <div className="mt-2 rounded-md border border-ink/10 p-3">
               <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Ret dig selv: det bør svaret ramme</p>
               <ul className="mt-1.5 space-y-1">
                 {r.task.points.map((p, i) => (
@@ -1040,8 +1040,8 @@ export default function ExamSatsPage({
               </p>
             </div>
 
-            <p className="mt-2 rounded-xl bg-ink/[0.03] p-3 text-sm leading-relaxed text-ink/70">{r.task.feedback}</p>
-            <p className="mt-2 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+            <p className="mt-2 rounded-md bg-ink/[0.04] p-3 text-sm leading-relaxed text-ink/70">{r.task.feedback}</p>
+            <p className="mt-2 flex gap-2 rounded-md border-l-4 border-ochre-base bg-ochre-soft p-3 text-xs leading-relaxed text-ochre-base">
               <LightbulbIcon className="mt-0.5 h-4 w-4 shrink-0" />
               <span>
                 <span className="font-bold">Til selve eksamen:</span> {r.task.examTip}
@@ -1052,10 +1052,10 @@ export default function ExamSatsPage({
       </div>
 
       <div className="flex justify-center gap-3 pb-2">
-        <button type="button" onClick={onClose} className="rounded-full border-2 border-ink/15 px-5 py-2.5 text-sm font-semibold text-ink">
+        <button type="button" onClick={onClose} className="btn btn-outline">
           Tilbage til prøver
         </button>
-        <button type="button" onClick={reset} className={cn("rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md", theme.solidBg)}>
+        <button type="button" onClick={reset} className={cn("btn", theme.solidBg)}>
           {allUsed ? "Tag en ny prøve (puljen er blandet)" : "Næste prøve (nyt sæt)"}
         </button>
       </div>
@@ -1067,7 +1067,7 @@ export default function ExamSatsPage({
             herunder, sæt ind (Ctrl/Cmd+V) og send.
           </p>
           <div className="mt-4 flex gap-2">
-            <button type="button" onClick={() => setAiModal(null)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+            <button type="button" onClick={() => setAiModal(null)} className="btn btn-outline flex-1">
               Luk
             </button>
             <a
@@ -1075,7 +1075,7 @@ export default function ExamSatsPage({
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => setAiModal(null)}
-              className={cn("flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r py-2.5 text-sm font-bold text-white shadow-md", theme.gradient)}
+              className={cn("btn flex-1", theme.solidBg)}
             >
               <SparklesIcon className="h-4 w-4" /> Åbn Copilot
             </a>
@@ -1104,13 +1104,13 @@ function TaskCard({
   const touched = taskTouched(task, ans);
 
   return (
-    <div className={cn("rounded-3xl border-2 bg-white p-4 shadow-sm sm:p-5", touched ? "border-emerald-200" : "border-ink/10")}>
+    <div className={cn("card p-4 sm:p-5", touched ? "border-l-4 border-l-pine-base" : "border-ink/12")}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2.5">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-50 font-display text-sm font-extrabold text-blue-600">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border border-slate-base/40 bg-slate-soft text-sm font-extrabold tabular-nums text-slate-base">
             {task.no}
           </span>
-          <h3 className="font-display text-lg font-extrabold leading-tight text-ink">{task.prompt}</h3>
+          <h3 className="text-base font-extrabold leading-snug tracking-tight text-ink">{task.prompt}</h3>
         </div>
         <button
           type="button"
@@ -1118,8 +1118,8 @@ function TaskCard({
           aria-expanded={hintOpen}
           aria-label={`Hvad skal jeg i opgave ${task.no} (${task.label})?`}
           className={cn(
-            "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-sm font-extrabold transition",
-            hintOpen ? "border-amber-400 bg-amber-100 text-amber-700" : "border-ink/15 text-ink/50 hover:border-amber-400 hover:text-amber-600"
+            "flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border text-sm font-extrabold transition-colors",
+            hintOpen ? "border-ochre-base bg-ochre-soft text-ochre-base" : "border-ink/20 text-ink/50 hover:border-ochre-base hover:text-ochre-base"
           )}
         >
           ?
@@ -1130,7 +1130,7 @@ function TaskCard({
       </p>
 
       {hintOpen && (
-        <div className="mt-2 rounded-xl border border-amber-200 bg-amber-50 p-3 text-xs leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+        <div className="mt-2 rounded-md border-l-4 border-ochre-base bg-ochre-soft p-3 text-xs leading-relaxed text-ochre-base">
           <span className="font-bold">Sådan gør du:</span> {task.hint.replace(/^Sådan gør du:\s*/, "")}
         </div>
       )}
@@ -1172,7 +1172,7 @@ function FieldBox({ field, value, onChange }: { field: ExamFieldT; value: string
         onChange={(e) => onChange(e.target.value)}
         rows={field.rows ?? 2}
         placeholder={field.placeholder}
-        className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+        className="field mt-1 w-full placeholder:text-ink/35"
       />
     </div>
   );
@@ -1192,12 +1192,12 @@ function GenrePart({ part, ans, onChange }: PartProps<ExamGenrePartT>) {
               onClick={() => onChange((prev) => ({ ...prev, genre: g.id }))}
               aria-pressed={on}
               className={cn(
-                "flex items-center gap-3 rounded-2xl border-2 px-4 py-3 text-left text-sm font-bold transition",
-                on ? "border-blue-500 bg-blue-50 text-ink shadow-sm" : "border-ink/10 bg-white text-ink/80 hover:border-blue-300 hover:bg-blue-50/40"
+                "flex items-center gap-3 rounded-md border px-4 py-3 text-left text-sm font-bold transition-colors",
+                on ? "border-l-4 border-l-hhx-base border-hhx-base/40 bg-hhx-soft text-ink" : "border-ink/12 bg-card text-ink/80 hover:border-ink/30"
               )}
             >
-              <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2", on ? "border-blue-500 bg-blue-500" : "border-ink/25 bg-white")}>
-                {on && <span className="h-2 w-2 rounded-full bg-white" />}
+              <span className={cn("flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border", on ? "border-hhx-base bg-hhx-base" : "border-ink/25 bg-card")}>
+                {on && <CheckIcon className="h-3.5 w-3.5 text-white" />}
               </span>
               {g.label}
             </button>
@@ -1225,8 +1225,8 @@ function MorphologyPart({ part, ans, onChange }: PartProps<ExamMorphologyPartT>)
   return (
     <div className="space-y-3">
       {part.words.map((w, i) => (
-        <div key={w.word} className="rounded-2xl bg-ink/[0.03] p-3.5">
-          <p className="font-display text-sm font-extrabold text-ink">&ldquo;{w.word}&rdquo;</p>
+        <div key={w.word} className="rounded-md bg-ink/[0.04] p-3.5">
+          <p className="text-sm font-extrabold text-ink">&ldquo;{w.word}&rdquo;</p>
           <div className="mt-2 space-y-2.5">
             <div>
               <label htmlFor={`m-${i}-split`} className="text-sm font-bold text-ink">
@@ -1238,7 +1238,7 @@ function MorphologyPart({ part, ans, onChange }: PartProps<ExamMorphologyPartT>)
                 value={ans.text[`${i}-split`] ?? ""}
                 onChange={(e) => onChange(setText(`${i}-split`, e.target.value))}
                 placeholder={w.splitPlaceholder}
-                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+                className="field mt-1 w-full placeholder:text-ink/35"
               />
             </div>
             <div>
@@ -1251,7 +1251,7 @@ function MorphologyPart({ part, ans, onChange }: PartProps<ExamMorphologyPartT>)
                 value={ans.text[`${i}-ask`] ?? ""}
                 onChange={(e) => onChange(setText(`${i}-ask`, e.target.value))}
                 placeholder={w.ask.placeholder}
-                className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+                className="field mt-1 w-full placeholder:text-ink/35"
               />
             </div>
           </div>
@@ -1290,8 +1290,8 @@ function AnalysisPart({ part, ans, onChange }: PartProps<ExamAnalysisPartT>) {
               type="button"
               onClick={() => setActive(active === i ? null : i)}
               className={cn(
-                "flex flex-col items-center gap-1 rounded-xl border-2 px-3 py-2 text-sm font-medium transition",
-                active === i ? "border-blue-500 bg-blue-50 ring-2 ring-blue-200" : sym ? "border-emerald-300 bg-emerald-50" : "border-ink/15 bg-white hover:border-blue-300"
+                "flex flex-col items-center gap-1 rounded-md border px-3 py-2 text-sm font-medium transition-colors",
+                active === i ? "border-l-4 border-l-hhx-base border-hhx-base/40 bg-hhx-soft" : sym ? "border-pine-base/50 bg-pine-soft" : "border-ink/15 bg-card hover:border-ink/35"
               )}
               aria-haspopup="menu"
               aria-expanded={active === i}
@@ -1312,7 +1312,7 @@ function AnalysisPart({ part, ans, onChange }: PartProps<ExamAnalysisPartT>) {
         })}
       </div>
       {active !== null && (
-        <div className="rounded-2xl border border-ink/10 bg-white p-3 shadow-md" role="menu" aria-label="Vælg symbol for leddet">
+        <div className="popover p-3" role="menu" aria-label="Vælg symbol for leddet">
           <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-ink/40">Led for «{part.chunks[active]}»</p>
           <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
             {SYMBOLS.map((sym) => (
@@ -1322,26 +1322,26 @@ function AnalysisPart({ part, ans, onChange }: PartProps<ExamAnalysisPartT>) {
                 role="menuitem"
                 onClick={() => assign(active, sym.symbol)}
                 className={cn(
-                  "flex items-center gap-2 rounded-xl border px-2.5 py-2 text-left text-xs font-semibold text-ink transition hover:border-blue-400 hover:bg-blue-50",
-                  symbols[active] === sym.symbol ? "border-blue-500 bg-blue-50" : "border-ink/10"
+                  "flex items-center gap-2 rounded-md border px-2.5 py-2 text-left text-xs font-semibold text-ink transition-colors hover:border-ink/35 hover:bg-ink/[0.04]",
+                  symbols[active] === sym.symbol ? "border-hhx-base bg-hhx-soft" : "border-ink/10"
                 )}
                 title={sym.name}
               >
-                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border", sym.colorClasses)}>
+                <span className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-sm border", sym.colorClasses)}>
                   <LedGlyph symbol={sym.symbol} className="h-4.5 w-4.5" />
                 </span>
                 <span>{sym.short}</span>
               </button>
             ))}
           </div>
-          <button type="button" onClick={() => assign(active, null)} className="mt-2 rounded-full border border-rose-200 px-2.5 py-1 text-[11px] font-bold text-rose-600 hover:bg-rose-50">
+          <button type="button" onClick={() => assign(active, null)} className="btn btn-danger mt-2 px-2.5 py-1 text-[11px]">
             Fjern symbol fra leddet
           </button>
         </div>
       )}
       <div className="flex flex-wrap gap-x-3 gap-y-1.5 text-xs text-ink/45">
         {SYMBOLS.map((s) => (
-          <span key={s.symbol} className="inline-flex items-center gap-1 rounded-full bg-ink/5 px-2 py-1">
+          <span key={s.symbol} className="chip bg-ink/[0.05] text-ink/55 normal-case tracking-normal">
             <LedGlyph symbol={s.symbol} className="h-3.5 w-3.5" /> {s.short}
           </span>
         ))}
@@ -1355,7 +1355,7 @@ function TensePart({ part, ans, onChange }: PartProps<ExamTensePartT>) {
   return (
     <div className="space-y-3">
       {part.items.map((it) => (
-        <div key={it.id} className="rounded-2xl bg-ink/[0.03] p-3.5">
+        <div key={it.id} className="rounded-md bg-ink/[0.04] p-3.5">
           <p className="text-sm italic text-ink/70">&ldquo;{it.sentence}&rdquo;</p>
           <p className="mt-2 text-xs font-semibold text-ink/55">Hvilken tid står &ldquo;{it.verb}&rdquo; i?</p>
           <div className="mt-1.5 flex flex-wrap gap-1.5">
@@ -1368,8 +1368,8 @@ function TensePart({ part, ans, onChange }: PartProps<ExamTensePartT>) {
                   onClick={() => onChange((prev) => ({ ...prev, tense: { ...(prev.tense ?? {}), [it.id]: t.id } }))}
                   aria-pressed={on}
                   className={cn(
-                    "rounded-full border-2 px-3.5 py-1.5 text-sm font-bold transition",
-                    on ? "border-blue-500 bg-blue-500 text-white shadow-sm" : "border-ink/15 bg-white text-ink hover:border-blue-300 hover:bg-blue-50"
+                    "rounded-sm border px-3.5 py-1.5 text-sm font-bold transition-colors",
+                    on ? "border-hhx-base bg-hhx-base text-white" : "border-ink/15 bg-card text-ink hover:border-ink/40"
                   )}
                 >
                   {t.label}
@@ -1386,7 +1386,7 @@ function TensePart({ part, ans, onChange }: PartProps<ExamTensePartT>) {
             value={ans.text[`${it.id}-rewrite`] ?? ""}
             onChange={(e) => onChange(setText(`${it.id}-rewrite`, e.target.value))}
             placeholder="Skriv hele sætningen med verbet i den nye tid..."
-            className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+            className="field mt-1 w-full placeholder:text-ink/35"
           />
         </div>
       ))}
@@ -1422,19 +1422,19 @@ function ClausePart({ part, ans, onChange }: PartProps<ExamClausePartT>) {
               type="button"
               onClick={() => cycle(i)}
               className={cn(
-                "flex w-full flex-wrap items-center justify-between gap-2 rounded-2xl border-2 px-4 py-3 text-left text-sm transition",
+                "flex w-full flex-wrap items-center justify-between gap-2 rounded-md border px-4 py-3 text-left text-sm transition-colors",
                 v === "hoved"
-                  ? "border-blue-500 bg-blue-50"
+                  ? "border-l-4 border-l-hhx-base border-hhx-base/40 bg-hhx-soft"
                   : v === "led"
-                    ? "border-purple-400 bg-purple-50"
-                    : "border-ink/15 bg-white hover:border-blue-300"
+                    ? "border-l-4 border-l-purple border-purple/40 bg-purple/5"
+                    : "border-ink/15 bg-card hover:border-ink/35"
               )}
             >
               <span className="text-ink">{p.text}</span>
               <span
                 className={cn(
-                  "rounded-full px-2.5 py-1 text-[11px] font-extrabold uppercase tracking-wide",
-                  v === "hoved" ? "bg-blue-500 text-white" : v === "led" ? "bg-purple-500 text-white" : "bg-ink/10 text-ink/45"
+                  "chip",
+                  v === "hoved" ? "bg-hhx-base text-white" : v === "led" ? "bg-purple text-white" : "bg-ink/10 text-ink/45"
                 )}
               >
                 {v === "hoved" ? "Hovedsætning" : v === "led" ? "Ledsætning" : "tryk for at vælge"}
@@ -1454,7 +1454,7 @@ function ClausePart({ part, ans, onChange }: PartProps<ExamClausePartT>) {
           value={ans.text["indleder"] ?? ""}
           onChange={(e) => onChange(setText("indleder", e.target.value))}
           placeholder="Fx at, fordi, når, hvis, som eller der"
-          className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
+          className="field mt-1 w-full placeholder:text-ink/35"
         />
       </div>
 
@@ -1470,8 +1470,8 @@ function ClausePart({ part, ans, onChange }: PartProps<ExamClausePartT>) {
                 onClick={() => onChange((prev) => ({ ...prev, clauseFn: f.id }))}
                 aria-pressed={on}
                 className={cn(
-                  "rounded-full border-2 px-3.5 py-1.5 text-sm font-bold transition",
-                  on ? "border-blue-500 bg-blue-500 text-white shadow-sm" : "border-ink/15 bg-white text-ink hover:border-blue-300 hover:bg-blue-50"
+                  "rounded-sm border px-3.5 py-1.5 text-sm font-bold transition-colors",
+                  on ? "border-hhx-base bg-hhx-base text-white" : "border-ink/15 bg-card text-ink hover:border-ink/40"
                 )}
               >
                 {f.label}
@@ -1496,7 +1496,7 @@ function ReviewAnswer({ task, ans }: { task: ExamTaskT; ans: Ans }) {
   if (rows.length === 0) return null;
 
   return (
-    <div className="mt-2 space-y-1.5 rounded-xl bg-ink/[0.03] p-3">
+    <div className="mt-2 space-y-1.5 rounded-md bg-ink/[0.04] p-3">
       <p className="text-[10px] font-bold uppercase tracking-wide text-ink/40">Dine skrevne svar (dem bedømmer AI&apos;en)</p>
       {rows.map((r) => (
         <p key={r.label} className="text-sm">
@@ -1510,9 +1510,9 @@ function ReviewAnswer({ task, ans }: { task: ExamTaskT; ans: Ans }) {
 
 function Modal({ title, onClose, children }: { title: string; onClose: () => void; children: React.ReactNode }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4" role="dialog" aria-modal="true" onClick={onClose}>
-      <div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-        <h3 className="font-display text-lg font-extrabold text-ink">{title}</h3>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4" role="dialog" aria-modal="true" onClick={onClose}>
+      <div className="modal w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
+        <h3 className="section-title">{title}</h3>
         <div className="mt-1">{children}</div>
       </div>
     </div>

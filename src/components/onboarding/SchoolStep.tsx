@@ -42,25 +42,30 @@ export default function SchoolStep({
   return (
     <div className="w-full space-y-3">
       <div className="grid gap-2.5">
-        {schools.map((school, i) => {
+        {schools.map((school) => {
           const fmt = formatForSchoolId(school.formatId);
           const active = value === school.id;
           return (
-            <motion.button
+            <button
               key={school.id}
               type="button"
               onClick={() => onChange(school.id)}
               aria-pressed={active}
-              animate={reduceMotion ? undefined : { scale: active ? 1.01 : 1 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: "spring", stiffness: 400, damping: 26, delay: reduceMotion ? 0 : i * 0.05 }}
               className={cn(
-                "flex w-full items-center gap-3.5 rounded-2xl border-2 p-4 text-left transition",
-                active ? cn(theme.borderActive, "bg-white shadow-md") : "border-ink/10 bg-white hover:border-ink/25"
+                "flex w-full items-center gap-3.5 rounded-lg border bg-card p-4 text-left transition-colors",
+                active
+                  ? cn(theme.borderActive, "border-l-4", education === "stx" ? "bg-stx-soft" : "bg-hhx-soft")
+                  : "border-ink/12 hover:border-ink/30"
               )}
             >
-              <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", active ? theme.solidBg : theme.softBg)}>
-                <CheckIcon className={cn("h-5 w-5", active ? "text-white" : "opacity-0")} />
+              {/* Kvadratisk markering i stedet for farvet ikonboks */}
+              <span
+                className={cn(
+                  "flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border",
+                  active ? cn(theme.borderActive, theme.solidBg, "border text-white") : "border-ink/25"
+                )}
+              >
+                {active && <CheckIcon className="h-3.5 w-3.5" />}
               </span>
               <span className="flex-1">
                 <span className="block font-bold text-ink">{school.name}</span>
@@ -68,60 +73,57 @@ export default function SchoolStep({
                   {school.city ? `${school.city} · ` : ""}
                   {fmt?.status === "klar" ? "Eksamensform: beskrivelsen er klar" : "Eksamensform: beskrivelse under udarbejdelse"}
                 </span>
-                <span className="mt-1 flex flex-wrap gap-1">
+                <span className="mt-1.5 flex flex-wrap gap-1">
                   {school.exams.length > 0 ? (
                     school.exams.map((ex) => (
-                      <span key={ex} className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", theme.accentChip)}>
+                      <span key={ex} className={cn("chip", theme.accentChip)}>
                         {SCHOOL_EXAM_LABELS[ex].short} findes i appen
                       </span>
                     ))
                   ) : (
-                    <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold text-ink/45">
-                      Ingen eksamensprøve endnu : kun prøvegeneratoren
-                    </span>
+                    <span className="chip bg-ink/[0.06] text-ink/50">Ingen eksamensprøve endnu : kun prøvegeneratoren</span>
                   )}
                 </span>
               </span>
-            </motion.button>
+            </button>
           );
         })}
 
-        <motion.button
-          key="unknown"
+        <button
           type="button"
           onClick={() => onChange(UNKNOWN_SCHOOL_ID)}
           aria-pressed={otherSelected}
-          whileTap={{ scale: 0.98 }}
           className={cn(
-            "w-full rounded-2xl border-2 border-dashed p-3.5 text-center text-sm font-semibold transition",
-            otherSelected ? cn(theme.borderActive, "bg-white text-ink") : "border-ink/20 bg-transparent text-ink/55 hover:border-ink/35 hover:text-ink"
+            "w-full rounded-md border border-dashed p-3.5 text-center text-sm font-semibold transition-colors",
+            otherSelected ? cn(theme.borderActive, "bg-card text-ink") : "border-ink/25 bg-transparent text-ink/55 hover:border-ink/40 hover:text-ink"
           )}
         >
           Min skole er ikke på listen (anden skole)
-        </motion.button>
+        </button>
       </div>
 
       {otherSelected && (
         <motion.div
           initial={reduceMotion ? false : { opacity: 0, y: -6, height: 0 }}
           animate={reduceMotion ? undefined : { opacity: 1, y: 0, height: "auto" }}
-          transition={{ duration: 0.25, ease: "easeOut" }}
+          transition={{ duration: 0.2, ease: "easeOut" }}
           className="overflow-hidden"
         >
-          <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+          <div className="card p-4">
             <p className="flex items-center gap-2 text-sm font-bold text-ink">
               <InfoIcon className="h-4 w-4" /> Det her kan du se for dit spor ({theme.label})
             </p>
-            <p className="mt-1 text-xs text-ink/55">
+            <p className="mt-1 text-xs leading-relaxed text-ink/55">
               Indtil din egen skole er kommet på listen, kan du bruge de eksamensformer, vi har beskrevet for {theme.label}. De er her:
             </p>
             <div className="mt-3 space-y-2">
               {otherFormats.map((f) => (
-                <div key={f.id} className="rounded-xl bg-ink/[0.03] px-3 py-2.5">
+                <div key={f.id} className="rounded-md bg-ink/[0.04] px-3 py-2.5">
                   <p className="text-xs font-bold text-ink">
-                    {f.school} <span className={cn("ml-1 rounded-full px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide", theme.accentChip)}>{f.educationLabel}</span>
+                    {f.school}{" "}
+                    <span className={cn("chip ml-1 align-middle", theme.accentChip)}>{f.educationLabel}</span>
                     {f.status === "under-udarbejdelse" && (
-                      <span className="ml-1 rounded-full bg-amber-100 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-amber-700">kommer snart</span>
+                      <span className="chip ml-1 align-middle bg-ochre-soft text-ochre-base">kommer snart</span>
                     )}
                   </p>
                   <p className="mt-0.5 text-[11px] leading-relaxed text-ink/60">{f.summary}</p>
@@ -131,7 +133,7 @@ export default function SchoolStep({
             <p className="mt-2 text-[11px] text-ink/45">
               Din skoles form kan afvige ; tjek altid meldingen hos din AP-lærer. Vi tilføjer flere skoler løbende.
             </p>
-            <p className="mt-1.5 rounded-xl bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
+            <p className="mt-1.5 rounded-md bg-ochre-soft px-3 py-2 text-[11px] leading-relaxed text-ochre-base">
               Bemærk: eksamensprøven i Prøve-fanen simulerer én bestemt skoles eksamensark, og den kan derfor ikke tages, når du har valgt
               &quot;anden skole&quot;. Prøvegeneratoren og alle øvelser virker som normalt : de træner de samme fagbegreber.
             </p>

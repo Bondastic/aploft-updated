@@ -92,7 +92,7 @@ function highlight(text: string, query: string) {
   return (
     <>
       {text.slice(0, idx)}
-      <mark className="rounded bg-amber-200 px-0.5 text-stone-900">{text.slice(idx, idx + query.length)}</mark>
+      <mark className="rounded-sm bg-amber-200 px-0.5 text-stone-900">{text.slice(idx, idx + query.length)}</mark>
       {text.slice(idx + query.length)}
     </>
   );
@@ -153,8 +153,8 @@ export default function TranslationSheet({
             initial={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0.5 }}
             animate={reduceMotion ? { opacity: 1 } : { y: 0, opacity: 1 }}
             exit={reduceMotion ? { opacity: 0 } : { y: "100%", opacity: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 24 }}
-            className="relative flex h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-2xl bg-[#f5ecd7] shadow-2xl sm:h-[85vh] sm:rounded-2xl"
+            transition={{ type: "spring", stiffness: 240, damping: 28 }}
+            className="relative flex h-[92vh] w-full max-w-md flex-col overflow-hidden rounded-t-lg bg-[#f5ecd7] shadow-2xl sm:h-[85vh] sm:rounded-lg"
           >
             {/* Sticky top: titel, luk, faneblade og søgefelt */}
             <div className="shrink-0 border-b border-stone-300/60 bg-[#f5ecd7] px-3 pb-2 pt-3">
@@ -163,12 +163,12 @@ export default function TranslationSheet({
                   <ScrollIcon className="h-4 w-4" />
                   Oversættelsesark
                 </p>
-                <button onClick={close} className="rounded-full bg-stone-200 p-1.5 text-stone-600 hover:bg-stone-300" aria-label="Luk">
+                <button onClick={close} className="rounded-sm bg-stone-200 p-1.5 text-stone-600 hover:bg-stone-300" aria-label="Luk">
                   <XIcon className="h-4 w-4" />
                 </button>
               </div>
 
-              <div className="mb-2 flex rounded-xl bg-stone-200/70 p-1">
+              <div className="mb-2 flex rounded-md bg-stone-200/70 p-1">
                 <button
                   onClick={() => setTab("ord")}
                   className={cn("flex-1 rounded-lg py-1.5 text-xs font-bold transition", tab === "ord" ? "bg-white text-stone-800 shadow-sm" : "text-stone-500")}
@@ -195,13 +195,13 @@ export default function TranslationSheet({
                     autoComplete="off"
                     autoCapitalize="off"
                     spellCheck={false}
-                    className="w-full rounded-xl border-2 border-stone-300 bg-white py-2 pl-9 pr-8 text-sm text-stone-800 outline-none focus:border-amber-500"
+                    className="w-full rounded-md border border-stone-300 bg-white py-2 pl-9 pr-8 text-sm text-stone-800 outline-none focus:border-clay-base"
                   />
                   {query && (
                     <button
                       onClick={() => setQuery("")}
                       aria-label="Ryd søgning"
-                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full p-1 text-stone-400 hover:bg-stone-100"
+                      className="absolute right-2 top-1/2 -translate-y-1/2 rounded-sm p-1 text-stone-400 hover:bg-stone-100"
                     >
                       <XIcon className="h-3.5 w-3.5" />
                     </button>
@@ -213,7 +213,7 @@ export default function TranslationSheet({
             {/* Scrollbart indhold */}
             <div className="flex-1 overflow-y-auto px-3 py-3">
               {tab === "ord" ? (
-                <div className="rounded-lg border-4 border-white bg-white/60 p-3 shadow-inner">
+                <div className="rounded-sm border-4 border-white bg-white/60 p-3 shadow-inner">
                   {query && (
                     <p className="mb-2 text-xs font-semibold text-stone-500" aria-live="polite">
                       {totalMatches === 0 ? "Ingen ord matcher søgningen." : `${totalMatches} ord matcher "${query}"`}
@@ -231,7 +231,7 @@ export default function TranslationSheet({
                             <span className="font-serif italic text-stone-800">{highlight(w.latin, query)}</span>
                             <span className="text-right text-stone-600">
                               {highlight(w.danish, query)}
-                              {w.note && <span className="ml-1.5 rounded-full bg-stone-200 px-1.5 py-0.5 text-[10px] font-semibold text-stone-500">{w.note}</span>}
+                              {w.note && <span className="ml-1.5 rounded-sm bg-stone-200 px-1.5 py-0.5 text-[10px] font-semibold text-stone-500">{w.note}</span>}
                             </span>
                           </li>
                         ))}
@@ -242,7 +242,7 @@ export default function TranslationSheet({
               ) : (
                 <div className="space-y-3">
                   {DECLENSION_TABLES.map((t) => (
-                    <div key={t.title} className="overflow-hidden rounded-lg border-4 border-white bg-white/60 shadow-inner">
+                    <div key={t.title} className="overflow-hidden rounded-sm border-4 border-white bg-white/60 shadow-inner">
                       <div className="border-b border-stone-200 bg-white/70 px-3 py-1.5">
                         <p className="text-xs font-bold text-stone-700">{t.title}</p>
                         <p className="text-[11px] text-stone-500">{t.note}</p>

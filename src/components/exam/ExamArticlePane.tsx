@@ -20,21 +20,21 @@ import { cn } from "../../utils/cn";
 export type HlColor = "gul" | "groen" | "pink" | "blaa";
 
 const HL: Record<HlColor, { label: string; swatch: string; on: string }> = {
-  gul: { label: "Gul", swatch: "bg-yellow-300", on: "bg-yellow-200/90 dark:bg-yellow-400/25 rounded px-0.5" },
-  groen: { label: "Grøn", swatch: "bg-emerald-300", on: "bg-emerald-200/90 dark:bg-emerald-400/25 rounded px-0.5" },
-  pink: { label: "Lyserød", swatch: "bg-pink-300", on: "bg-pink-200/90 dark:bg-pink-400/25 rounded px-0.5" },
-  blaa: { label: "Blå", swatch: "bg-sky-300", on: "bg-sky-200/90 dark:bg-sky-400/25 rounded px-0.5" },
+  gul: { label: "Gul", swatch: "bg-ochre-base", on: "bg-ochre-soft dark:bg-ochre-base/30 rounded-sm px-0.5" },
+  groen: { label: "Grøn", swatch: "bg-pine-base", on: "bg-pine-soft dark:bg-pine-base/30 rounded-sm px-0.5" },
+  pink: { label: "Lyserød", swatch: "bg-mulberry-base", on: "bg-mulberry-soft dark:bg-mulberry-base/30 rounded-sm px-0.5" },
+  blaa: { label: "Blå", swatch: "bg-slate-base", on: "bg-slate-soft dark:bg-slate-base/30 rounded-sm px-0.5" },
 };
 
 // Statisk kort over farvet underlining pr. led-symbol (Tailwind JIT-venligt).
 const LED_LINE: Record<LedSymbol, string> = {
-  subjekt: "border-b-[3px] border-blue-500",
-  verbal: "border-b-[3px] border-red-500",
-  objekt: "border-b-[3px] border-emerald-500",
-  dativ: "border-b-[3px] border-teal-500",
-  adverbial: "border-b-[3px] border-amber-500",
-  subjpred: "border-b-[3px] border-purple",
-  objpred: "border-b-[3px] border-fuchsia-500",
+  subjekt: "border-b-[3px] border-slate-base",
+  verbal: "border-b-[3px] border-rust-base",
+  objekt: "border-b-[3px] border-pine-base",
+  dativ: "border-b-[3px] border-sea-base",
+  adverbial: "border-b-[3px] border-ochre-base",
+  subjpred: "border-b-[3px] border-plum-base",
+  objpred: "border-b-[3px] border-mulberry-base",
 };
 
 export interface ExamMark {
@@ -184,10 +184,10 @@ export default function ExamArticlePane({
               : "Klik på et ord (eller første ord i et område)";
 
   return (
-    <div className="rounded-3xl border border-ink/10 bg-white shadow-sm">
+    <div className="card overflow-hidden">
       {/* Værktøjslinje */}
-      <div className="flex flex-wrap items-center gap-1.5 rounded-t-3xl border-b border-ink/10 bg-ink/[0.03] px-3 py-2">
-        <span className="mr-1 text-[11px] font-bold uppercase tracking-wide text-ink/40">Læseværktøj</span>
+      <div className="flex flex-wrap items-center gap-1.5 border-b border-ink/10 bg-ink/[0.04] px-3 py-2">
+        <span className="eyebrow mr-1">Læseværktøj</span>
         <ToolButton active={tool === "tusch" && !eraser} onClick={() => { setTool("tusch"); setEraser(false); setStart(null); }}>
           🖍 Tusch
         </ToolButton>
@@ -210,14 +210,14 @@ export default function ExamArticlePane({
                 aria-label={`Vælg ${HL[c].label} tusch`}
                 onClick={() => setColor(c)}
                 className={cn(
-                  "h-5 w-5 rounded-full border transition",
+                  "h-5 w-5 rounded-sm border transition-colors",
                   HL[c].swatch,
-                  color === c ? "scale-110 border-ink/60 ring-2 ring-ink/20" : "border-ink/20 hover:scale-105"
+                  color === c ? "border-ink" : "border-ink/25 hover:border-ink/50"
                 )}
               />
             ))}
           <label className={cn("ml-1 inline-flex cursor-pointer items-center gap-1 text-[11px] font-semibold text-ink/50", tool !== "tusch" || eraser ? "pointer-events-none opacity-30" : "")}>
-            <input type="checkbox" className="h-3.5 w-3.5 accent-blue-600" checked={sentenceMode} onChange={(e) => setSentenceMode(e.target.checked)} />
+            <input type="checkbox" className="h-3.5 w-3.5 accent-hhx-base" checked={sentenceMode} onChange={(e) => setSentenceMode(e.target.checked)} />
             hele sætningen
           </label>
         </div>
@@ -225,8 +225,8 @@ export default function ExamArticlePane({
 
       {/* Teksten */}
       <div className="px-4 py-4 sm:px-6 sm:py-5">
-        <h2 className="font-display text-xl font-extrabold text-ink sm:text-2xl">{article.title}</h2>
-        <p className="mt-1 text-[11px] font-semibold uppercase tracking-wide text-ink/40">{article.byline}</p>
+        <h2 className="font-display text-2xl font-extrabold leading-tight tracking-tight text-ink sm:text-3xl">{article.title}</h2>
+        <p className="eyebrow mt-1.5">{article.byline}</p>
         <div className="mt-4 space-y-4 text-[15px] leading-7 text-ink/80">
           {article.paragraphs.map((_, pi) => {
               const group = tokens.filter((t) => t.para === pi);
@@ -244,15 +244,15 @@ export default function ExamArticlePane({
                           tapWord(tok);
                         }}
                         className={cn(
-                          "relative inline-flex flex-col items-center rounded-md text-left transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-400",
+                          "relative inline-flex flex-col items-center rounded-sm text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-hhx-base",
                           "hover:bg-ink/5",
                           m?.hl && HL[m.hl].on,
                           m?.led && cn("px-0.5", LED_LINE[m.led]),
-                          m?.wc && "underline decoration-indigo-400 decoration-dotted underline-offset-4",
-                          start?.id === tok.id && "ring-2 ring-blue-400"
+                          m?.wc && "underline decoration-slate-base/70 decoration-dotted underline-offset-4",
+                          start?.id === tok.id && "ring-2 ring-hhx-base/60"
                         )}
                       >
-                        <span className="h-3.5">{isFirstLed && m?.led ? <LedGlyph symbol={m.led} className="h-3.5 w-3.5 text-ink/70" /> : m?.wc ? <span className="text-[8px] font-bold uppercase text-indigo-500">{m.wc.slice(0, 4)}</span> : null}</span>
+                        <span className="h-3.5">{isFirstLed && m?.led ? <LedGlyph symbol={m.led} className="h-3.5 w-3.5 text-ink/70" /> : m?.wc ? <span className="text-[8px] font-bold uppercase tracking-wider text-slate-base">{m.wc.slice(0, 4)}</span> : null}</span>
                         <span>{tok.text}</span>
                       </button>
                     );
@@ -285,7 +285,7 @@ export default function ExamArticlePane({
                   applyRange(ledRange[0], ledRange[1], { led: s.symbol }, []);
                   setLedRange(null);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-ink/10 bg-white px-2.5 py-1.5 text-xs font-semibold text-ink transition hover:border-blue-400 hover:bg-blue-50" 
+                className="inline-flex items-center gap-1.5 rounded-sm border border-ink/12 bg-card px-2.5 py-1.5 text-xs font-semibold text-ink transition-colors hover:border-ink/35 hover:bg-ink/[0.04]" 
                 title={s.name}
               >
                 <LedGlyph symbol={s.symbol} className="h-4 w-4" />
@@ -298,7 +298,7 @@ export default function ExamArticlePane({
                 removeRange(ledRange[0], ledRange[1], ["led"]);
                 setLedRange(null);
               }}
-              className="inline-flex items-center rounded-xl border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+              className="btn btn-danger px-2.5 py-1.5 text-xs"
             >
               Fjern led
             </button>
@@ -324,8 +324,8 @@ export default function ExamArticlePane({
                   setWcWord(null);
                 }}
                 className={cn(
-                  "rounded-xl border px-2.5 py-1.5 text-xs font-semibold transition",
-                  marks[wcWord.id]?.wc === t.id ? "border-indigo-400 bg-indigo-50 text-indigo-700" : "border-ink/10 text-ink hover:border-indigo-300 hover:bg-indigo-50/50"
+                  "rounded-sm border px-2.5 py-1.5 text-xs font-semibold transition-colors",
+                  marks[wcWord.id]?.wc === t.id ? "border-slate-base bg-slate-soft text-slate-base" : "border-ink/12 text-ink hover:border-ink/35"
                 )}
               >
                 {t.label}
@@ -337,7 +337,7 @@ export default function ExamArticlePane({
                 removeRange(wcWord.id, wcWord.id, ["wc"]);
                 setWcWord(null);
               }}
-              className="rounded-xl border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 hover:bg-rose-50"
+              className="btn btn-danger px-2.5 py-1.5 text-xs"
             >
               Fjern ordklasse
             </button>
@@ -348,7 +348,7 @@ export default function ExamArticlePane({
       <div className="flex items-center justify-between gap-2 border-t border-ink/10 px-4 py-2">
         <p className="text-[11px] text-ink/40">Markeringerne er dit læseværktøj ; de bliver ikke bedømt, men de ryger med i kopien af din besvarelse.</p>
         {Object.keys(marks).length > 0 && (
-          <button type="button" onClick={() => setMarks({})} className="shrink-0 rounded-full border border-ink/15 px-2.5 py-1 text-[11px] font-bold text-ink/60 hover:border-rose-300 hover:text-rose-600">
+          <button type="button" onClick={() => setMarks({})} className="btn btn-danger shrink-0 px-2.5 py-1 text-[11px]">
             Ryd alle markeringer
           </button>
         )}
@@ -368,8 +368,8 @@ function ToolButton({ active, onClick, children }: { active: boolean; onClick: (
       type="button"
       onClick={onClick}
       className={cn(
-        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-bold transition",
-        active ? "border-blue-500 bg-blue-500 text-white shadow-sm" : "border-ink/15 bg-white text-ink/70 hover:border-blue-300 hover:text-ink"
+        "inline-flex items-center gap-1 rounded-sm border px-2.5 py-1 text-[11px] font-bold transition-colors",
+        active ? "border-hhx-base bg-hhx-base text-white" : "border-ink/15 bg-card text-ink/70 hover:border-ink/40 hover:text-ink"
       )}
     >
       {children}

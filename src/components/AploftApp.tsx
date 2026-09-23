@@ -111,7 +111,7 @@ export default function AploftApp() {
   // mismatch mellem server- og klient-rendering viser vi derfor en tom,
   // neutral skal, indtil vi har læst tilstanden i browseren.
   if (!hydrated) {
-    return <div className="min-h-screen bg-[#faf8ff]" aria-hidden="true" />;
+    return <div className="min-h-screen bg-paper" aria-hidden="true" />
   }
 
   // Første besøg: vis velkomstskærmen (uddannelsesvalg + valgfrit brugernavn).
@@ -121,7 +121,7 @@ export default function AploftApp() {
   if (!progress.onboarded) {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-[#faf8ff]">
+        <div className="min-h-screen bg-paper">
           <WelcomePage
             reduceMotion={progress.settings.reduceMotion}
             onComplete={(education, nickname, school) => {
@@ -169,7 +169,7 @@ export default function AploftApp() {
   if (needsSchoolChoice(progress)) {
     return (
       <ErrorBoundary>
-        <div className="min-h-screen bg-[#faf8ff]">
+        <div className="min-h-screen bg-paper">
           <SchoolGatePage
             education={progress.education}
             reduceMotion={progress.settings.reduceMotion}
@@ -188,10 +188,10 @@ export default function AploftApp() {
 
   return (
     <ErrorBoundary onReset={() => setPage("home")}>
-    <div className="min-h-screen bg-[#faf8ff]">
+    <div className="min-h-screen bg-paper">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-lg focus:bg-purple focus:px-4 focus:py-2 focus:text-white"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-50 focus:rounded-md focus:bg-ink focus:px-4 focus:py-2 focus:text-white"
       >
         Spring til indhold
       </a>
@@ -254,23 +254,23 @@ export default function AploftApp() {
 
       {pendingNav && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"
           role="alertdialog"
           aria-modal="true"
           aria-label="Bekræft at du forlader en igangværende opgave"
           onClick={() => setPendingNav(null)}
         >
-          <div className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <h3 className="font-display text-lg font-extrabold text-ink">Du er midt i en opgave</h3>
+          <div className="modal w-full max-w-sm space-y-3 p-5" onClick={(e) => e.stopPropagation()}>
+            <h3 className="section-title">Du er midt i en opgave</h3>
             <p className="text-sm text-ink/60">
               Går du væk nu, forlader du den igangværende opgave eller prøve : <span className="font-bold text-ink">fremdriften i netop den
               session bliver ikke gemt</span>, og den skal startes forfra. Dine gemte resultater og dit XP er selvfølgelig sikre.
             </p>
             <div className="flex gap-2">
-              <button onClick={() => setPendingNav(null)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+              <button onClick={() => setPendingNav(null)} className="btn btn-outline flex-1">
                 Bliv i opgaven
               </button>
-              <button onClick={confirmLeaveSession} className="flex-1 rounded-full bg-rose-600 py-2.5 text-sm font-bold text-white shadow-md">
+              <button onClick={confirmLeaveSession} className="btn btn-danger-solid flex-1">
                 Gå alligevel
               </button>
             </div>

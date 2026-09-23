@@ -3,6 +3,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type { MascotPose } from "../types";
 
+// Lingua er appens figur, men udtrykket er bevidst redaktionelt frem for
+// "cute maskot": et gråtonet portræt i skarp ramme og en kort, kursiveret
+// replik som et citation med en hårfin venstrestreg — ikke en taleboble.
+// Komponentens API er uændret, så al kald-logik bevares.
+
 const POSE_IMAGES: Record<MascotPose, string> = {
   welcome: "/mascot/welcome.webp",
   explain: "/mascot/explain.webp",
@@ -18,7 +23,7 @@ const POSE_LINES: Record<MascotPose, string[]> = {
   welcome: ["Hej med dig! Klar til at træne AP?", "Godt at se dig igen!"],
   explain: ["Lad mig forklare det her.", "Se lige denne regel."],
   celebrate: ["Fantastisk klaret!", "Du er i topform i dag!"],
-  surprise: ["Uh, den var svær!", "Det havde jeg ikke set komme."],
+  surprise: ["Uh, den var svær!", "Det havde jeg ikke set kommet."],
   encourage: ["Du kan godt! Prøv igen.", "Næsten! Kom nu."],
   thinking: [
     "Tag dig god tid.",
@@ -71,10 +76,10 @@ export default function Mascot({
   className?: string;
 }) {
   const sizeClasses = {
-    sm: "h-16 w-16",
-    md: "h-24 w-24",
-    lg: "h-36 w-36",
-    xl: "h-52 w-52",
+    sm: "h-14 w-14",
+    md: "h-20 w-20",
+    lg: "h-28 w-28",
+    xl: "h-44 w-44",
   }[size];
 
   const line = speech === undefined ? POSE_LINES[pose][0] : speech;
@@ -82,43 +87,44 @@ export default function Mascot({
   return (
     <div className={`flex items-end gap-3 ${className}`}>
       <div className={`relative shrink-0 ${sizeClasses}`}>
-        <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait" initial={false}>
           {reduceMotion ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               key={pose}
               src={POSE_IMAGES[pose]}
-              alt={`Maskot: ${pose}`}
-              className="h-full w-full rounded-full object-cover shadow-lg shadow-purple-200 ring-4 ring-white"
+              alt={`Lingua: ${pose}`}
+              className="h-full w-full rounded-sm border border-ink/15 object-cover grayscale contrast-[1.05]"
             />
           ) : (
             <motion.img
               key={pose}
               src={POSE_IMAGES[pose]}
-              alt={`Maskot: ${pose}`}
-              initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="h-full w-full rounded-full object-cover shadow-lg shadow-purple-200 ring-4 ring-white"
+              alt={`Lingua: ${pose}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="h-full w-full rounded-sm border border-ink/15 object-cover grayscale contrast-[1.05]"
             />
           )}
         </AnimatePresence>
       </div>
       {line ? (
         reduceMotion ? (
-          <div className="relative mb-1 max-w-[220px] rounded-2xl rounded-bl-sm bg-white px-3 py-2 text-sm font-medium text-ink shadow-md ring-1 ring-black/5">
+          <p className="mb-1 max-w-[240px] border-l-2 border-ink/20 pl-3 text-sm italic leading-relaxed text-ink/60">
             {line}
-          </div>
+          </p>
         ) : (
-          <motion.div
+          <motion.p
             key={line}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="relative mb-1 max-w-[220px] rounded-2xl rounded-bl-sm bg-white px-3 py-2 text-sm font-medium text-ink shadow-md ring-1 ring-black/5"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.15, ease: "easeOut" }}
+            className="mb-1 max-w-[240px] border-l-2 border-ink/20 pl-3 text-sm italic leading-relaxed text-ink/60"
           >
             {line}
-          </motion.div>
+          </motion.p>
         )
       ) : null}
     </div>

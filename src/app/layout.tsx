@@ -109,7 +109,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           dangerouslySetInnerHTML={{ __html: DARK_MODE_INIT_SCRIPT }}
         />
       </head>
-      <body className="bg-[#faf8ff] text-ink antialiased transition-colors dark:bg-[#171225] dark:text-ink-dark" suppressHydrationWarning>
+      <body className="bg-paper text-ink antialiased transition-colors" suppressHydrationWarning>
         {children}
       </body>
     </html>

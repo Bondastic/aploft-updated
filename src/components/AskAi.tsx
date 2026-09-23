@@ -63,7 +63,7 @@ export default function AskAiButton({ task }: { task: Task }) {
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-1.5 rounded-full border border-purple/25 bg-purple/5 px-3.5 py-1.5 text-xs font-bold text-purple transition hover:bg-purple/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
+        className="btn btn-outline px-3 py-1.5 text-xs"
       >
         <SparklesIcon className="h-3.5 w-3.5" aria-hidden="true" />
         Spørg AI
@@ -85,10 +85,7 @@ export default function AskAiButton({ task }: { task: Task }) {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-full border border-purple/25 bg-purple/5 px-3.5 py-1.5 text-xs font-bold text-purple transition hover:bg-purple/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
-      >
+      <button onClick={() => setOpen(true)} className="btn btn-outline px-3 py-1.5 text-xs">
         <SparklesIcon className="h-3.5 w-3.5" aria-hidden="true" />
         Spørg AI
       </button>
@@ -101,27 +98,22 @@ export default function AskAiButton({ task }: { task: Task }) {
           aria-label="Åbn Copilot"
           onClick={() => setOpen(false)}
         >
-          <div
-            className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="modal w-full max-w-sm p-5" onClick={(e) => e.stopPropagation()}>
             <div className="mb-1 flex items-start justify-between gap-3">
-              <h3 className="font-display text-lg font-extrabold text-ink">Spørg Copilot om hjælp?</h3>
+              <h3 className="section-title">Spørg Copilot om hjælp?</h3>
               <button
                 onClick={() => setOpen(false)}
                 aria-label="Luk"
-                className="rounded-full p-1 text-ink/40 transition hover:bg-ink/5 hover:text-ink"
+                className="rounded-sm p-1 text-ink/40 transition-colors hover:bg-ink/5 hover:text-ink"
               >
                 <XIcon className="h-4 w-4" />
               </button>
             </div>
-            <p className="text-sm text-ink/60">
+            <p className="text-sm leading-relaxed text-ink/60">
               Denne knap tager dig til <span className="font-semibold text-ink">Microsoft Copilot</span>, hvor du kan få en
               intuitiv og letforståelig forklaring af spørgsmålet. Du åbner siden i en ny fane.
             </p>
-            <p className="mt-2 rounded-xl bg-purple/5 px-3 py-2 text-xs italic text-ink/50">
-              &quot;{questionText(task)}&quot;
-            </p>
+            <p className="mt-2 border-l-2 border-ink/15 pl-3 text-xs italic text-ink/50">&quot;{questionText(task)}&quot;</p>
             <label className="mt-4 flex cursor-pointer items-center gap-2 text-sm text-ink/70">
               <input
                 type="checkbox"
@@ -132,16 +124,10 @@ export default function AskAiButton({ task }: { task: Task }) {
               Vis ikke igen
             </label>
             <div className="mt-4 flex gap-2">
-              <button
-                onClick={() => setOpen(false)}
-                className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink/60 transition hover:border-ink/30 hover:text-ink"
-              >
+              <button onClick={() => setOpen(false)} className="btn btn-outline flex-1">
                 Luk
               </button>
-              <button
-                onClick={confirm}
-                className="flex flex-1 items-center justify-center gap-1.5 rounded-full bg-gradient-to-r from-purple to-purple-dark py-2.5 text-sm font-bold text-white shadow-md shadow-purple/30"
-              >
+              <button onClick={confirm} className="btn btn-primary flex-1">
                 <SparklesIcon className="h-4 w-4" aria-hidden="true" />
                 Gå til Copilot
               </button>

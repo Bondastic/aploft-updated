@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { cn } from "../utils/cn";
-import Mascot from "../components/Mascot";
 import { CategoryIcon } from "../components/icons";
 import type { Education, IconName, Progress, Track } from "../types";
 
@@ -400,133 +399,140 @@ const LATIN_LESSONS: Lesson[] = [
 ];
 
 function LessonTableView({ table }: { table: LessonTable }) {
- return (
- <div className="mb-3 overflow-x-auto rounded-xl border border-ink/10">
- {table.caption && <p className="border-b border-ink/10 bg-ink/5 px-3 py-1.5 text-xs font-bold text-ink/70">{table.caption}</p>}
- <table className="w-full min-w-[420px] border-collapse text-left text-xs sm:text-sm">
- <thead>
- <tr className="bg-ink/5">
- {table.headers.map((h) => (
- <th key={h} scope="col" className="border-b border-ink/10 px-3 py-2 font-bold text-ink">
- {h}
- </th>
- ))}
- </tr>
- </thead>
- <tbody>
- {table.rows.map((row, i) => (
- <tr key={i} className="odd:bg-white even:bg-ink/[0.02]">
- {row.map((cell, j) => (
- <td key={j} className="border-b border-ink/5 px-3 py-2 text-ink/80">
- {cell}
- </td>
- ))}
- </tr>
- ))}
- </tbody>
- </table>
- </div>
- );
+  return (
+    <div className="mb-3 overflow-x-auto rounded-md border border-ink/10">
+      {table.caption && <p className="border-b border-ink/10 bg-ink/[0.04] px-3 py-1.5 text-xs font-bold text-ink/70">{table.caption}</p>}
+      <table className="w-full min-w-[420px] border-collapse text-left text-xs sm:text-sm">
+        <thead>
+          <tr className="bg-ink/[0.04]">
+            {table.headers.map((h) => (
+              <th key={h} scope="col" className="border-b border-ink/10 px-3 py-2 font-bold text-ink">
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((row, i) => (
+            <tr key={i} className="odd:bg-card even:bg-ink/[0.02]">
+              {row.map((cell, j) => (
+                <td key={j} className="border-b border-ink/5 px-3 py-2 text-ink/80">
+                  {cell}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 }
 
+// Lynkursus: opslagsværk i redaktionel indeks-stil. Faner er understregede
+// tekstfaner, og emnerne er en foldbar fortegnelse med hårfine skillelinjer.
 export default function LynkursusPage({ education, progress }: { education: Education; progress: Progress }) {
- const [tab, setTab] = useState<Track>(education === "hhx" ? "hhx" : "almen");
- const [openIndex, setOpenIndex] = useState<number | null>(0);
- const isHhx = education === "hhx";
- const lessons = isHhx ? HHX_LESSONS : tab === "almen" ? ALMEN_LESSONS : LATIN_LESSONS;
- const accent = isHhx ? "text-blue-600" : tab === "almen" ? "text-purple" : "text-orange-600";
+  const [tab, setTab] = useState<Track>(education === "hhx" ? "hhx" : "almen");
+  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const isHhx = education === "hhx";
+  const lessons = isHhx ? HHX_LESSONS : tab === "almen" ? ALMEN_LESSONS : LATIN_LESSONS;
+  const accent = isHhx ? "text-hhx-base" : tab === "almen" ? "text-plum-base" : "text-clay-base";
 
- return (
-    <div className="app-page space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-extrabold text-ink">Lynkursus</h1>
- <p className="text-sm text-ink/50">
- Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i "Øv dig" ; brug siden her til at
- genopfriske, slå skemaer op eller få et hurtigt overblik, før du tager en prøve.
- </p>
- </div>
+  return (
+    <div className="app-page space-y-8">
+      <header className={cn("border-t-4 pt-5", isHhx ? "border-hhx-base" : "border-stx-base")}>
+        <p className="eyebrow">Opslag</p>
+        <h1 className="page-title mt-1">Lynkursus</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/60">
+          Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i &quot;Øv dig&quot; ; brug
+          siden her til at genopfriske, slå skemaer op eller få et hurtigt overblik, før du tager en prøve.
+        </p>
+      </header>
 
- <div className="rounded-2xl border border-purple/20 bg-purple/5 px-4 py-3 text-xs text-ink/60">
- 💡 Du behøver ikke læse dette først. Start roligt i <span className="font-semibold text-ink">Øv dig</span> ; hvert forløb starter fra
- bunden og forklarer alt undervejs.
- </div>
+      <p className="border-l-2 border-ink/20 py-1 pl-3 text-xs leading-relaxed text-ink/55">
+        Du behøver ikke læse dette først. Start roligt i <span className="font-semibold text-ink">Øv dig</span> ; hvert forløb starter fra
+        bunden og forklarer alt undervejs.
+      </p>
 
- <Mascot
- pose="thinking"
- size="md"
- speech="Klik på et emne for at folde det ud og se skemaerne."
- reduceMotion={progress.settings.reduceMotion}
- />
+      {/* Understregede tekstfaner i stedet for en pille-gruppe */}
+      {isHhx ? (
+        <div className="flex gap-6 border-b border-ink/15 pb-2">
+          <span className="inline-flex items-center gap-1.5 border-b-2 border-hhx-base pb-2 -mb-[9px] text-sm font-bold text-hhx-deep">
+            <CategoryIcon name="hhx" className="h-4 w-4" />
+            HHX-pensum
+          </span>
+        </div>
+      ) : (
+        <div className="flex gap-6 border-b border-ink/15">
+          <button
+            onClick={() => {
+              setTab("almen");
+              setOpenIndex(0);
+            }}
+            className={cn(
+              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-sm font-bold transition-colors",
+              tab === "almen" ? "border-plum-base text-plum-base" : "border-transparent text-ink/45 hover:text-ink/70"
+            )}
+          >
+            <CategoryIcon name="almen" className="h-4 w-4" />
+            Almen del
+          </button>
+          <button
+            onClick={() => {
+              setTab("latin");
+              setOpenIndex(0);
+            }}
+            className={cn(
+              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-sm font-bold transition-colors",
+              tab === "latin" ? "border-clay-base text-clay-base" : "border-transparent text-ink/45 hover:text-ink/70"
+            )}
+          >
+            <CategoryIcon name="latin" className="h-4 w-4" />
+            Latindel
+          </button>
+        </div>
+      )}
 
- {isHhx ? (
- <div className="flex rounded-2xl bg-ink/5 p-1">
- <div className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white py-2 text-sm font-bold text-blue-600 shadow-sm">
- <CategoryIcon name="hhx" className="h-4 w-4" />
- HHX-pensum
- </div>
- </div>
- ) : (
- <div className="flex rounded-2xl bg-ink/5 p-1">
- <button
- onClick={() => {
- setTab("almen");
- setOpenIndex(0);
- }}
- className={cn("inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-sm font-bold transition", tab === "almen" ? "bg-white text-purple shadow-sm" : "text-ink/40")}
- >
- <CategoryIcon name="almen" className="h-4 w-4" />
- Almen del
- </button>
- <button
- onClick={() => {
- setTab("latin");
- setOpenIndex(0);
- }}
- className={cn("inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl py-2 text-sm font-bold transition", tab === "latin" ? "bg-white text-orange-600 shadow-sm" : "text-ink/40")}
- >
- <CategoryIcon name="latin" className="h-4 w-4" />
- Latindel
- </button>
- </div>
- )}
-
- <div className="space-y-3">
- {lessons.map((lesson, i) => {
- const open = openIndex === i;
- return (
- <div key={lesson.title} className="overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-sm">
- <button
- onClick={() => setOpenIndex(open ? null : i)}
- aria-expanded={open}
- className="flex w-full items-center gap-3 px-4 py-3 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
- >
- <span className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-ink/5", accent)}>
- <CategoryIcon name={lesson.icon} className="h-5 w-5" />
- </span>
- <span className="flex-1 font-bold text-ink">{lesson.title}</span>
- <span className={cn("text-ink/30 transition-transform", open && "rotate-90")} aria-hidden="true">
- ›
- </span>
- </button>
- {open && (
- <div className="space-y-3 border-t border-ink/10 px-4 py-3">
- <ul className="space-y-1.5 text-sm text-ink/70">
- {lesson.points.map((pt) => (
- <li key={pt} className="flex gap-2">
- <span className={accent}>•</span>
- <span>{pt}</span>
- </li>
- ))}
- </ul>
- {lesson.tables?.map((t) => (
- <LessonTableView key={t.caption ?? t.headers.join()} table={t} />
- ))}
- </div>
- )}
- </div>
- );
- })}
- </div>
- </div>
- );
+      {/* Emner som indeks med hårfine skillelinjer */}
+      <div className="border-t border-ink/15">
+        {lessons.map((lesson, i) => {
+          const open = openIndex === i;
+          return (
+            <div key={lesson.title} className="border-b border-ink/10">
+              <button
+                onClick={() => setOpenIndex(open ? null : i)}
+                aria-expanded={open}
+                className="flex w-full items-center gap-3.5 py-3.5 text-left transition-colors hover:bg-ink/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                <span className="font-display w-7 shrink-0 text-sm font-extrabold tabular-nums text-ink/30">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className={cn("shrink-0", accent)}>
+                  <CategoryIcon name={lesson.icon} className="h-5 w-5" />
+                </span>
+                <span className="flex-1 text-[15px] font-extrabold tracking-tight text-ink">{lesson.title}</span>
+                <span className={cn("shrink-0 text-sm text-ink/30 transition-transform", open && "rotate-90")} aria-hidden="true">
+                  ›
+                </span>
+              </button>
+              {open && (
+                <div className="space-y-3 border-t border-ink/5 pb-4 pl-[3.25rem] pr-1 pt-3">
+                  <ul className="space-y-1.5 text-sm leading-relaxed text-ink/70">
+                    {lesson.points.map((pt) => (
+                      <li key={pt} className="flex gap-2">
+                        <span className={accent}>•</span>
+                        <span>{pt}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {lesson.tables?.map((t) => (
+                    <LessonTableView key={t.caption ?? t.headers.join()} table={t} />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }

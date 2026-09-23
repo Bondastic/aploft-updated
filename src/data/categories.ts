@@ -247,17 +247,21 @@ export function getCategory(id: string, education?: Education): CategoryDef | un
   return STX_CATEGORIES.find((c) => c.id === id) ?? HHX_CATEGORIES.find((c) => c.id === id);
 }
 
+// Kategorifarver fra designsystemets dæmpede arkiv-toner (globals.css) — ikke
+// Tailwinds standardpalet. Tonen vises som hårfin nøglelinje, ikonfarve og
+// fin fremdriftsbjælke; aldrig som farvet boks eller glød. Flere kategorier
+// deler bevidst tone, så paletten holdes rolig.
 export const CATEGORY_COLOR_CLASSES: Record<string, { bg: string; text: string; ring: string; solid: string }> = {
- purple: { bg: "bg-purple-100", text: "text-purple-700", ring: "ring-purple-300", solid: "bg-purple-500" },
- blue: { bg: "bg-blue-100", text: "text-blue-700", ring: "ring-blue-300", solid: "bg-blue-500" },
- emerald: { bg: "bg-emerald-100", text: "text-emerald-700", ring: "ring-emerald-300", solid: "bg-emerald-500" },
- amber: { bg: "bg-amber-100", text: "text-amber-700", ring: "ring-amber-300", solid: "bg-amber-500" },
- rose: { bg: "bg-rose-100", text: "text-rose-700", ring: "ring-rose-300", solid: "bg-rose-500" },
- orange: { bg: "bg-orange-100", text: "text-orange-700", ring: "ring-orange-300", solid: "bg-orange-500" },
- teal: { bg: "bg-teal-100", text: "text-teal-700", ring: "ring-teal-300", solid: "bg-teal-500" },
- indigo: { bg: "bg-indigo-100", text: "text-indigo-700", ring: "ring-indigo-300", solid: "bg-indigo-500" },
- red: { bg: "bg-red-100", text: "text-red-700", ring: "ring-red-300", solid: "bg-red-500" },
- cyan: { bg: "bg-cyan-100", text: "text-cyan-700", ring: "ring-cyan-300", solid: "bg-cyan-500" },
- violet: { bg: "bg-violet-100", text: "text-violet-700", ring: "ring-violet-300", solid: "bg-violet-500" },
- fuchsia: { bg: "bg-fuchsia-100", text: "text-fuchsia-700", ring: "ring-fuchsia-300", solid: "bg-fuchsia-500" },
+ purple: { bg: "bg-plum-soft", text: "text-plum-base", ring: "ring-plum-base/30", solid: "bg-plum-base" },
+ blue: { bg: "bg-slate-soft", text: "text-slate-base", ring: "ring-slate-base/30", solid: "bg-slate-base" },
+ emerald: { bg: "bg-pine-soft", text: "text-pine-base", ring: "ring-pine-base/30", solid: "bg-pine-base" },
+ amber: { bg: "bg-ochre-soft", text: "text-ochre-base", ring: "ring-ochre-base/30", solid: "bg-ochre-base" },
+ rose: { bg: "bg-rust-soft", text: "text-rust-base", ring: "ring-rust-base/30", solid: "bg-rust-base" },
+ orange: { bg: "bg-clay-soft", text: "text-clay-base", ring: "ring-clay-base/30", solid: "bg-clay-base" },
+ teal: { bg: "bg-sea-soft", text: "text-sea-base", ring: "ring-sea-base/30", solid: "bg-sea-base" },
+ indigo: { bg: "bg-slate-soft", text: "text-slate-base", ring: "ring-slate-base/30", solid: "bg-slate-base" },
+ red: { bg: "bg-rust-soft", text: "text-rust-base", ring: "ring-rust-base/30", solid: "bg-rust-base" },
+ cyan: { bg: "bg-sea-soft", text: "text-sea-base", ring: "ring-sea-base/30", solid: "bg-sea-base" },
+ violet: { bg: "bg-plum-soft", text: "text-plum-base", ring: "ring-plum-base/30", solid: "bg-plum-base" },
+ fuchsia: { bg: "bg-mulberry-soft", text: "text-mulberry-base", ring: "ring-mulberry-base/30", solid: "bg-mulberry-base" },
 };

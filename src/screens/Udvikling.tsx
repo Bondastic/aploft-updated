@@ -5,7 +5,6 @@ import type { Education, Progress } from "../types";
 import { CATEGORY_COLOR_CLASSES, HHX_CATEGORIES, STX_CATEGORIES } from "../data/categories";
 import { getCategoryPath } from "../data/paths";
 import { getCategoryHighScoreAverage, LESSON_PASS_THRESHOLD } from "../lib/progress";
-import Mascot from "../components/Mascot";
 import { CategoryIcon } from "../components/icons";
 import { cn } from "../utils/cn";
 
@@ -41,9 +40,10 @@ function gradeFor(pct: number): { grade: string; label: string } {
   return found ?? GRADE_SCALE[GRADE_SCALE.length - 1];
 }
 
+// Udvikling: redaktionel statistikside. Nøgletal uden kortkasser, kategorier
+// som hårfine regneark-rækker, og karakteren som sidens store display-øjeblik.
 export default function UdviklingPage({ education, progress }: { education: Education; progress: Progress }) {
   const [showGrade, setShowGrade] = useState(false);
-  const reduceMotion = progress.settings.reduceMotion;
   const isHhx = education === "hhx";
 
   const rows = useMemo(() => {
@@ -82,35 +82,42 @@ export default function UdviklingPage({ education, progress }: { education: Educ
   const untouched = rows.filter((r) => r.total === 0);
 
   return (
-    <div className="app-page space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-extrabold text-ink">Din udvikling</h1>
-        <p className="text-sm text-ink/50">Se hvor du står i hver kategori, hvad du bør øve mest, og få en estimeret standpunktskarakter.</p>
-      </div>
+    <div className="app-page space-y-10">
+      <header className={cn("border-t-4 pt-5", isHhx ? "border-hhx-base" : "border-stx-base")}>
+        <p className="eyebrow">Statistik</p>
+        <h1 className="page-title mt-1">Din udvikling</h1>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink/60">
+          Se hvor du står i hver kategori, hvad du bør øve mest, og få en estimeret standpunktskarakter.
+        </p>
+      </header>
 
-      <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
-          <p className="text-xl font-extrabold text-ink">{totalAnswered}</p>
-          <p className="text-[11px] text-ink/50">opgaver besvaret</p>
+      {/* Nøgletal i fri luft med hårfine skillelinjer */}
+      <dl className="grid grid-cols-3 gap-px overflow-hidden border-y border-ink/10 bg-ink/10">
+        <div className="bg-paper py-4">
+          <dt className="eyebrow">Besvaret</dt>
+          <dd className="mt-1 text-2xl font-extrabold tabular-nums text-ink">{totalAnswered}</dd>
+          <dd className="text-[11px] text-ink/45">opgaver</dd>
         </div>
-        <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
-          <p className="text-xl font-extrabold text-purple">{progress.xp}</p>
-          <p className="text-[11px] text-ink/50">XP i alt</p>
+        <div className="bg-paper px-4 py-4">
+          <dt className="eyebrow">Erfaring</dt>
+          <dd className="mt-1 text-2xl font-extrabold tabular-nums text-ink">{progress.xp}</dd>
+          <dd className="text-[11px] text-ink/45">XP i alt</dd>
         </div>
-        <div className="rounded-2xl border border-ink/10 bg-white p-4 text-center shadow-sm">
-          <p className="text-xl font-extrabold text-amber-600">{rows.reduce((s, r) => s + r.lessonsPassed, 0)}</p>
-          <p className="text-[11px] text-ink/50">forløb bestået</p>
+        <div className="bg-paper px-4 py-4">
+          <dt className="eyebrow">Forløb</dt>
+          <dd className="mt-1 text-2xl font-extrabold tabular-nums text-ink">{rows.reduce((s, r) => s + r.lessonsPassed, 0)}</dd>
+          <dd className="text-[11px] text-ink/45">bestået</dd>
         </div>
-      </div>
+      </dl>
 
       {(weakest.length > 0 || untouched.length > 0) && (
-        <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
-          <p className="mb-3 font-bold text-ink">Hvad skal du øve dig på?</p>
+        <section className="border-t border-ink/15 pt-5">
+          <p className="section-title mb-3">Hvad skal du øve dig på?</p>
           {weakest.length > 0 && (
             <ul className="space-y-2">
               {weakest.map((r) => (
                 <li key={r.cat.id} className="flex items-center gap-3 text-sm">
-                  <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", CATEGORY_COLOR_CLASSES[r.cat.color].bg, CATEGORY_COLOR_CLASSES[r.cat.color].text)}>
+                  <span className="shrink-0 text-ink/50">
                     <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
                   </span>
                   <span className="flex-1 text-ink/70">
@@ -121,38 +128,38 @@ export default function UdviklingPage({ education, progress }: { education: Educ
             </ul>
           )}
           {untouched.length > 0 && (
-            <p className="mt-3 text-xs text-ink/50">
+            <p className="mt-3 text-xs leading-relaxed text-ink/50">
               Du har endnu ikke prøvet: {untouched.map((r) => r.cat.short).join(", ")}. Start et forløb i disse kategorier for at få et
               billede af, hvor du står.
             </p>
           )}
-        </div>
+        </section>
       )}
 
-      <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
-        <p className="mb-3 font-bold text-ink">Resultat pr. kategori</p>
-        <div className="space-y-3">
+      <section>
+        <p className="eyebrow mb-3">Resultat pr. kategori</p>
+        <div className="border-t border-ink/15">
           {rows.map((r) => (
-            <div key={r.cat.id} className="flex items-center gap-3 text-sm">
-              <span className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", CATEGORY_COLOR_CLASSES[r.cat.color].bg, CATEGORY_COLOR_CLASSES[r.cat.color].text)}>
+            <div key={r.cat.id} className="flex items-center gap-3 border-b border-ink/10 py-2.5 text-sm">
+              <span className="shrink-0 text-ink/50">
                 <CategoryIcon name={r.cat.icon} className="h-4 w-4" />
               </span>
               <span className="w-32 shrink-0 truncate text-ink/70">{r.cat.short}</span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-ink/10">
+              <div className="h-1 flex-1 overflow-hidden rounded-full bg-ink/10">
                 <div className={cn("h-full rounded-full", CATEGORY_COLOR_CLASSES[r.cat.color].solid)} style={{ width: `${r.pct ?? 0}%` }} />
               </div>
-              <span className="w-20 shrink-0 text-right text-xs font-semibold text-ink/50">{r.pct !== null ? `${r.pct}%` : "-"}</span>
+              <span className="w-14 shrink-0 text-right text-xs font-bold tabular-nums text-ink/50">{r.pct !== null ? `${r.pct}%` : "-"}</span>
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      <div className="rounded-3xl border-2 border-purple/20 bg-gradient-to-br from-purple/5 to-transparent p-5 shadow-sm">
-        <div className="flex items-start gap-4">
-          <Mascot pose="explain" size="md" speech={null} reduceMotion={reduceMotion} />
-          <div className="flex-1">
-            <p className="font-display text-lg font-extrabold text-ink">Linguas vurdering</p>
-            <p className="mt-1 text-sm text-ink/60">
+      {/* Linguas vurdering: tekst-first med karakteren som stort display-tal */}
+      <section className="border-t-[3px] border-ink pt-5">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <div>
+            <p className="eyebrow">Linguas vurdering</p>
+            <p className="mt-1 max-w-xl text-sm leading-relaxed text-ink/60">
               Lingua kan give dig en hardcoded standpunktskarakter ud fra dine resultater i de kategorier, du allerede har trænet.
             </p>
           </div>
@@ -162,31 +169,37 @@ export default function UdviklingPage({ education, progress }: { education: Educ
           <button
             onClick={() => setShowGrade(true)}
             disabled={!canGrade}
-            className="mt-4 w-full rounded-full bg-gradient-to-r from-purple to-purple-dark py-3 text-sm font-bold text-white shadow-md shadow-purple/30 disabled:cursor-not-allowed disabled:opacity-40"
+            className={cn("btn mt-4", isHhx ? "bg-hhx-base text-white" : "bg-stx-base text-white")}
           >
             Få en standpunktskarakter af Lingua
           </button>
         ) : (
-          <div className="mt-4 space-y-3 rounded-2xl border border-purple/20 bg-white p-5 text-center">
-            <p className="text-xs font-semibold uppercase tracking-wide text-purple/70">Estimeret standpunktskarakter</p>
-            <p className="font-display text-5xl font-extrabold text-ink">{grade.grade}</p>
-            <p className="text-sm font-semibold text-ink/60">{grade.label}</p>
-            <p className="text-xs text-ink/50">Baseret på et vægtet gennemsnit på {Math.round(weightedPct)}% rigtige på tværs af de kategorier, du har trænet.</p>
+          <div className="mt-5 flex flex-wrap items-end gap-x-8 gap-y-3 border-y border-ink/15 py-6">
+            {/* Det store tal er et af de få steder, display-fonten bruges */}
+            <p className={cn("font-display text-6xl font-extrabold leading-none tabular-nums sm:text-7xl", isHhx ? "text-hhx-deep" : "text-stx-deep")}>
+              {grade.grade}
+            </p>
+            <div className="pb-1">
+              <p className="text-sm font-extrabold text-ink">{grade.label}</p>
+              <p className="mt-1 max-w-sm text-xs leading-relaxed text-ink/50">
+                Baseret på et vægtet gennemsnit på {Math.round(weightedPct)}% rigtige på tværs af de kategorier, du har trænet.
+              </p>
+            </div>
           </div>
         )}
 
         {!canGrade && (
-          <p className="mt-3 text-xs text-ink/50">
+          <p className="mt-3 text-xs leading-relaxed text-ink/50">
             Gennemfør flere forløb (mindst {MIN_ANSWERS_FOR_GRADE} opgaver i alt, fordelt på mindst 2 kategorier), så Lingua har nok data til at
             give dig en vurdering.
           </p>
         )}
 
-        <p className="mt-4 rounded-xl bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-800">
+        <p className="mt-4 rounded-md bg-ochre-soft px-3 py-2 text-[11px] leading-relaxed text-ochre-base">
           Bemærk: opgavebanken i AP Klar er endnu ikke fuldt færdig. Karakteren er derfor kun et estimat baseret på det, du allerede har
           trænet. Den kan blive langt mere præcis, når flere kategorier og forløb er fuldt udbyggede.
         </p>
-      </div>
+      </section>
     </div>
   );
 }

@@ -183,11 +183,11 @@ export default function PracticePage({
       return (
         <div className="app-page-narrow space-y-5 pt-10 text-center">
           <Mascot pose="surprise" size="md" className="mx-auto justify-center" reduceMotion={reduceMotion} />
-          <h2 className="font-display text-2xl font-extrabold text-ink">Ingen opgaver her</h2>
+          <h2 className="page-title">Ingen opgaver her</h2>
           <p className="text-sm text-ink/60">
             Dette forløb har ingen opgaver lige nu. Gå tilbage og vælg et andet, eller prøv igen senere.
           </p>
-          <button onClick={() => setView("path")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+          <button onClick={() => setView("path")} className="btn btn-primary">
             Tilbage til forløb
           </button>
         </div>
@@ -206,7 +206,7 @@ export default function PracticePage({
           <button
             type="button"
             onClick={() => setConfirmAbandon(true)}
-            className="inline-flex items-center rounded-full border-2 border-ink/15 bg-white px-3 py-1.5 text-xs font-bold text-ink hover:border-rose-300 hover:text-rose-600"
+            className="btn btn-danger px-3 py-1.5 text-xs"
           >
             Afbryd
           </button>
@@ -224,7 +224,7 @@ export default function PracticePage({
           <p className="text-center text-xs font-semibold text-ink/40">Du kigger på et tidligere trin. Gå frem for at fortsætte, hvor du slap.</p>
         )}
         <div
-          className="h-2 w-full overflow-hidden rounded-full bg-ink/10"
+          className="h-1 w-full overflow-hidden rounded-full bg-ink/10"
           role="progressbar"
           aria-valuenow={index}
           aria-valuemin={0}
@@ -245,7 +245,7 @@ export default function PracticePage({
           initial={reduceMotion ? false : { opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.16, ease: "easeOut" }}
-          className="rounded-3xl border border-ink/10 bg-white p-5 shadow-sm"
+          className="card p-5"
         >
           <TaskRenderer
             key={task.id}
@@ -258,34 +258,34 @@ export default function PracticePage({
           />
         </motion.div>
         {answered && !isReview && (
-          <button onClick={next} className="w-full rounded-full bg-ink py-3 text-sm font-bold text-white shadow-md">
+          <button onClick={next} className="btn btn-primary w-full py-3">
             {index + 1 >= sessionTasks.length ? "Se resultat →" : "Næste →"}
           </button>
         )}
 
         {confirmAbandon && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4"
             role="alertdialog"
             aria-modal="true"
             aria-label="Bekræft afbrydelse af forløbet"
             onClick={() => setConfirmAbandon(false)}
           >
             <motion.div
-              initial={reduceMotion ? false : { scale: 0.92, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 380, damping: 28 }}
-              className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-6 text-center shadow-2xl"
+              initial={reduceMotion ? false : { opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="modal w-full max-w-sm space-y-3 p-6 text-center"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="font-display text-lg font-extrabold text-ink">Afbryd forløbet midt i?</h3>
+              <h3 className="section-title">Afbryd forløbet midt i?</h3>
               <p className="text-sm leading-relaxed text-ink/60">
                 Du er {index + 1} trin hen i forløbet. Afbryder du nu, <span className="font-bold text-ink">bliver fremdriften i netop denne session
                 ikke gemt</span> (de enkelte rigtige og forkerte svar tæller dog med i din statistik). Forløbet skal startes forfra, hvis du vil have
                 det bestået.
               </p>
               <div className="flex gap-2">
-                <button onClick={() => setConfirmAbandon(false)} className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink">
+                <button onClick={() => setConfirmAbandon(false)} className="btn btn-outline flex-1">
                   Bliv i forløbet
                 </button>
                 <button
@@ -293,7 +293,7 @@ export default function PracticePage({
                     setConfirmAbandon(false);
                     setView("path");
                   }}
-                  className="flex-1 rounded-full bg-rose-600 py-2.5 text-sm font-bold text-white shadow-md"
+                  className="btn btn-danger-solid flex-1"
                 >
                   Afbryd alligevel
                 </button>
@@ -325,7 +325,7 @@ export default function PracticePage({
         className="app-page-narrow space-y-6 pt-10 text-center"
       >
         <Mascot pose={pct >= 70 ? "celebrate" : "encourage"} size="lg" className="mx-auto justify-center" reduceMotion={reduceMotion} />
-        <h2 className="font-display text-2xl font-extrabold text-ink">{activeNode?.title ?? "Forløb"} klaret!</h2>
+        <h2 className="page-title">{activeNode?.title ?? "Forløb"} klaret!</h2>
         {contentOnly ? (
           <p className="text-ink/60">Du har læst introduktionen. Du kan altid åbne den igen, hvis du vil friske den op.</p>
         ) : (
@@ -335,19 +335,19 @@ export default function PracticePage({
           </p>
         )}
         {passed ? (
-          <p className="mx-auto max-w-sm rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700">
+          <p className="mx-auto max-w-sm rounded-md border-l-4 border-pine-base bg-pine-soft px-4 py-3 text-sm font-semibold text-pine-base">
             {contentOnly ? "Næste forløb i rækken er nu låst op." : "Bestået! Det næste forløb i rækken er nu låst op."}
           </p>
         ) : (
-          <p className="mx-auto max-w-sm rounded-2xl bg-amber-50 px-4 py-3 text-sm font-semibold text-amber-700">
+          <p className="mx-auto max-w-sm rounded-md border-l-4 border-ochre-base bg-ochre-soft px-4 py-3 text-sm font-semibold text-ochre-base">
             Du skal have mindst {LESSON_PASS_THRESHOLD}% rigtige for at låse det næste forløb op. Prøv igen. Det går bedre næste gang!
           </p>
         )}
         {!contentOnly && !isFirstAttempt && (
           <p
             className={cn(
-              "mx-auto max-w-sm rounded-2xl px-4 py-3 text-sm font-semibold",
-              isNewBest ? cn("bg-ink/5", theme.accentText) : "bg-ink/5 text-ink/60"
+              "mx-auto max-w-sm rounded-md px-4 py-3 text-sm font-semibold",
+              isNewBest ? cn("bg-ink/[0.05]", theme.accentText) : "bg-ink/[0.05] text-ink/60"
             )}
             aria-live="polite"
           >
@@ -359,13 +359,13 @@ export default function PracticePage({
           </p>
         )}
         <div className="flex flex-wrap justify-center gap-3">
-          <button onClick={() => setView("path")} className="rounded-full border-2 border-ink/15 px-5 py-2.5 text-sm font-semibold text-ink">
+          <button onClick={() => setView("path")} className="btn btn-outline">
             Tilbage til forløb
           </button>
           {activeNode && (
             <button
               onClick={() => startLesson(activeNode)}
-              className={cn("rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-md", theme.solidBg)}
+              className={cn("btn", theme.solidBg)}
             >
               {contentOnly ? "Læs introduktionen igen" : "Øv dette forløb igen"}
             </button>
@@ -383,8 +383,8 @@ export default function PracticePage({
     if (!cat) {
       return (
         <div className="app-page-narrow space-y-5 pt-10 text-center">
-          <h2 className="font-display text-2xl font-extrabold text-ink">Kategorien findes ikke</h2>
-          <button onClick={() => setView("categories")} className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white shadow-md">
+          <h2 className="page-title">Kategorien findes ikke</h2>
+          <button onClick={() => setView("categories")} className="btn btn-primary">
             Tilbage til kategorier
           </button>
         </div>
@@ -407,23 +407,23 @@ export default function PracticePage({
           ← Alle kategorier
         </button>
 
-        <div className="flex items-center gap-4 rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-          <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl", colors.bg, colors.text)}>
-            <CategoryIcon name={cat.icon} className="h-6 w-6" />
+        <div className="flex items-center gap-4 border-t-[3px] border-ink pt-4">
+          <div className={cn("shrink-0", colors.text)}>
+            <CategoryIcon name={cat.icon} className="h-7 w-7" />
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="font-display text-xl font-extrabold text-ink">{cat.title}</h1>
+            <h1 className="page-title">{cat.title}</h1>
             <p className="text-xs text-ink/50">{cat.description}</p>
           </div>
         </div>
 
         {overallPct !== null && (
-          <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+          <div className="card p-4">
             <div className="mb-1.5 flex items-center justify-between text-sm">
               <span className="font-bold text-ink">Din gennemsnitlige score i {cat.short}</span>
               <span className={cn("font-bold", theme.accentText)}>{overallPct}% rigtige</span>
             </div>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-ink/10">
+            <div className="h-1 w-full overflow-hidden rounded-full bg-ink/10">
               <div className={cn("h-full rounded-full", colors.solid)} style={{ width: `${overallPct}%` }} />
             </div>
             <p className="mt-1 text-[11px] text-ink/40">
@@ -435,8 +435,8 @@ export default function PracticePage({
         )}
 
         <div>
-          <h2 className="font-display text-lg font-extrabold text-ink">Forløb du kan vælge</h2>
-          <p className="text-sm text-ink/50">
+          <h2 className="section-title">Forløb du kan vælge</h2>
+          <p className="mt-1 text-sm leading-relaxed text-ink/55">
             Følg stien: hvert forløb låser det næste op, når du består med mindst {LESSON_PASS_THRESHOLD}% rigtige. Er du øvet i forvejen,
             kan du låse et forløb op og springe hen til det. De oplåste forløb tæller som ikke forsøgt.
           </p>
@@ -465,8 +465,8 @@ export default function PracticePage({
                 key={node.id}
                 layout
                 initial={false}
-                animate={justUnlocked ? { scale: [1, 1.04, 1] } : { scale: 1 }}
-                transition={{ duration: 0.35, ease: "easeOut" }}
+                animate={justUnlocked ? { opacity: [0.55, 1] } : { opacity: 1 }}
+                transition={{ duration: 0.3, ease: "easeOut" }}
               >
                 <button
                   type="button"
@@ -481,15 +481,15 @@ export default function PracticePage({
                     });
                   }}
                   className={cn(
-                    "flex w-full items-center gap-4 rounded-2xl border-2 p-4 text-left shadow-sm transition focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple",
-                    unlocked ? "border-ink/10 bg-white hover:-translate-y-0.5 hover:shadow-md" : "border-dashed border-ink/20 bg-white hover:border-ink/40",
-                    isReview && unlocked && cn("border-ink/10 bg-ink/5")
+                    "flex w-full items-center gap-4 rounded-md border p-4 text-left transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
+                    unlocked ? "border-ink/12 bg-card hover:border-ink/30" : "border-dashed border-ink/25 bg-card hover:border-ink/40",
+                    isReview && unlocked && "bg-ink/[0.04]"
                   )}
                 >
                   <div
                     className={cn(
-                      "flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-sm font-extrabold",
-                      passed ? "bg-emerald-100 text-emerald-700" : unlocked ? cn(colors.bg, colors.text) : "bg-ink/10 text-ink/30"
+                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-sm border text-sm font-extrabold tabular-nums",
+                      passed ? "border-pine-base/40 bg-pine-soft text-pine-base" : unlocked ? cn("border-ink/15", colors.text) : "border-ink/15 text-ink/35"
                     )}
                   >
                     {passed ? <CheckIcon className="h-5 w-5" /> : unlocked ? i + 1 : <LockIcon className="h-5 w-5" />}
@@ -498,12 +498,12 @@ export default function PracticePage({
                     <p className={cn("font-bold", unlocked ? "text-ink" : "text-ink/40")}>
                       {node.title}
                       {isReview && (
-                        <span className={cn("ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold uppercase", theme.accentText)}>
+                        <span className={cn("chip ml-2 align-middle bg-ink/[0.06]", theme.accentText)}>
                           Opsamling
                         </span>
                       )}
                       {contentOnly && (
-                        <span className={cn("ml-2 rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold uppercase", theme.accentText)}>
+                        <span className={cn("chip ml-2 align-middle bg-ink/[0.06]", theme.accentText)}>
                           Intro
                         </span>
                       )}
@@ -523,7 +523,7 @@ export default function PracticePage({
                   {unlocked ? (
                     <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink/30" />
                   ) : (
-                    <span className={cn("shrink-0 rounded-full px-3 py-1 text-[11px] font-bold text-white", theme.solidBg)}>Lås op</span>
+                    <span className={cn("chip shrink-0", theme.solidBg)}>Lås op</span>
                   )}
                 </button>
               </motion.li>
@@ -532,9 +532,9 @@ export default function PracticePage({
         </ol>
 
         {unlockTarget && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#171225]/60 p-4">
-            <div className="w-full max-w-md space-y-3 rounded-3xl bg-white p-5 shadow-2xl">
-              <h3 className="font-display text-lg font-extrabold text-ink">Lås forløb op?</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/55 p-4">
+            <div className="modal w-full max-w-md space-y-3 p-5">
+              <h3 className="section-title">Lås forløb op?</h3>
               <p className="text-sm text-ink/70">
                 Alle forløb frem til og med <span className="font-bold text-ink">{unlockTarget.node.title}</span> bliver låst op.
                 De markeres som &quot;ikke forsøgt endnu&quot; og tæller ikke som gennemført.
@@ -542,7 +542,7 @@ export default function PracticePage({
               <div className="flex gap-2">
                 <button
                   onClick={() => setUnlockTarget(null)}
-                  className="flex-1 rounded-full border-2 border-ink/15 py-2.5 text-sm font-semibold text-ink"
+                  className="btn btn-outline flex-1"
                 >
                   Fortryd
                 </button>
@@ -557,7 +557,7 @@ export default function PracticePage({
                       setRevealedIds([]);
                     }
                   }}
-                  className={cn("flex-1 rounded-full py-2.5 text-sm font-bold text-white shadow-md", theme.solidBg)}
+                  className={cn("btn flex-1", theme.solidBg)}
                 >
                   Lås op
                 </button>
@@ -580,46 +580,50 @@ export default function PracticePage({
       transition={{ duration: 0.18, ease: "easeOut" }}
       className="app-page space-y-6"
     >
-      <div>
-        <h1 className="font-display text-2xl font-extrabold text-ink">Øv dig</h1>
-        <p className="text-sm text-ink/50">
+      <header className={cn("border-t-4 pt-5", isHhx ? "border-hhx-base" : "border-stx-base")}>
+        <p className="eyebrow">Øvelser</p>
+        <h1 className="page-title mt-1">Øv dig</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink/60">
           {isHhx
             ? "Her er HHX-pensum: fælles grammatik + kommunikation, semantik, pragmatik, genrer, sproghistorie og læringsstrategier."
             : "Vælg en kategori for at se dens forløb. De vigtigste og mest grundlæggende emner står øverst."}
         </p>
-      </div>
+      </header>
 
       {isHhx ? (
-        <div className="flex rounded-2xl bg-ink/5 p-1">
-          <div className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl bg-white py-2 text-sm font-bold shadow-sm text-blue-600">
+        <div className="flex gap-6 border-b border-ink/15">
+          <span className="inline-flex items-center gap-1.5 border-b-2 border-hhx-base pb-2 text-sm font-bold text-hhx-deep">
             <CategoryIcon name="hhx" className="h-4 w-4" />
             HHX-pensum
-          </div>
+          </span>
         </div>
       ) : (
-        <div className="flex rounded-2xl bg-ink/5 p-1">
+        <div className="flex gap-6 border-b border-ink/15">
           <button
             onClick={() => setTab("almen")}
-            className={cn("flex-1 rounded-xl py-2 text-sm font-bold transition", tab === "almen" ? "bg-white text-purple shadow-sm" : "text-ink/40")}
+            className={cn(
+              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-sm font-bold transition-colors",
+              tab === "almen" ? "border-plum-base text-plum-base" : "border-transparent text-ink/45 hover:text-ink/70"
+            )}
           >
-            <span className="inline-flex items-center justify-center gap-1.5">
-              <CategoryIcon name="almen" className="h-4 w-4" />
-              Almen del
-            </span>
+            <CategoryIcon name="almen" className="h-4 w-4" />
+            Almen del
           </button>
           <button
             onClick={() => setTab("latin")}
-            className={cn("flex-1 rounded-xl py-2 text-sm font-bold transition", tab === "latin" ? "bg-white text-orange-600 shadow-sm" : "text-ink/40")}
+            className={cn(
+              "inline-flex items-center gap-1.5 border-b-2 pb-2 text-sm font-bold transition-colors",
+              tab === "latin" ? "border-clay-base text-clay-base" : "border-transparent text-ink/45 hover:text-ink/70"
+            )}
           >
-            <span className="inline-flex items-center justify-center gap-1.5">
-              <CategoryIcon name="latin" className="h-4 w-4" />
-              Latindel
-            </span>
+            <CategoryIcon name="latin" className="h-4 w-4" />
+            Latindel
           </button>
         </div>
       )}
 
-      <div className="space-y-3">
+      {/* Kategorier som en indeks-fortegnelse med hårfine skillelinjer */}
+      <ol className="border-t border-ink/15">
         {categories.map((cat) => {
           const colors = CATEGORY_COLOR_CLASSES[cat.color];
           const hs = getCategoryHighScoreAverage(progress, cat.id, education);
@@ -627,32 +631,33 @@ export default function PracticePage({
           const path = getCategoryPath(cat.id, education);
           const lessonsPassed = path.nodes.filter((n) => (progress.completedLessons[n.id]?.bestPct ?? 0) >= LESSON_PASS_THRESHOLD).length;
           return (
-            <button
-              key={cat.id}
-              onClick={() => openCategory(cat.id)}
-              className="flex w-full items-center gap-4 rounded-2xl border border-ink/10 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple"
-            >
-              <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl", colors.bg, colors.text)}>
-                <CategoryIcon name={cat.icon} className="h-6 w-6" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-ink">{cat.title}</p>
-                <p className="truncate text-xs text-ink/50">{cat.description}</p>
-                <p className="mt-0.5 text-[11px] text-ink/40">
-                  {lessonsPassed}/{path.nodes.length} forløb bestået
-                  {pct !== null && <> · {pct}% rigtige i gennemsnit</>}
-                </p>
-                {pct !== null && (
-                  <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-ink/10">
-                    <div className={cn("h-full rounded-full", colors.solid)} style={{ width: `${pct}%` }} />
-                  </div>
-                )}
-              </div>
-              <ChevronRightIcon className="h-5 w-5 shrink-0 text-ink/30" />
-            </button>
+            <li key={cat.id} className="border-b border-ink/10">
+              <button
+                onClick={() => openCategory(cat.id)}
+                className="group flex w-full items-center gap-4 py-4 text-left transition-colors hover:bg-ink/[0.04] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+              >
+                <span className={cn("shrink-0 transition-colors", colors.text)}>
+                  <CategoryIcon name={cat.icon} className="h-5 w-5" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[15px] font-extrabold tracking-tight text-ink">{cat.title}</p>
+                  <p className="truncate text-xs text-ink/50">{cat.description}</p>
+                  <p className="mt-0.5 text-[11px] text-ink/45">
+                    {lessonsPassed}/{path.nodes.length} forløb bestået
+                    {pct !== null && <> · {pct}% rigtige i gennemsnit</>}
+                  </p>
+                  {pct !== null && (
+                    <div className="mt-1.5 h-1 max-w-xs overflow-hidden rounded-full bg-ink/10">
+                      <div className={cn("h-full rounded-full", colors.solid)} style={{ width: `${pct}%` }} />
+                    </div>
+                  )}
+                </div>
+                <span className="text-ink/25 transition-colors group-hover:text-ink/60">→</span>
+              </button>
+            </li>
           );
         })}
-      </div>
+      </ol>
     </motion.div>
   );
 }

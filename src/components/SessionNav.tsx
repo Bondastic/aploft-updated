@@ -21,12 +21,7 @@ export default function SessionNav({
         type="button"
         onClick={onBack}
         disabled={!canBack}
-        className={cn(
-          "inline-flex items-center gap-1 rounded-full border-2 px-3 py-1.5 text-xs font-bold transition",
-          canBack
-            ? "border-ink/15 text-ink hover:border-ink/30"
-            : "cursor-not-allowed border-ink/10 text-ink/30"
-        )}
+        className={cn("btn btn-outline px-3 py-1.5 text-xs", !canBack && "cursor-not-allowed opacity-40")}
       >
         <ChevronRightIcon className="h-3.5 w-3.5 rotate-180" />
         Forrige svar
@@ -35,12 +30,7 @@ export default function SessionNav({
         type="button"
         onClick={onForward}
         disabled={!canForward}
-        className={cn(
-          "inline-flex items-center gap-1 rounded-full border-2 px-3 py-1.5 text-xs font-bold transition",
-          canForward
-            ? "border-ink/15 text-ink hover:border-ink/30"
-            : "cursor-not-allowed border-ink/10 text-ink/30"
-        )}
+        className={cn("btn btn-outline px-3 py-1.5 text-xs", !canForward && "cursor-not-allowed opacity-40")}
       >
         Næste svar
         <ChevronRightIcon className="h-3.5 w-3.5" />
