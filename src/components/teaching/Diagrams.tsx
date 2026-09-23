@@ -11,6 +11,7 @@
 
 export type DiagramId =
   | "analysepilen"
+  | "kasus"
   | "morfemer"
   | "tempus"
   | "hovedled"
@@ -222,8 +223,34 @@ function Genrer() {
   );
 }
 
+/** Kasus: hvilken form et ord får efter sin funktion i sætningen. */
+function Kasus() {
+  const rows = [
+    ["Nominativ", "subjekt", "puella : pigen synger"],
+    ["Akkusativ", "direkte objekt", "puellam : jeg ser pigen"],
+    ["Dativ", "indirekte objekt", "puellae : jeg giver pigen bogen"],
+    ["Genitiv", "ejerforhold", "puellae : pigens bog"],
+    ["Ablativ", "middel, sted, måde", "puella : med pigen"],
+  ];
+  return (
+    <svg viewBox="0 0 320 176" className="w-full text-ink/80" role="img" aria-label="Kasus og deres funktion i sætningen">
+      {rows.map(([navn, funktion, ex], i) => (
+        <g key={navn}>
+          <rect x="4" y={6 + i * 33} width="312" height="26" rx="8" className={BOX} strokeWidth="1.2" />
+          <text x="14" y={17 + i * 33} className={LABEL}>{navn} <tspan className="font-medium" opacity="0.6">: {funktion}</tspan></text>
+          <text x="14" y={28 + i * 33} className={SMALL} opacity="0.65">{ex}</text>
+        </g>
+      ))}
+      <text x="160" y="172" textAnchor="middle" className={SMALL} opacity="0.7">
+        Endelsen viser funktionen : derfor er ordstillingen fri på latin
+      </text>
+    </svg>
+  );
+}
+
 const DIAGRAMS: Record<DiagramId, () => React.JSX.Element> = {
   analysepilen: Analysepilen,
+  kasus: Kasus,
   morfemer: Morfemer,
   tempus: Tempus,
   hovedled: Hovedled,

@@ -52,9 +52,10 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "kommunikation-6",
  c,
  "Hvad kaldes modtagerens reaktion tilbage til afsenderen : fx et nik, et svar eller en mail tilbage?",
- ["Feedback", "Støj (forstyrrelse af budskabet)", "Kode (det sprog, budskabet er i)", "Monolog (en enetaler)"],
+ ["Feedback", "Støj", "Kode", "Monolog"],
  0,
- "Feedback er modtagerens reaktion og gør kommunikationen til en dialog. Uden feedback kan afsenderen ikke vide, om budskabet nåede frem."
+ "Feedback er modtagerens reaktion og gør kommunikationen til en dialog. Uden feedback kan afsenderen ikke vide, om budskabet nåede frem.",
+ ["", "Støj er det, der forstyrrer budskabet undervejs : ikke modtagerens svar tilbage.", "Koden er det sprog eller system, budskabet er formuleret i.", "En monolog er netop kommunikation UDEN svar tilbage fra modtageren."]
  ),
  mc(
  "kommunikation-7",

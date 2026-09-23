@@ -166,8 +166,86 @@ export const HHX_EMNE_INTRO: Partial<Record<CategoryId, EmneIntroT>> = {
   },
 };
 
-/** Findes der en læseside for emnet? (Kun HHX : se filens hoved.) */
+
+// ---------------------------------------------------------------------------
+// STX-LÆSESIDER.
+//
+// STX har sin egen AP-undervisning med latindelen, så teksterne herunder er
+// skrevet til det pensum : diagrammerne og begrebslisterne er de samme, fordi
+// grammatikken er den samme. Har vi først materialet fra en STX-lærer, kan
+// teksterne strammes yderligere.
+// ---------------------------------------------------------------------------
+const base = (c: CategoryId): EmneIntroT => HHX_EMNE_INTRO[c] as EmneIntroT;
+
+export const STX_EMNE_INTRO: Partial<Record<CategoryId, EmneIntroT>> = {
+  saetningsled: {
+    ...base("saetningsled"),
+    lead: "Sætningsanalyse er kernen i AP: du skal kunne dele en sætning i led og navngive dem med de latinske betegnelser : både på dansk og i de latinske sætninger.",
+    goals: [
+      "Finde leddene i den rigtige rækkefølge (analysepilen) i stedet for at gætte.",
+      "Navngive hvert led med den latinske betegnelse og sætte det rigtige analysetegn.",
+      "Bruge analysen som bro til latin: leddene hænger sammen med kasus.",
+    ],
+  },
+  morfologi: {
+    ...base("morfologi"),
+    lead: "Morfologi handler om ordets byggeklodser. På STX bruger du det både til dansk orddannelse og til at gennemskue latinske ord, der er bygget af de samme dele.",
+    goals: [
+      "Dele et ord i morfemer og navngive hver del.",
+      "Kende forskel på afledning (nyt ord) og bøjning (samme ord, ny form).",
+      "Genkende de latinske præfikser og suffikser, der også findes i dansk.",
+    ],
+    obs: undefined,
+  },
+  tempus: {
+    ...base("tempus"),
+    lead: "Tiderne hedder det samme på dansk og latin : præsens, præteritum, perfektum, pluskvamperfektum og futurum. Kan du dem på dansk, kan du genkende dem i latinske verber.",
+    goals: [
+      "Bestemme tiden med både det latinske og det danske navn.",
+      "Omskrive en sætning til en anden tid uden at ændre resten.",
+      "Overføre tidsbegreberne til latinske verbalformer.",
+    ],
+  },
+  syntaks: {
+    ...base("syntaks"),
+    lead: "Hoved- og ledsætninger er en fast del af AP. Ikke-reglen er den sikreste test, og den virker både i dansk og i oversatte latinske sætninger.",
+    goals: [
+      "Bruge ikke-reglen som test i stedet for at gætte.",
+      "Kende indlederne: at, fordi, hvis, når, da og som, der.",
+      "Sige hvilket led ledsætningen er i hovedsætningen.",
+    ],
+  },
+  ordklasser: {
+    ...base("ordklasser"),
+    lead: "Ordklasserne er grundlaget for hele AP: de bestemmer, hvordan et ord kan bøjes, og hvilken funktion det kan få i sætningen.",
+    goals: [
+      "Bestemme ordklassen ud fra ordets egenskaber, ikke ud fra hvad det handler om.",
+      "Bruge bøjningstest: kan ordet bøjes i tal, bestemthed eller tid?",
+      "Genkende de samme ordklasser i latinske ord.",
+    ],
+  },
+  kasus: {
+    title: "Kasus: formen viser funktionen",
+    lead: "Latin markerer sætningsleddene med endelser i stedet for med ordstilling. Kender du kasus, kan du læse en latinsk sætning, uanset hvilken rækkefølge ordene står i.",
+    diagram: "kasus",
+    goals: [
+      "Kende de fem kasus og deres funktion i sætningen.",
+      "Koble kasus til sætningsleddene: nominativ = subjekt, akkusativ = direkte objekt, dativ = indirekte objekt.",
+      "Bruge endelsen frem for ordstillingen, når du oversætter.",
+    ],
+    terms: [
+      { term: "Nominativ", def: "Subjektets kasus: puella cantat : pigen synger." },
+      { term: "Akkusativ", def: "Det direkte objekts kasus: video puellam : jeg ser pigen." },
+      { term: "Dativ", def: "Det indirekte objekts kasus: do puellae librum : jeg giver pigen bogen." },
+      { term: "Genitiv", def: "Ejerforholdets kasus: liber puellae : pigens bog." },
+      { term: "Ablativ", def: "Bruges om middel, sted og måde: cum puella : sammen med pigen." },
+    ],
+    trap: "Dansk har kun rester af kasus (jeg/mig, hans/hendes og genitiv-s). Derfor skal du lede efter ENDELSEN på latin, ikke efter ordets plads i sætningen.",
+  },
+};
+
+/** Læsesiden for emnet i det spor, eleven går på. */
 export function getEmneIntro(category: CategoryId, education: string): EmneIntroT | null {
-  if (education !== "hhx") return null;
-  return HHX_EMNE_INTRO[category] ?? null;
+  const map = education === "hhx" ? HHX_EMNE_INTRO : STX_EMNE_INTRO;
+  return map[category] ?? null;
 }

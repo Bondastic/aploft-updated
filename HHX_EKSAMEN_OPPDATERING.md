@@ -307,3 +307,35 @@ pentagrammet med formålet i midten.
 legitime parenteser i hele sætninger) · kørt i browser: feedback ved forkert
 svar, læsesiderne for sætningsled, morfologi, tempus og kommunikation, og logoet
 som genvej til forsiden. Ingen konsolfejl.
+
+
+---
+
+# RUNDE 6 : To nye prøve-sæt, neutral pladsholder og læsesider til STX
+
+## 12A. Nyt i denne runde
+
+- **Sæt 7 "Tal for de unge, ikke om dem"** (politisk tale) og **sæt 8
+  "Charmerende byhus med overkommelig have"** (ejendomsannonce) er skrevet, så
+  alle fem genrer fra skolens liste nu findes i puljen (informerende artikel,
+  opinionsartikel, reklame, politisk tale og ejendomsannonce). Begge har de syv
+  opgaver, 22 point der kan rettes automatisk, og teksterne er digtede fra
+  bunden. Rotationen tæller nu 8 sæt.
+- **Pladsholderen i opgave 7** ("Fx at, fordi, når, hvis, som eller der")
+  indeholdt facit for flere sæt. Den er skiftet til "Skriv indlederen her".
+- **De sidste afslørende svarmuligheder** er ryddet op: kommunikation-6,
+  sproghandlinger-3 og semantik-13 havde forklaringer i parentes, der pegede
+  direkte på facit. Teksten er flyttet over i feedbacken.
+- **Læsesider til STX**: `STX_EMNE_INTRO` i `src/data/hhx/emneIntro.ts` dækker
+  ordklasser, sætningsled, morfologi, tempus, syntaks og kasus. Diagrammerne og
+  begrebslisterne genbruges (grammatikken er den samme), mens mål og
+  indledninger er skrevet til STX-pensum med latindelen. Nyt kasus-diagram i
+  `Diagrams.tsx`. `getEmneIntro()` vælger nu kort efter spor.
+
+## 12B. Sådan bruges værktøjerne
+
+```bash
+npx tsx scripts/status-check.mts        # dækning af feedback + læsesider
+npx tsx scripts/option-leak-check.mts   # svarmuligheder der røber facit
+node --experimental-strip-types scripts/exam-data-check.mts   # eksamenssættene
+```

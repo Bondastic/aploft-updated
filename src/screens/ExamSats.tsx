@@ -1460,7 +1460,7 @@ function ClausePart({ part, ans, onChange }: PartProps<ExamClausePartT>) {
           type="text"
           value={ans.text["indleder"] ?? ""}
           onChange={(e) => onChange(setText("indleder", e.target.value))}
-          placeholder="Fx at, fordi, når, hvis, som eller der"
+          placeholder="Skriv indlederen her"
           className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
         />
       </div>
