@@ -261,3 +261,49 @@ Resultat: ALL CHECKS PASSED for alle seks sæt.
 `npm run build` grøn · datatjek grønt · kørt i browser mod `next start`: alle
 syv opgavekort renderer med den rigtige svarform, aflevering giver karakter og
 gennemgang med facit pr. delsvar, og ingen konsolfejl.
+
+
+---
+
+# RUNDE 5 : Elevernes og AP-lærerens tilbagemeldinger fra testrunden
+
+Første rigtige brugerrunde på HHX Risskov (spørgeskema + AP-lærerens
+gennemgang). Ændringerne deler sig i to: dem, der gælder BEGGE spor (UI og
+kvalitet), og dem, der er INDHOLD fra skolens eget AP-materiale og derfor kun
+ligger på HHX-siden.
+
+## 11A. Gælder begge spor
+
+| Ønske | Løsning |
+|---|---|
+| "Giv en beskrivelse hvis man svarer forkert" | Feedback-panelet viser nu elevens eget svar, hvorfor netop den svarmulighed er forkert (nyt `whyWrong`-felt pr. svarmulighed i `ChoiceTaskT`), hvad det rigtige svar var, og forklaringen. Klik-på-ord viser manglende og forkert klikkede ord ; sætningsanalyse viser valgt og korrekt symbol pr. led ; skrive- og tabelopgaver viser facit ved siden af elevens svar. |
+| "Når man trykker på logoet, kommer man tilbage til hjem" | Logoet i `TopBar` er nu en knap, der navigerer til forsiden (gennem app-skallens navigations-vagt, så en igangværende prøve stadig advarer). |
+| "Eleverne satte spørgsmålstegn ved AI-funktionen" | `AskAi`-knappen er fjernet helt fra alle opgaver, og komponenten er slettet. Hvor AI stadig kan bruges (kopiér-til-AI efter en prøve), står nu lærerens OBS om, at AI svarer misvisende om grammatik, især morfologi. |
+| "Svaret var markeret med stort" / parenteser røbede facit | 50 opgaver havde forklarende parenteser eller store bogstaver, der pegede på det rigtige svar. Teksten er flyttet over i den nye feedback, så informationen ikke går tabt. `scripts/option-leak-check.mts` finder mønstrene igen (parentes-tell, store bogstaver, facit dobbelt så langt). |
+| Faglige fejl | `saetled-17`: 'legede' er ikke et kopulaverbum, så 'glade' kunne ikke være subjektsprædikat : sætningen er lavet om. `saetled-49`: 'ansvarlig for fejlen' er ét objektsprædikat, ikke prædikat + adverbial. `saetled-29`: verberne opgives nu i infinitiv (være, blive, hedde, synes). Alle morfologi-opgaver har fået klarere forklaringer. |
+
+## 11B. Kun HHX (indhold fra skolens AP-materiale)
+
+**Læseside før opgaverne.** Åbner en HHX-elev et emne under Øv dig, møder hun
+nu en kort informationsside, før opgaverne starter (og kan altid åbne den igen
+fra emnets forside). Siden har et diagram, "det skal du kunne bagefter",
+begreberne med de latinske betegnelser først, den typiske fælde og lærerens
+OBS, hvor den er relevant.
+
+- `src/data/hhx/emneIntro.ts` : indholdet pr. emne. `getEmneIntro(category, education)` returnerer null for STX.
+- `src/components/teaching/EmneIntro.tsx` : selve siden.
+- `src/components/teaching/Diagrams.tsx` : syv diagrammer tegnet som inline-SVG (analysepilen, morfem-modellen, tiderne, ikke-reglen, ordklasse-oversigten, Ciceros pentagram og genrelisten). De bruger `currentColor`, så de virker i både lys og mørk tilstand.
+- `src/lib/emneIntroStorage.ts` : husker (lokalt), hvilke læsesider eleven har set, så den kun popper op første gang.
+
+Diagrammerne følger AP-dokumentets egne modeller: analysepilens rækkefølge
+(V → S → DO → IO → A → SP/OP), de fem morfemtyper, de fem tider, ikke-reglen og
+pentagrammet med formålet i midten.
+
+## 11C. Verifikation
+
+`npm run typecheck` ren · `npm run lint` uændret baseline (7 fejl + 1 warning) ·
+`npm run build` grøn · `scripts/exam-data-check.mts` ALL CHECKS PASSED ·
+`scripts/option-leak-check.mts` kørt før og efter (83 → 33 fund, resten er
+legitime parenteser i hele sætninger) · kørt i browser: feedback ved forkert
+svar, læsesiderne for sætningsled, morfologi, tempus og kommunikation, og logoet
+som genvej til forsiden. Ingen konsolfejl.

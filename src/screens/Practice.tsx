@@ -12,7 +12,10 @@ import Mascot from "../components/Mascot";
 import TaskRenderer from "../components/tasks/TaskRenderer";
 import SessionNav from "../components/SessionNav";
 import { cn } from "../utils/cn";
-import { CategoryIcon, CheckIcon, ChevronRightIcon, LockIcon } from "../components/icons";
+import { CategoryIcon, CheckIcon, ChevronRightIcon, InfoIcon, LockIcon } from "../components/icons";
+import EmneIntro from "../components/teaching/EmneIntro";
+import { getEmneIntro } from "../data/hhx/emneIntro";
+import { loadSeenIntros, markIntroSeen } from "../lib/emneIntroStorage";
 
 type Outcome = { ok: boolean | "content"; answer?: SavedAnswer } | null;
 
@@ -39,6 +42,9 @@ export default function PracticePage({
 }) {
   const [tab, setTab] = useState<Track>(education === "hhx" ? "hhx" : "almen");
   const [view, setView] = useState<View>("categories");
+  // Læsesiden for emnet (kun HHX). Vises automatisk første gang, eleven åbner
+  // emnet, og kan derefter åbnes igen fra emnets forside.
+  const [introFor, setIntroFor] = useState<CategoryId | null>(null);
   const [activeCategory, setActiveCategory] = useState<CategoryId | null>(null);
   const [activeNode, setActiveNode] = useState<LessonNode | null>(null);
 
@@ -93,6 +99,10 @@ export default function PracticePage({
   function openCategory(catId: CategoryId) {
     setActiveCategory(catId);
     setView("path");
+    // Første gang: vis den korte læseside, så eleven ved, hvad emnet går ud på.
+    if (getEmneIntro(catId, education) && !loadSeenIntros().includes(catId)) {
+      setIntroFor(catId);
+    }
   }
 
   // Antal opgaver i den aktive session, der reelt bedømmes (dvs. ikke rene
@@ -177,6 +187,25 @@ export default function PracticePage({
   // ---------------------------------------------------------------------
   // SESSION (aktiv opgave)
   // ---------------------------------------------------------------------
+  // Læsesiden for emnet (HHX). Den ligger før alle views, så eleven møder den
+  // som det første : både automatisk første gang og via knappen på emnesiden.
+  const introData = introFor ? getEmneIntro(introFor, education) : null;
+  if (introFor && introData) {
+    return (
+      <EmneIntro
+        intro={introData}
+        accentSolid={theme.solidBg}
+        reduceMotion={reduceMotion}
+        onBack={() => setIntroFor(null)}
+        onStart={() => {
+          markIntroSeen(introFor);
+          setIntroFor(null);
+          window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+        }}
+      />
+    );
+  }
+
   if (view === "session") {
     const task = sessionTasks[index];
     if (!task) {
@@ -416,6 +445,28 @@ export default function PracticePage({
             <p className="text-xs text-ink/50">{cat.description}</p>
           </div>
         </div>
+
+        {getEmneIntro(activeCategory, education) && (
+          <button
+            type="button"
+            onClick={() => setIntroFor(activeCategory)}
+            className={cn(
+              "flex w-full items-center gap-3 rounded-2xl border-2 bg-white p-4 text-left shadow-sm transition hover:shadow-md",
+              theme.borderActive
+            )}
+          >
+            <span className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", theme.softBg)}>
+              <InfoIcon className="h-5 w-5" />
+            </span>
+            <span className="flex-1">
+              <span className="block font-bold text-ink">Læs om emnet først</span>
+              <span className="block text-xs text-ink/50">
+                Et minut om, hvad du skal kunne, hvilke begreber vi bruger, og hvad du skal passe på : med diagram.
+              </span>
+            </span>
+            <span className={cn("shrink-0 rounded-full px-3 py-1.5 text-xs font-bold text-white", theme.solidBg)}>Åbn</span>
+          </button>
+        )}
 
         {overallPct !== null && (
           <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
