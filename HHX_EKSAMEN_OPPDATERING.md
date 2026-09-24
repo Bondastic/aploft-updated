@@ -332,6 +332,28 @@ som genvej til forsiden. Ingen konsolfejl.
   indledninger er skrevet til STX-pensum med latindelen. Nyt kasus-diagram i
   `Diagrams.tsx`. `getEmneIntro()` vælger nu kort efter spor.
 
+## 12C. Runde 7: begrundelser og de sidste læsesider
+
+- **whyWrong i syntaks, kasus og tempus**: alle 130 multiple choice i de tre
+  banker har nu en begrundelse pr. forkert svarmulighed. Dækningen på tværs af
+  hele appen er dermed 191 af 577 (33 %). Begrundelserne siger, hvad det valgte
+  svar faktisk ER (fx "det er ledsætningsordstilling, hvor 'ikke' står foran
+  verbet"), så eleven kan se forskellen i stedet for bare at få facit.
+- **Læsesider til de sidste HHX-emner**: sproghandlinger, semantik, pragmatik,
+  sproghistorie og læringsstrategier. Alle 12 HHX-emner har nu en læseside.
+  Indholdet følger skolens eget materiale (AP.pdf): de seks sproghandlingstyper,
+  denotation over for konnotation, pragmatikkens vej fra ytring over kontekst
+  til sproghandling, og arveord/låneord/fremmedord med tallene 17 % tysk og
+  3 % fransk.
+- **Nye diagrammer** i `Diagrams.tsx`: `sproghandlinger`, `denotation`,
+  `pragmatik`, `laaneord`, `sprogtraeet` og `gentagelse` (spaced repetition).
+- **`sprog` er ikke et HHX-emne.** `HHX_CATEGORIES` har 12 emner, og `sprog`
+  (Sprog & Kommunikation) er kun med på STX. Læsesiden om sprogfamilier og
+  sprogtræet ligger derfor i `STX_EMNE_INTRO`, hvor den kan nås. `status-check`
+  læste før emnelisten fra en håndskrevet liste med `sprog` i og viste derfor et
+  hul, der ikke fandtes : scriptet henter nu listen fra `HHX_CATEGORIES` og
+  viser også STX-siderne.
+
 ## 12B. Sådan bruges værktøjerne
 
 ```bash

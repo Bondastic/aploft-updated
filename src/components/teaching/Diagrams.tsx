@@ -17,7 +17,13 @@ export type DiagramId =
   | "hovedled"
   | "ordklasser"
   | "pentagram"
-  | "genrer";
+  | "genrer"
+  | "sproghandlinger"
+  | "denotation"
+  | "pragmatik"
+  | "laaneord"
+  | "sprogtraeet"
+  | "gentagelse";
 
 const BOX = "fill-white stroke-current";
 const LABEL = "fill-current text-[11px] font-bold";
@@ -248,6 +254,195 @@ function Kasus() {
   );
 }
 
+/** Sproghandlinger: hvad man GØR med ordene. */
+function Sproghandlinger() {
+  const rows = [
+    ["Assertiv (konstativ)", "påstår noget om verden : Solen er varm"],
+    ["Direktiv (regulativ)", "skal få modtageren til at handle : Luk vinduet"],
+    ["Kommissiv", "afsenderen binder sig selv : Jeg lover at komme"],
+    ["Ekspressiv", "udtrykker følelse eller holdning : Jeg elsker pizza"],
+    ["Deklarativ (kvalitativ)", "ændrer virkeligheden : Jeg erklærer jer for gift"],
+    ["Fatisk", "holder kontakten i gang : Hej, farvel, hvordan går det"],
+  ];
+  return (
+    <svg viewBox="0 0 320 204" className="w-full text-ink/80" role="img" aria-label="De seks typer sproghandlinger med eksempler">
+      {rows.map(([navn, ex], i) => (
+        <g key={navn}>
+          <rect x="4" y={6 + i * 31} width="312" height="26" rx="8" className={BOX} strokeWidth="1.2" />
+          <text x="14" y={17 + i * 31} className={LABEL}>{navn}</text>
+          <text x="14" y={28 + i * 31} className={SMALL} opacity="0.65">{ex}</text>
+        </g>
+      ))}
+      <text x="160" y="198" textAnchor="middle" className={SMALL} opacity="0.7">
+        Indirekte sproghandling: Her er koldt betyder Luk vinduet
+      </text>
+    </svg>
+  );
+}
+
+/** Denotation og konnotation: samme ord, to slags betydning. */
+function Denotation() {
+  return (
+    <svg viewBox="0 0 320 172" className="w-full text-ink/80" role="img" aria-label="Forskellen på et ords denotation og konnotation">
+      <rect x="110" y="6" width="100" height="28" rx="10" className={BOX} strokeWidth="1.4" />
+      <text x="160" y="24" textAnchor="middle" className={LABEL}>torsk</text>
+      <line x1="140" y1="34" x2="86" y2="56" className="stroke-current" strokeWidth="1.2" opacity="0.5" />
+      <line x1="180" y1="34" x2="234" y2="56" className="stroke-current" strokeWidth="1.2" opacity="0.5" />
+
+      <rect x="8" y="56" width="146" height="64" rx="10" className={BOX} strokeWidth="1.2" />
+      <text x="18" y="73" className={LABEL}>Denotation</text>
+      <text x="18" y="87" className={SMALL} opacity="0.7">grundbetydningen</text>
+      <text x="18" y="99" className={SMALL} opacity="0.7">en fisk</text>
+      <text x="18" y="113" className={SMALL} opacity="0.55">nøgtern, objektiv tekst</text>
+
+      <rect x="166" y="56" width="146" height="64" rx="10" className={BOX} strokeWidth="1.2" />
+      <text x="176" y="73" className={LABEL}>Konnotation</text>
+      <text x="176" y="87" className={SMALL} opacity="0.7">bibetydning og ladning</text>
+      <text x="176" y="99" className={SMALL} opacity="0.7">en dum person</text>
+      <text x="176" y="113" className={SMALL} opacity="0.55">holdningspræget tekst</text>
+
+      <text x="160" y="142" textAnchor="middle" className={SMALL} opacity="0.7">
+        Konnotationer er sociale aftaler: de virker, fordi vi er enige om dem
+      </text>
+      <text x="160" y="158" textAnchor="middle" className={SMALL} opacity="0.7">
+        Mange konnotationer betyder en subjektiv afsender
+      </text>
+    </svg>
+  );
+}
+
+/** Pragmatik: fra det sagte, gennem konteksten, til det mente. */
+function Pragmatik() {
+  const steps = [
+    ["Ytringen", "Her er koldt"],
+    ["Konteksten", "vinduet står åbent, og du er gæst i huset"],
+    ["Sproghandlingen", "Luk vinduet, tak"],
+  ];
+  return (
+    <svg viewBox="0 0 320 168" className="w-full text-ink/80" role="img" aria-label="Pragmatik: fra ytring gennem kontekst til den handling afsenderen vil udføre">
+      {steps.map(([navn, ex], i) => (
+        <g key={navn}>
+          <rect x="20" y={6 + i * 50} width="280" height="34" rx="10" className={BOX} strokeWidth="1.2" />
+          <text x="32" y={21 + i * 50} className={LABEL}>{navn}</text>
+          <text x="32" y={33 + i * 50} className={SMALL} opacity="0.65">{ex}</text>
+          {i < 2 && (
+            <path d={`M160 ${40 + i * 50} L160 ${56 + i * 50}`} className="stroke-current" strokeWidth="1.4" opacity="0.5" fill="none" />
+          )}
+          {i < 2 && (
+            <path d={`M156 ${50 + i * 50} L160 ${56 + i * 50} L164 ${50 + i * 50}`} className="fill-none stroke-current" strokeWidth="1.4" strokeLinejoin="round" opacity="0.5" />
+          )}
+        </g>
+      ))}
+      <text x="160" y="162" textAnchor="middle" className={SMALL} opacity="0.7">
+        Pragmatik spørger: hvad vil afsenderen opnå, ikke kun hvad står der
+      </text>
+    </svg>
+  );
+}
+
+/** Arveord, låneord og fremmedord: hvor det danske ordforråd kommer fra. */
+function Laaneord() {
+  const rows = [
+    ["Arveord", "har altid været i dansk : blod, fader, hjul, ko"],
+    ["Låneord", "lånt og tilpasset : kirke fra latin, borgmester fra tysk"],
+    ["Fremmedord", "optaget, men stadig fremmed : weekend, comeback"],
+  ];
+  return (
+    <svg viewBox="0 0 320 172" className="w-full text-ink/80" role="img" aria-label="Arveord, låneord og fremmedord i dansk">
+      {rows.map(([navn, ex], i) => (
+        <g key={navn}>
+          <rect x="4" y={6 + i * 36} width="312" height="30" rx="9" className={BOX} strokeWidth="1.2" />
+          <text x="14" y={19 + i * 36} className={LABEL}>{navn}</text>
+          <text x="14" y={31 + i * 36} className={SMALL} opacity="0.65">{ex}</text>
+        </g>
+      ))}
+      <text x="160" y="132" textAnchor="middle" className={SMALL} opacity="0.7">
+        Arveord er husets nødvendigheder, låneord gør livet bekvemt,
+      </text>
+      <text x="160" y="146" textAnchor="middle" className={SMALL} opacity="0.7">
+        og fremmedord peger på luksus : ordforrådet følger samfundet
+      </text>
+      <text x="160" y="164" textAnchor="middle" className={SMALL} opacity="0.55">
+        Ca. 17 % af ordene kommer fra tysk, ca. 3 % fra fransk
+      </text>
+    </svg>
+  );
+}
+
+/** Sprogtræet: fra den indoeuropæiske sprogæt ned til dansk. */
+function Sprogtraeet() {
+  return (
+    <svg viewBox="0 0 320 206" className="w-full text-ink/80" role="img" aria-label="Sprogtræet fra indoeuropæisk over germansk og nordisk til dansk">
+      <rect x="85" y="6" width="150" height="26" rx="9" className={BOX} strokeWidth="1.4" />
+      <text x="160" y="23" textAnchor="middle" className={LABEL}>Indoeuropæisk sprogæt</text>
+
+      <path d="M160 32 L160 40 M58 40 L262 40 M58 40 L58 48 M160 40 L160 48 M262 40 L262 48"
+        className="stroke-current" strokeWidth="1.2" opacity="0.5" fill="none" />
+
+      <rect x="8" y="48" width="100" height="32" rx="9" className={BOX} strokeWidth="1.2" />
+      <text x="18" y="62" className={LABEL}>Germansk</text>
+      <text x="18" y="74" className={SMALL} opacity="0.65">dansk, engelsk</text>
+
+      <rect x="110" y="48" width="100" height="32" rx="9" className={BOX} strokeWidth="1.2" />
+      <text x="120" y="62" className={LABEL}>Romansk</text>
+      <text x="120" y="74" className={SMALL} opacity="0.65">fransk, spansk</text>
+
+      <rect x="212" y="48" width="100" height="32" rx="9" className={BOX} strokeWidth="1.2" />
+      <text x="222" y="62" className={LABEL}>Slavisk</text>
+      <text x="222" y="74" className={SMALL} opacity="0.65">russisk, polsk</text>
+
+      <path d="M58 80 L58 96" className="stroke-current" strokeWidth="1.2" opacity="0.5" fill="none" />
+      <rect x="8" y="96" width="140" height="32" rx="9" className={BOX} strokeWidth="1.2" />
+      <text x="18" y="110" className={LABEL}>Nordgermansk</text>
+      <text x="18" y="122" className={SMALL} opacity="0.65">urnordisk indtil ca. år 700</text>
+
+      <path d="M58 128 L58 136 M58 136 L212 136 M58 136 L58 144 M212 136 L212 144"
+        className="stroke-current" strokeWidth="1.2" opacity="0.5" fill="none" />
+
+      <rect x="8" y="144" width="140" height="32" rx="9" className={BOX} strokeWidth="1.2" />
+      <text x="18" y="158" className={LABEL}>Østnordisk</text>
+      <text x="18" y="170" className={SMALL} opacity="0.65">dansk, svensk</text>
+
+      <rect x="160" y="144" width="152" height="32" rx="9" className={BOX} strokeWidth="1.2" />
+      <text x="170" y="158" className={LABEL}>Vestnordisk</text>
+      <text x="170" y="170" className={SMALL} opacity="0.65">norsk, islandsk, færøsk</text>
+
+      <text x="160" y="196" textAnchor="middle" className={SMALL} opacity="0.7">
+        Rasmus Rask påviste slægtskabet i begyndelsen af 1800-tallet
+      </text>
+    </svg>
+  );
+}
+
+/** Spaced repetition: mellemrummene mellem gentagelserne skal vokse. */
+function Gentagelse() {
+  const nodes = [
+    ["1", "i dag"],
+    ["2", "efter 1 dag"],
+    ["3", "efter 3 dage"],
+    ["4", "efter 1 uge"],
+    ["5", "efter 1 md."],
+  ];
+  return (
+    <svg viewBox="0 0 320 136" className="w-full text-ink/80" role="img" aria-label="Spaced repetition: gentag med stadig større mellemrum">
+      <text x="160" y="22" textAnchor="middle" className={SMALL} opacity="0.7">
+        Hver gentagelse gør sporet stærkere : derfor må mellemrummet vokse
+      </text>
+      <line x1="24" y1="62" x2="296" y2="62" className="stroke-current" strokeWidth="1.2" opacity="0.4" />
+      {nodes.map(([n, label], i) => (
+        <g key={n}>
+          <circle cx={32 + i * 64} cy="62" r="11" className={BOX} strokeWidth="1.4" />
+          <text x={32 + i * 64} y="66" textAnchor="middle" className={LABEL}>{n}</text>
+          <text x={32 + i * 64} y="88" textAnchor="middle" className={SMALL} opacity="0.65">{label}</text>
+        </g>
+      ))}
+      <text x="160" y="116" textAnchor="middle" className={SMALL} opacity="0.7">
+        Genkald svaret aktivt, før du slår op
+      </text>
+    </svg>
+  );
+}
+
 const DIAGRAMS: Record<DiagramId, () => React.JSX.Element> = {
   analysepilen: Analysepilen,
   kasus: Kasus,
@@ -257,6 +452,12 @@ const DIAGRAMS: Record<DiagramId, () => React.JSX.Element> = {
   ordklasser: Ordklasser,
   pentagram: Pentagram,
   genrer: Genrer,
+  sproghandlinger: Sproghandlinger,
+  denotation: Denotation,
+  pragmatik: Pragmatik,
+  laaneord: Laaneord,
+  sprogtraeet: Sprogtraeet,
+  gentagelse: Gentagelse,
 };
 
 export default function Diagram({ id }: { id: DiagramId }) {

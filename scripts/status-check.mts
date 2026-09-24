@@ -3,7 +3,8 @@
 import { ALMEN_TASKS } from "../src/data/questions.ts";
 import { HHX_TASKS } from "../src/data/hhxQuestions.ts";
 import { LATIN_TASKS } from "../src/data/latinQuestions.ts";
-import { HHX_EMNE_INTRO } from "../src/data/hhx/emneIntro.ts";
+import { HHX_EMNE_INTRO, STX_EMNE_INTRO } from "../src/data/hhx/emneIntro.ts";
+import { HHX_CATEGORIES, ALMEN_CATEGORIES } from "../src/data/categories.ts";
 import type { Task } from "../src/types.ts";
 
 const seen = new Set<string>();
@@ -27,6 +28,10 @@ for (const [k, v] of Object.entries(rows).sort()) {
   console.log(k.padEnd(26), String(v.mc).padStart(4), String(v.medWhy).padStart(14), String(v.andre).padStart(6));
 }
 console.log(`\nI ALT: ${mc} multiple choice, ${why} med begrundelse pr. svarmulighed (${Math.round((why / mc) * 100)}%)`);
-const hhxCats = ["ordklasser","saetningsled","morfologi","tempus","syntaks","sprog","kommunikation","sproghandlinger","semantik","pragmatik","genrer","sproghistorie","laeringsstrategier"];
+const hhxCats = HHX_CATEGORIES.map((c) => c.id);
 console.log("\nLæsesider (HHX):");
 for (const c of hhxCats) console.log(" ", (c as string).padEnd(20), c in HHX_EMNE_INTRO ? "✔" : "mangler");
+console.log("\nLæsesider (STX, almen-delen):");
+for (const c of ALMEN_CATEGORIES.map((x) => x.id)) {
+  console.log(" ", (c as string).padEnd(20), c in STX_EMNE_INTRO ? "✔" : "mangler");
+}
