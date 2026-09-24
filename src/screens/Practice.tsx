@@ -14,6 +14,7 @@ import SessionNav from "../components/SessionNav";
 import { cn } from "../utils/cn";
 import { CategoryIcon, CheckIcon, ChevronRightIcon, InfoIcon, LockIcon } from "../components/icons";
 import EmneIntro from "../components/teaching/EmneIntro";
+import EmneLoader from "../components/teaching/EmneLoader";
 import { getEmneIntro } from "../data/hhx/emneIntro";
 import { loadSeenIntros, markIntroSeen } from "../lib/emneIntroStorage";
 
@@ -45,6 +46,9 @@ export default function PracticePage({
   // Læsesiden for emnet (kun HHX). Vises automatisk første gang, eleven åbner
   // emnet, og kan derefter åbnes igen fra emnets forside.
   const [introFor, setIntroFor] = useState<CategoryId | null>(null);
+  // Mellemskærmen med Lingua og procesbaren. Den vises, når man trykker på et
+  // emne, så man når at se, HVAD man er på vej ind i, før opgaverne starter.
+  const [loadingCategory, setLoadingCategory] = useState<CategoryId | null>(null);
   const [activeCategory, setActiveCategory] = useState<CategoryId | null>(null);
   const [activeNode, setActiveNode] = useState<LessonNode | null>(null);
 
@@ -97,6 +101,14 @@ export default function PracticePage({
   }, [unlockingIds, revealedIds, reduceMotion]);
 
   function openCategory(catId: CategoryId) {
+    // Først mellemskærmen ("er du klar?"), derefter selve emnet. Det giver
+    // eleven et øjeblik til at se, hvilket emne der åbnes, i stedet for at
+    // blive kastet direkte ind i en liste af forløb.
+    setLoadingCategory(catId);
+  }
+
+  function enterCategory(catId: CategoryId) {
+    setLoadingCategory(null);
     setActiveCategory(catId);
     setView("path");
     // Første gang: vis den korte læseside, så eleven ved, hvad emnet går ud på.
@@ -104,6 +116,13 @@ export default function PracticePage({
       setIntroFor(catId);
     }
   }
+
+  // Ny skærm = start fra toppen. Uden det beholder browseren den gamle
+  // scroll-position, så man landede midt nede i den nye side : elevernes
+  // "man kommer ind i bunden af emnet".
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [view, introFor, loadingCategory, activeCategory, activeNode?.id, tab]);
 
   // Antal opgaver i den aktive session, der reelt bedømmes (dvs. ikke rene
   // undervisningstrin uden rigtigt/forkert). Bruges til procent-udregning.
@@ -189,6 +208,24 @@ export default function PracticePage({
   // ---------------------------------------------------------------------
   // Læsesiden for emnet (HHX). Den ligger før alle views, så eleven møder den
   // som det første : både automatisk første gang og via knappen på emnesiden.
+  if (loadingCategory) {
+    const cat = getCategory(loadingCategory, education);
+    const path = getCategoryPath(loadingCategory, education);
+    const taskCount = path.nodes.reduce((sum, n) => sum + (n.taskIds?.length ?? n.sampleSize ?? 0), 0);
+    return (
+      <EmneLoader
+        title={cat?.title ?? "Emne"}
+        description={cat?.description ?? ""}
+        lessonCount={path.nodes.length}
+        taskCount={taskCount}
+        accentSolid={theme.solidBg}
+        reduceMotion={reduceMotion}
+        onReady={() => enterCategory(loadingCategory)}
+        onCancel={() => setLoadingCategory(null)}
+      />
+    );
+  }
+
   const introData = introFor ? getEmneIntro(introFor, education) : null;
   if (introFor && introData) {
     return (
@@ -200,7 +237,6 @@ export default function PracticePage({
         onStart={() => {
           markIntroSeen(introFor);
           setIntroFor(null);
-          window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
         }}
       />
     );
@@ -587,7 +623,7 @@ export default function PracticePage({
             <div className="w-full max-w-md space-y-3 rounded-3xl bg-white p-5 shadow-2xl">
               <h3 className="font-display text-lg font-extrabold text-ink">Lås forløb op?</h3>
               <p className="text-sm text-ink/70">
-                Alle forløb frem til og med <span className="font-bold text-ink">{unlockTarget.node.title}</span> bliver låst op.
+                Alle forløb frem til og med <span className="font-bold text-ink">{unlockTarget.node.title}</span>{" "}bliver låst op.
                 De markeres som &quot;ikke forsøgt endnu&quot; og tæller ikke som gennemført.
               </p>
               <div className="flex gap-2">

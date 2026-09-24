@@ -83,6 +83,12 @@ export default function AploftApp() {
     }, 60);
   }, [progress.settings.reduceMotion]);
 
+  // Skift af side = start fra toppen. Browseren beholder ellers den gamle
+  // scroll-position, så man lander midt nede på den nye side.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "auto" });
+  }, [page]);
+
   const handleTourNavigate = useCallback((p: TourPage) => setPage(p), []);
 
   // Navigation med session-vagt: i en igangvaerende opgave/prove skal brugeren

@@ -50,6 +50,16 @@ export default function EmneIntro({
         <p className="mt-1 text-sm leading-relaxed text-ink/60">{intro.lead}</p>
       </div>
 
+      {/* Forklaringen FØR diagrammet: eleverne skal vide, hvad de kigger på. */}
+      <div className="space-y-3 rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+        <p className="font-bold text-ink">Kort fortalt</p>
+        {intro.explain.map((para) => (
+          <p key={para.slice(0, 40)} className="text-[15px] leading-relaxed text-ink/75">
+            {para}
+          </p>
+        ))}
+      </div>
+
       <Diagram id={intro.diagram} />
 
       <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
@@ -76,6 +86,29 @@ export default function EmneIntro({
           ))}
         </dl>
       </div>
+
+      {intro.walkthrough && (
+        <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
+          <p className="font-bold text-ink">Sådan gør du : trin for trin</p>
+          <p className="mt-1.5 rounded-xl bg-ink/[0.04] px-3 py-2 text-[13px] font-semibold italic leading-relaxed text-ink/70">
+            {intro.walkthrough.case}
+          </p>
+          <ol className="mt-3 space-y-2.5">
+            {intro.walkthrough.steps.map((s) => (
+              <li key={s.step} className="border-l-2 border-ink/10 pl-3">
+                <p className="text-[13px] font-bold text-ink">{s.step}</p>
+                <p className="text-[13px] leading-relaxed text-ink/70">{s.text}</p>
+              </li>
+            ))}
+          </ol>
+          {intro.walkthrough.result && (
+            <p className={cn("mt-3 rounded-xl px-3 py-2.5 text-[13px] font-semibold leading-relaxed text-white", accentSolid)}>
+              <span className="opacity-80">Svaret bliver: </span>
+              {intro.walkthrough.result}
+            </p>
+          )}
+        </div>
+      )}
 
       {intro.trap && (
         <div className="flex gap-2 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">

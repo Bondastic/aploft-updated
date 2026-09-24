@@ -9,6 +9,7 @@ import { isWriteAnswerCorrect } from "../../data/builders";
 import { CheckIcon, XIcon, LedGlyph, LightbulbIcon, ScrollIcon } from "../icons";
 import TranslationSheet from "../TranslationSheet";
 import { cn } from "../../utils/cn";
+import { CATEGORY_METODE } from "../../data/metode";
 
 // Kategorier, hvor ordforråd/bøjning faktisk er en del af opgaven. Her må
 // eleven altid slå op i oversættelsesarket, inden hun svarer. Logikken ligger
@@ -145,6 +146,14 @@ export default function TaskRenderer({
             {!wasCorrect && <span className="font-bold text-ink">Sådan hænger det sammen: </span>}
             {task.explanation}
           </p>
+          {/* Det halve skridt, eleverne bad om: ikke bare HVAD der var rigtigt,
+              men hvilket håndgreb man bruger for selv at nå frem næste gang. */}
+          {!wasCorrect && CATEGORY_METODE[task.category] && (
+            <p className="rounded-xl border border-ink/10 bg-white/70 p-2.5 text-[13px] leading-relaxed text-ink/75">
+              <span className="font-bold text-ink">Sådan tjekker du det selv: </span>
+              {CATEGORY_METODE[task.category]}
+            </p>
+          )}
         </motion.div>
       )}
       {footer}

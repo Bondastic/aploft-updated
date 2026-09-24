@@ -354,6 +354,43 @@ som genvej til forsiden. Ingen konsolfejl.
   hul, der ikke fandtes : scriptet henter nu listen fra `HHX_CATEGORIES` og
   viser også STX-siderne.
 
+## 12D. Runde 8: tydelighed, mobil og flow
+
+Fire punkter fra Victors tilbagemelding.
+
+**1. Meget mere tydelig forklaring.**
+- `EmneIntroT` har to nye felter: `explain` (2-3 afsnit, der forklarer HVAD
+  emnet er og hvorfor det giver mening) og `walkthrough` (et gennemregnet
+  eksempel med 5 trin og et færdigt svar). Alle 12 HHX-emner plus STX-emnerne
+  kasus og sprog har fået begge dele, skrevet ud fra skolens eget materiale.
+  Læsesiden viser nu: Kort fortalt → diagram → Det skal du kunne →
+  Begreberne → Sådan gør du trin for trin → fælde → OBS.
+- Feedbacken ved forkert svar har fået et fjerde felt: "Sådan tjekker du det
+  selv" fra `src/data/metode.ts`. whyWrong siger, hvorfor DET svar er forkert.
+  Metoden siger, hvilket håndgreb man bruger næste gang (ikke-reglen,
+  analysepilen, hjælpeverbet som tempusmarkør osv.). Panelet er dermed:
+  Du svarede → Det rigtige svar → Sådan hænger det sammen → Sådan tjekker du
+  det selv.
+
+**2. Mobil-scroll i diagrammerne.** Diagrammerne blev presset ned i ~350 px og
+blev ulæselige. De ligger nu i en vandret scroll-boks med `min-w-[440px]` på
+små skærme og en lille hjælpetekst ("Træk til siden"). CSS-klassen
+`.diagram-scroll` sætter `touch-action: pan-x pan-y`, så fingeren stadig kan
+scrolle LODRET ned gennem siden, selv når den ligger på diagrammet.
+
+**3. Man landede i bunden af den nye side.** Browseren beholdt scroll-positionen
+fra den forrige skærm : trykkede man på et emne langt nede i listen, landede
+man 839 px nede på læsesiden. Der er nu `window.scrollTo(0, 0)` ved skift af
+view i `Practice.tsx` og ved skift af side i `AploftApp.tsx`.
+
+**4. Mellemskærm før emnet.** Ny komponent `EmneLoader.tsx`: Lingua, emnets
+navn og beskrivelse, en procesbar der fyldes på ca. 1,1 sekund, antal forløb og
+opgaver, og to knapper ("Ja, jeg er klar" / "Nej, vælg et andet emne").
+`openCategory()` viser den først, og `enterCategory()` går videre til selve
+emnet. Ved reduceMotion står baren fuld med det samme.
+
+Derudover rettet: manglende mellemrum i "Lås forløb op?"-dialogen.
+
 ## 12B. Sådan bruges værktøjerne
 
 ```bash

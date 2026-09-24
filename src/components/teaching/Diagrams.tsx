@@ -463,8 +463,23 @@ const DIAGRAMS: Record<DiagramId, () => React.JSX.Element> = {
 export default function Diagram({ id }: { id: DiagramId }) {
   const C = DIAGRAMS[id];
   return (
-    <div className="rounded-2xl border border-ink/10 bg-white p-3 shadow-sm">
-      <C />
-    </div>
+    <figure className="rounded-2xl border border-ink/10 bg-white p-3 shadow-sm">
+      {/* På en telefon bliver et diagram, der presses ned i 350 px, umuligt at
+          læse. Derfor får det en fast mindstebredde og kan trækkes til siden
+          i stedet for at skrumpe. `touch-action: pan-x pan-y` sikrer, at man
+          stadig kan scrolle lodret ned gennem siden med fingeren PÅ figuren. */}
+      <div
+        className="diagram-scroll -mx-1 overflow-x-auto px-1 pb-1"
+        role="group"
+        aria-label="Diagram : kan trækkes til siden på små skærme"
+      >
+        <div className="min-w-[440px] sm:min-w-0">
+          <C />
+        </div>
+      </div>
+      <figcaption className="mt-1 text-center text-[11px] text-ink/40 sm:hidden">
+        Træk til siden for at se hele diagrammet
+      </figcaption>
+    </figure>
   );
 }
