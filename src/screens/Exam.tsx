@@ -584,6 +584,13 @@ export default function ExamPage({
           Kopiér prøvens opgaver og DINE svar som tekst : sæt ind i en AI efter eget valg (Copilot, ChatGPT, Claude, hvad du nu har) og bed om
           retning og gode råd. Appen sender intet selv : teksten ligger kun i din udklipsholder.
         </p>
+        <p className="mt-2 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-[11px] leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+          <InfoIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>
+            <span className="font-bold">OBS fra din AP-lærer:</span> AI svarer nogle gange misvisende om grammatik, og særligt om morfologi.
+            Brug den til at få forklaringer og feedback på dine formuleringer : men tjek grammatikken i din bog eller hos din lærer.
+          </span>
+        </p>
         <button
           type="button"
           onClick={async () => {

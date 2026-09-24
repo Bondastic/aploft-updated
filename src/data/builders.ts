@@ -15,7 +15,14 @@ import type {
   WriteTaskT,
 } from "../types";
 
-/** Multiple choice-opgave. */
+/**
+ * Multiple choice-opgave.
+ *
+ * `whyWrong` er valgfri og forklarer, hvorfor hver enkelt svarmulighed er
+ * forkert (samme rækkefølge som `options`, tom streng hvor der ikke er noget
+ * at sige : og feltet for det rigtige svar bruges ikke). Det er den feedback,
+ * eleverne efterspurgte: "giv en beskrivelse hvis man svarer forkert".
+ */
 export function mc(
   id: string,
   category: CategoryId,
@@ -23,9 +30,10 @@ export function mc(
   options: string[],
   correctIndex: number,
   explanation: string,
+  whyWrong?: string[],
   showSheet?: boolean
 ): ChoiceTaskT {
-  return { id, category, type: "choice", prompt, options, correctIndex, explanation, showSheet };
+  return { id, category, type: "choice", prompt, options, correctIndex, explanation, whyWrong, showSheet };
 }
 
 /** Klik-på-ord-opgave. `sentence` splittes på mellemrum til tokens. */

@@ -7,7 +7,6 @@ import { isContentTask } from "../../types";
 import { SYMBOLS, getSymbolDef } from "../../data/symbols";
 import { isWriteAnswerCorrect } from "../../data/builders";
 import { CheckIcon, XIcon, LedGlyph, LightbulbIcon, ScrollIcon } from "../icons";
-import AskAiButton from "../AskAi";
 import TranslationSheet from "../TranslationSheet";
 import { cn } from "../../utils/cn";
 
@@ -42,6 +41,9 @@ export default function TaskRenderer({
 }) {
   const [answered, setAnswered] = useState(review);
   const [wasCorrect, setWasCorrect] = useState(review ? reviewCorrect : false);
+  // Elevens eget svar gemmes her, så feedbacken kan sige, hvad HUN svarede,
+  // hvorfor det er forkert, og hvad det rigtige svar er.
+  const [lastAnswer, setLastAnswer] = useState<SavedAnswer | undefined>(savedAnswer);
   const [checking, setChecking] = useState(false);
   const [sheetOpen, setSheetOpen] = useState(false);
 
@@ -57,6 +59,7 @@ export default function TaskRenderer({
     if (review) return;
     setAnswered(true);
     setWasCorrect(correct);
+    setLastAnswer(answer);
     onSubmit(correct, answer);
   }
 
@@ -71,8 +74,11 @@ export default function TaskRenderer({
     }, 450);
   }
 
-  const footer = (
-    <div className={cn("flex flex-wrap items-center gap-2", showSheet ? "justify-between" : "justify-end")}>
+  // Bemærk: den tidligere "Spørg AI"-knap er fjernet. Den kunne ikke se det
+  // konkrete spørgsmål, eleven sad med, og AP-læreren har påpeget, at AI
+  // desuden svarer misvisende om grammatik (især morfologi).
+  const footer = !showSheet ? null : (
+    <div className="flex flex-wrap items-center justify-start gap-2">
       {showSheet && (
         <button
           onClick={() => setSheetOpen(true)}
@@ -82,7 +88,6 @@ export default function TaskRenderer({
           Oversættelsesark
         </button>
       )}
-      <AskAiButton task={task} />
     </div>
   );
 
@@ -127,21 +132,134 @@ export default function TaskRenderer({
           role="status"
           aria-live="polite"
           className={cn(
-            "rounded-2xl border-2 p-4 text-sm",
+            "space-y-2.5 rounded-2xl border-2 p-4 text-sm",
             wasCorrect ? "border-emerald-300 bg-emerald-50 text-emerald-800" : "border-rose-300 bg-rose-50 text-rose-800"
           )}
         >
-          <div className="mb-1 flex items-center gap-2 font-semibold">
+          <div className="flex items-center gap-2 font-semibold">
             {wasCorrect ? <CheckIcon className="h-4 w-4" /> : <XIcon className="h-4 w-4" />}
-            {wasCorrect ? "Rigtigt! 🎉" : "Næsten! Sådan hænger det sammen:"}
+            {wasCorrect ? "Rigtigt! 🎉" : "Ikke helt : her er hvorfor"}
           </div>
-          <p>{task.explanation}</p>
+          {!wasCorrect && <WrongAnswerDetails task={task} answer={lastAnswer} />}
+          <p className={cn(!wasCorrect && "rounded-xl bg-white/70 p-2.5 text-ink/80")}>
+            {!wasCorrect && <span className="font-bold text-ink">Sådan hænger det sammen: </span>}
+            {task.explanation}
+          </p>
         </motion.div>
       )}
       {footer}
       <TranslationSheet open={sheetOpen} onClose={() => setSheetOpen(false)} reduceMotion={reduceMotion} />
     </div>
   );
+}
+
+// ---------------------------------------------------------------------------
+// "Hvorfor var mit svar forkert?" : den feedback, eleverne bad om i
+// testrunden. Panelet viser ALTID elevens eget svar, hvad der var det rigtige,
+// og (hvis opgaven har `whyWrong`) hvorfor netop den svarmulighed ikke holder.
+// ---------------------------------------------------------------------------
+function FeedbackRow({ tone, label, children }: { tone: "wrong" | "right"; label: string; children: React.ReactNode }) {
+  return (
+    <p
+      className={cn(
+        "rounded-xl border px-3 py-2 text-[13px] leading-relaxed",
+        tone === "wrong" ? "border-rose-200 bg-white/80 text-ink/80" : "border-emerald-300 bg-emerald-50/90 text-ink/80"
+      )}
+    >
+      <span className={cn("font-bold", tone === "wrong" ? "text-rose-700" : "text-emerald-700")}>{label} </span>
+      {children}
+    </p>
+  );
+}
+
+function WrongAnswerDetails({ task, answer }: { task: Task; answer?: SavedAnswer }) {
+  if (task.type === "choice" && answer?.kind === "choice" && answer.selected !== null) {
+    const picked = task.options[answer.selected];
+    const correct = task.options[task.correctIndex];
+    const why = task.whyWrong?.[answer.selected]?.trim();
+    return (
+      <div className="space-y-2">
+        <FeedbackRow tone="wrong" label="Du svarede:">
+          «{picked}»{why ? <> : {why}</> : null}
+        </FeedbackRow>
+        <FeedbackRow tone="right" label="Det rigtige svar:">«{correct}»</FeedbackRow>
+      </div>
+    );
+  }
+
+  if (task.type === "click-word" && answer?.kind === "click-word") {
+    const picked = new Set(answer.selected);
+    const missed = task.correctIndexes.filter((i) => !picked.has(i)).map((i) => task.tokens[i]);
+    const extra = answer.selected.filter((i) => !task.correctIndexes.includes(i)).map((i) => task.tokens[i]);
+    return (
+      <div className="space-y-2">
+        {extra.length > 0 && (
+          <FeedbackRow tone="wrong" label="Du klikkede forkert på:">{extra.map((w) => `«${w}»`).join(", ")}</FeedbackRow>
+        )}
+        {missed.length > 0 && (
+          <FeedbackRow tone="wrong" label="Du manglede:">{missed.map((w) => `«${w}»`).join(", ")}</FeedbackRow>
+        )}
+        <FeedbackRow tone="right" label="Du skulle have klikket på:">
+          {task.correctIndexes.map((i) => `«${task.tokens[i]}»`).join(", ")}
+        </FeedbackRow>
+      </div>
+    );
+  }
+
+  if (task.type === "analysis" && answer?.kind === "analysis") {
+    const rows = task.chunks
+      .map((chunk, i) => ({ chunk, picked: answer.assignments[i], correct: task.correctMap[i] }))
+      .filter((r) => r.picked !== r.correct);
+    return (
+      <div className="space-y-2">
+        {rows.map((r) => (
+          <FeedbackRow key={r.chunk} tone="wrong" label={`«${r.chunk}»:`}>
+            du valgte {r.picked ? getSymbolDef(r.picked).short.toLowerCase() : "intet symbol"}, men det er{" "}
+            <span className="font-bold text-emerald-700">{getSymbolDef(r.correct).short.toLowerCase()}</span>.
+          </FeedbackRow>
+        ))}
+      </div>
+    );
+  }
+
+  if (task.type === "build-sentence" && answer?.kind === "build-sentence") {
+    return (
+      <div className="space-y-2">
+        <FeedbackRow tone="wrong" label="Din rækkefølge:">{answer.words.join(" ") || "(ingen ord valgt)"}</FeedbackRow>
+        <FeedbackRow tone="right" label="Den rigtige rækkefølge:">{task.correctOrder.join(" ")}</FeedbackRow>
+      </div>
+    );
+  }
+
+  if (task.type === "write" && answer?.kind === "write") {
+    return (
+      <div className="space-y-2">
+        <FeedbackRow tone="wrong" label="Du skrev:">{answer.value.trim() || "(ingenting)"}</FeedbackRow>
+        <FeedbackRow tone="right" label="Det rigtige svar:">
+          {task.answer}
+          {task.altAnswers && task.altAnswers.length > 0 ? ` (også godkendt: ${task.altAnswers.join(", ")})` : ""}
+        </FeedbackRow>
+      </div>
+    );
+  }
+
+  if (task.type === "table-fill" && answer?.kind === "table-fill") {
+    const rows = task.blankIndexes
+      .map((i) => ({ label: task.rows[i].label, picked: answer.assignments[i], correct: task.rows[i].value }))
+      .filter((r) => (r.picked ?? "") !== r.correct);
+    return (
+      <div className="space-y-2">
+        {rows.map((r) => (
+          <FeedbackRow key={r.label} tone="wrong" label={`${r.label}:`}>
+            du skrev {r.picked ? `«${r.picked}»` : "ingenting"}, men det rigtige er{" "}
+            <span className="font-bold text-emerald-700">«{r.correct}»</span>.
+          </FeedbackRow>
+        ))}
+      </div>
+    );
+  }
+
+  return null;
 }
 
 function TeachTask({ task, onContinue }: { task: Extract<Task, { type: "teach" }>; onContinue?: () => void }) {

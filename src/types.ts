@@ -104,6 +104,14 @@ export interface ChoiceTaskT extends TaskBase {
   prompt: string;
   options: string[];
   correctIndex: number;
+  /**
+   * Hvorfor netop DEN svarmulighed er forkert, index for index (samme
+   * rækkefølge som `options`). Elevernes vigtigste ønske fra testrunden var
+   * at få at vide, hvorfor deres eget svar var forkert : ikke kun hvad det
+   * rigtige var. Feltet er valgfrit: mangler teksten, viser appen stadig
+   * elevens svar, det rigtige svar og forklaringen.
+   */
+  whyWrong?: string[];
 }
 
 export interface ClickWordTaskT extends TaskBase {

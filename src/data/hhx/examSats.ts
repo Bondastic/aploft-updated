@@ -46,7 +46,7 @@ import type { ExamSatsT, ExamWordClassTag } from "../../types";
 // ---------------------------------------------------------------------------
 
 
-import type { ExamClauseFnId, ExamGenreId, ExamTenseId } from "../../types";
+import type { ExamClauseFnId, ExamFieldT, ExamGenreId, ExamTenseId } from "../../types";
 
 // Ordklasse-listen der bruges i både eksamensspørgsmål og artikel-mærkater.
 export const EXAM_WORD_CLASS_TAGS: { id: ExamWordClassTag; label: string; short: string }[] = [
@@ -149,6 +149,25 @@ const ADVICE = {
   hovedled:
     "Til eksamen: Lav ikke-testen højt: det viser metoden, og du kan ikke huske forkert. Slut altid med at sige, hvilket LED ledsætningen er i hovedsætningen : det er den del, de fleste glemmer, og den, der løfter svaret.",
 } as const;
+
+const PENTAGRAM_FIELDS: ExamFieldT[] = [
+  { id: "afsender", label: "Afsender", help: "(Hvem taler/skriver, og med hvilken baggrund?)", placeholder: "Skriv kort her...", rows: 2 },
+  { id: "emne", label: "Emne (indhold)", help: "(Hvad handler kommunikationen om?)", placeholder: "Skriv kort her...", rows: 2 },
+  { id: "modtager", label: "Modtager", help: "(Hvem er målgruppen?)", placeholder: "Skriv kort her...", rows: 2 },
+  { id: "situation", label: "Situation (omstændigheder)", help: "(Hvor, hvornår og hvorfor?)", placeholder: "Skriv kort her...", rows: 2 },
+  { id: "genresprog", label: "Genre/Sprog", help: "(Hvilken form vælges, og hvordan lyder sproget?)", placeholder: "Skriv kort her...", rows: 2 },
+  { id: "formaal", label: "Formål (midten af pentagrammet)", help: "(Hvad vil afsenderen opnå: informere, overbevise, sælge?)", placeholder: "Skriv kort her...", rows: 2 },
+];
+
+const SAERTRAEK_FIELDS: ExamFieldT[] = [
+  {
+    id: "observationer",
+    label: "Dine observationer",
+    help: "(husk citater fra teksten)",
+    placeholder: "Fx: Teksten bruger mange adjektiver som ... Det har negative konnotationer ... Semantisk felt om ...",
+    rows: 6,
+  },
+];
 
 // Fælles informations-side for alle sæt: den følger skolens eget eksamensark.
 const SAT_INTRO: ExamSatsT["intro"] = {
@@ -2056,6 +2075,480 @@ const SAT_6_FAGBLAD: ExamSatsT = {
   ],
 };
 
+// Sæt 7. Politisk tale : genren står på skolens liste, men manglede i puljen.
+const SAT_7_POLITISK_TALE: ExamSatsT = {
+  id: "hhx-sats-07",
+  title: "Eksamenssæt 7 · Tal for de unge, ikke om dem",
+  schoolLabel: "Risskov · HHX",
+  minutes: 40,
+  intro: SAT_INTRO,
+  article: {
+    title: "Tal for de unge, ikke om dem",
+    byline: "Tale ved et ungdomspolitisk møde i Nørreby (fiktiv by) ; af byrådskandidat Miriam Kold ; 4. februar 2026",
+    paragraphs: [
+      "Kære forsamling. Jeg er vokset op tre gader herfra, og jeg tog den samme bus som jer. Derfor ved jeg, hvad der sker, når den bus ikke kommer: man kommer for sent til skole, man dropper fritidsjobbet, og til sidst flytter man.",
+      "Sidste år lukkede kommunen tre busruter. Tre ruter, som unge brugte hver eneste morgen. Man kaldte det en tilpasning. Jeg kalder det et fravalg af en hel generation.",
+      "Er det uretfærdigt at bede om en bus, der kører, når man skal i skole? Jeg synes det ikke. Kommunen giver de unge et ungdomskort hvert år, og det er godt. Men et kort til en bus, der ikke kører, er bare et stykke plastik.",
+      "Hvis vi vil have unge til at blive i byen, skal vi gøre det nemt at komme frem. Gode busforbindelser koster penge, ja. Men tomme klasselokaler og lukkede butikker koster mere.",
+      "Derfor lover jeg jer tre ting: de tre ruter tilbage, et ungdomskort der også gælder om aftenen, og et ungeråd med rigtig indflydelse. Vi bygger et fællesskab, der holder. Tak fordi I lyttede.",
+    ]
+  },
+  tasks: [
+    {
+      id: "g7-op1",
+      no: 1,
+      label: "Genre",
+      category: "genrer",
+      prompt: "Genretræk: Hvilken genre er teksten?",
+      hint: METHOD.genre,
+      part: {
+        kind: "genre",
+        correct: "politisk-tale",
+        justify: {
+          id: "begrundelse",
+          label: "Hvordan kan du se det?",
+          help: "(brug mindst én ting fra teksten)",
+          placeholder: "Fx: Teksten vil overbevise os om..., fordi den bruger...",
+          rows: 3,
+        },
+      },
+      points: [
+        "Placerer teksten som sagprosa med et tilslutningsformål.",
+        "Bestemmer genren som politisk tale.",
+        "Begrunder med den direkte tiltale til en forsamling ('Kære forsamling', 'jer').",
+        "Peger på appelformerne: etos (jeg tog den samme bus), patos (man flytter) og logos (tre ruter).",
+      ],
+      modelAnswer: "Teksten er en politisk tale: den er holdt mundtligt for en forsamling, den indledes med en tiltale ('Kære forsamling') og afsluttes med en tak. Afsenderen er en byrådskandidat, altså en, der vil vinde tilslutning. Talen bruger alle tre appelformer: etos, når hun fortæller, at hun selv tog bussen ; patos, når hun beskriver, at unge flytter ; og logos, når hun nævner de tre lukkede ruter. Til sidst kommer tre konkrete løfter, som er et typisk taletræk.",
+      feedback: "Talen ligner et debatindlæg, og det er ikke helt forkert set: begge vil overbevise. Forskellen er den mundtlige situation. Kig efter tiltalen, gentagelserne og de tre løfter til sidst : en tale er bygget til at blive HØRT én gang, så den gentager sine pointer.",
+      examTip: ADVICE.genre,
+    },
+    {
+      id: "g7-op2",
+      no: 2,
+      label: "Kommunikationssituation",
+      category: "kommunikation",
+      prompt: "Kommunikationssituationen (Ciceros pentagram)",
+      hint: METHOD.kommunikation,
+      openEnded: true,
+      part: { kind: "fields", fields: PENTAGRAM_FIELDS },
+      points: [
+        "Afsender: byrådskandidat Miriam Kold : hun vil vælges og bygger etos som lokal.",
+        "Emne: de nedlagte busruter og de unges muligheder i byen.",
+        "Modtager: de unge til mødet, men også vælgerne bag dem.",
+        "Situation: valgkamp og et ungdomspolitisk møde i februar.",
+        "Formål: at vinde tilslutning og stemmer.",
+      ],
+      modelAnswer: "Afsenderen er byrådskandidat Miriam Kold, som taler til et ungdomspolitisk møde. Emnet er de tre lukkede busruter og de unges hverdag. Modtagerne er de unge i salen, men gennem dem også forældre og vælgere. Situationen er valgkamp: hun skal bruge stemmer, og derfor er talen både personlig og konkret. Sproget er talesprogsnært med korte sætninger og gentagelser. I midten af pentagrammet står formålet: at vinde tilslutning ved at vise, at hun kender problemet indefra.",
+      feedback: "Husk, at en tale har en dobbelt modtagerkreds: dem i salen og dem, der hører om den bagefter. Og vær præcis med afsenderens interesse : hun er ikke en neutral iagttager, hun er kandidat.",
+      examTip: ADVICE.kommunikation,
+    },
+    {
+      id: "g7-op3",
+      no: 3,
+      label: "Sproglige særtræk",
+      category: "semantik",
+      prompt: "Sproglige særtræk",
+      hint: METHOD.saertraek,
+      openEnded: true,
+      part: { kind: "fields", fields: SAERTRAEK_FIELDS },
+      points: [
+        "Nævner mindst tre træk med citat fra talen.",
+        "Peger på gentagelsen ('Tre ruter'), det retoriske spørgsmål og de tre løfter.",
+        "Bruger fagbegreberne: appelformer, konnotation, paratakse, retorisk spørgsmål.",
+        "Forklarer virkningen: nærhed, genkendelse og en tydelig modstander.",
+      ],
+      modelAnswer: "Talen er bygget på gentagelser: 'Sidste år lukkede kommunen tre busruter. Tre ruter, som unge brugte hver eneste morgen.' Gentagelsen gør tallet til et billede. Hun bruger et retorisk spørgsmål ('Er det uretfærdigt at bede om en bus...?') og svarer selv, hvilket er et klassisk taletræk. Ordvalget er konkret og hverdagsnært (bus, skole, fritidsjob), og konnotationerne styrer vurderingen: kommunen 'kaldte det en tilpasning', mens hun kalder det 'et fravalg af en hel generation'. Sætningerne er korte og parataktiske, så de er lette at følge, når man hører dem én gang.",
+      feedback: "I en tale er rytmen et selvstændigt virkemiddel: treleddede opremsninger, gentagne ord og korte sætninger. Tag altid et citat med, og sig, hvad trækket gør ved tilhøreren.",
+      examTip: ADVICE.saertraek,
+    },
+    {
+      id: "g7-op4",
+      no: 4,
+      label: "Morfologi",
+      category: "morfologi",
+      prompt: "Morfologisk analyse",
+      hint: METHOD.morfologi,
+      part: {
+        kind: "morphology",
+        words: [
+          {
+            word: "uretfærdigt",
+            split: "u-ret-færdig-t",
+            splitAccepts: ["u-retfærdig-t"],
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Præfikset (forstavelsen)", placeholder: "Skriv morfemet her", answer: "u-", accepts: ["u"] },
+            explain: "u- (præfiks, der nægter) + ret + færdig (rodmorfemer i 'retfærdig') + -t (fleksiv, intetkøn).",
+          },
+          {
+            word: "ungdomskort",
+            split: "ung-dom-s-kort",
+            splitAccepts: ["ungdom-s-kort"],
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Bindebogstavet", placeholder: "Fx -e-", answer: "-s-", accepts: ["s", "-s"] },
+            explain: "ung + dom (suffikset -dom laver substantivet 'ungdom') + -s- (bindebogstav) + kort (rodmorfem).",
+          },
+          {
+            word: "busforbindelser",
+            split: "bus-for-bind-else-r",
+            splitAccepts: ["bus-forbindelse-r", "bus-for-bindelse-r"],
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Bøjningsendelsen (fleksiv)", placeholder: "Skriv morfemet her", answer: "-r", accepts: ["r", "-er"] },
+            explain: "bus + for- (præfiks) + bind (rodmorfem) + -else (suffiks, der laver substantivet) + -r (fleksiv, flertal).",
+          },
+          {
+            word: "fællesskab",
+            split: "fælles-skab",
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Suffikset (afledningsendelsen)", placeholder: "Fx -hed", answer: "-skab", accepts: ["skab"] },
+            explain: "fælles (rodmorfem, adjektiv) + -skab (suffiks, der laver et substantiv). Samme mønster som venskab og selskab.",
+          },
+        ],
+      },
+      points: [
+        "Deler ordene med bindestreger og sætter navn på hver del.",
+        "Kender forskel på afledning (-dom, -else, -skab) og bøjning (-t, -r).",
+        "Genkender bindebogstavet -s- i ungdomskort.",
+        "Kan sige, hvad delen GØR: -skab laver et substantiv af et adjektiv.",
+      ],
+      modelAnswer: "'uretfærdigt' = u- + ret + færdig + -t: præfikset nægter, og -t er bøjning i intetkøn. 'ungdomskort' = ung + dom + s + kort: to sammensatte dele bundet af bindebogstavet -s-. 'busforbindelser' = bus + for + bind + else + r: både sammensat og afledt, med -r som flertalsendelse. 'fællesskab' = fælles + -skab, hvor suffikset laver substantivet.",
+      feedback: "Ord i en tale er ofte lange, sammensatte ord : del dem først i de dele, der kan stå alene, og tag derefter for- og endelser. Husk, at -s- mellem to dele er et bindebogstav, ikke en ejeform.",
+      examTip: ADVICE.morfologi,
+    },
+    {
+      id: "g7-op5",
+      no: 5,
+      label: "Syntaktisk analyse",
+      category: "saetningsled",
+      prompt: "Syntaktisk analyse (sætningsanalyse)",
+      hint: METHOD.syntaks,
+      part: {
+        kind: "analysis",
+        sentence: "Kommunen giver de unge et ungdomskort hvert år.",
+        chunks: ["Kommunen", "giver", "de unge", "et ungdomskort", "hvert år"],
+        correctMap: ["subjekt", "verbal", "dativ", "objekt", "adverbial"],
+        explain: "Kommunen = subjekt (hvem giver?), giver = verballed, 'de unge' = indirekte objekt (til hvem?), 'et ungdomskort' = direkte objekt (hvad gives?), 'hvert år' = adverbial (tid).",
+      },
+      points: [
+        "Verballed: giver.",
+        "Subjekt: Kommunen.",
+        "Indirekte objekt: de unge (til hvem?).",
+        "Direkte objekt: et ungdomskort.",
+        "Adverbial: hvert år (tid).",
+      ],
+      modelAnswer: "Verballeddet er 'giver'. Subjektet er 'Kommunen'. Sætningen har to objekter: 'de unge' er indirekte objekt (til hvem gives kortet?), og 'et ungdomskort' er direkte objekt (hvad gives?). 'hvert år' er adverbial og svarer på hvornår. Prøven på det indirekte objekt er omskrivningen: kommunen giver et ungdomskort TIL de unge.",
+      feedback: "Rækkefølgen i dansk er fast: indirekte objekt før direkte objekt. Bliver du i tvivl, så sæt 'til' foran det ene led : kan det lade sig gøre, er det det indirekte objekt.",
+      examTip: ADVICE.syntaks,
+    },
+    {
+      id: "g7-op6",
+      no: 6,
+      label: "Verballedets tid",
+      category: "tempus",
+      prompt: "Verballedets tid",
+      hint: METHOD.verbaltid,
+      part: {
+        kind: "tense",
+        items: [
+          {
+            id: "t1",
+            sentence: "Sidste år lukkede kommunen tre busruter.",
+            verb: "lukkede",
+            correct: "praeteritum",
+            rewriteTo: "perfektum",
+            rewriteAnswer: "Sidste år har kommunen lukket tre busruter.",
+            rewriteKeys: ["har", "lukket"],
+            explain: "'lukkede' er præteritum (datid): ét ord bøjet med -ede. Perfektum dannes med 'har' + participium: 'har lukket'.",
+          },
+          {
+            id: "t2",
+            sentence: "Vi bygger et fællesskab, der holder.",
+            verb: "bygger",
+            correct: "praesens",
+            rewriteTo: "futurum",
+            rewriteAnswer: "Vi vil bygge et fællesskab, der holder.",
+            rewriteKeys: ["vil", "bygge"],
+            explain: "'bygger' er præsens (nutid). Futurum dannes med 'vil' eller 'skal' + infinitiv: 'vil bygge'. Bemærk, at præsens i en tale gør løftet nærværende : det er allerede i gang.",
+          },
+        ],
+      },
+      points: [
+        "Bestemmer tiderne: præteritum og præsens.",
+        "Omskriver til perfektum ('har lukket') og futurum ('vil bygge').",
+        "Nævner, at hjælpeverbet bærer bøjningen i de sammensatte tider.",
+        "Kan sige, hvad tiden gør i talen: datid om svigtet, præsens om løsningen.",
+      ],
+      modelAnswer: "'lukkede' står i præteritum og fortæller om noget afsluttet: kommunens beslutning. 'bygger' står i præsens og gør hendes eget projekt nærværende. Talen bruger altså tiderne retorisk: fortiden hører til modstanderen, nutiden og fremtiden til hende selv.",
+      feedback: "Kobl gerne tempus til retorikken, når du er til eksamen: det viser, at du kan bruge grammatikken i en analyse og ikke kun genkende former.",
+      examTip: ADVICE.verbaltid,
+    },
+    {
+      id: "g7-op7",
+      no: 7,
+      label: "Hoved- og ledsætninger",
+      category: "syntaks",
+      prompt: "Hoved- og ledsætninger",
+      hint: METHOD.hovedled,
+      part: {
+        kind: "clause",
+        sentence: "Hvis vi vil have unge til at blive i byen, skal vi gøre det nemt at komme frem.",
+        parts: [
+          { text: "Hvis vi vil have unge til at blive i byen,", type: "led" },
+          { text: "skal vi gøre det nemt at komme frem.", type: "hoved" },
+        ],
+        indleder: "hvis",
+        funktion: "adverbial",
+        explain: "'Hvis vi vil have unge til at blive i byen' er ledsætningen: ikke-testen giver 'hvis vi IKKE vil have', altså 'ikke' mellem subjekt og verballed. Den indledes af konjunktionen 'hvis' og er adverbial (betingelse). Fordi den står først, får hovedsætningen omvendt ledstilling: 'skal vi'.",
+      },
+      points: [
+        "Markerer betingelsessætningen som ledsætning og resten som hovedsætning.",
+        "Bruger ikke-reglen på begge dele.",
+        "Finder indlederen 'hvis'.",
+        "Siger, at ledsætningen er adverbial (betingelse).",
+      ],
+      modelAnswer: "Hovedsætning: 'skal vi gøre det nemt at komme frem' : 'skal vi ikke gøre' viser, at 'ikke' står efter det bøjede verbum. Ledsætning: 'Hvis vi vil have unge til at blive i byen' : 'hvis vi ikke vil have' viser, at 'ikke' står mellem subjekt og verballed. Indlederen er 'hvis', og ledsætningen er adverbial, fordi den angiver en betingelse for hovedsætningen.",
+      feedback: "Betingelsessætninger med 'hvis' er en favorit i taler, fordi de sætter et krav op og lover en gevinst. Husk ledfunktionen : den halve opgave ligger der.",
+      examTip: ADVICE.hovedled,
+    },
+  ],
+};
+
+// Sæt 8. Ejendomsannonce : den sidste af de fem genrer fra skolens liste.
+const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
+  id: "hhx-sats-08",
+  title: "Eksamenssæt 8 · Charmerende byhus med overkommelig have",
+  schoolLabel: "Risskov · HHX",
+  minutes: 40,
+  intro: SAT_INTRO,
+  article: {
+    title: "Charmerende byhus med overkommelig have",
+    byline: "Boligannonce hos Nørreby Bolig (fiktiv mægler) ; udarbejdet af ejendomsmægler Jonas Friis ; maj 2026",
+    paragraphs: [
+      "Tæt på skole, bus og indkøb ligger dette charmerende byhus fra 1936. Boligen er autentisk og venter på nye ejere med lyst til at sætte deres eget præg.",
+      "Stueetagen byder på et hyggeligt køkken og en stue med originale detaljer. Huset giver familien masser af plads i hverdagen, og fra spisepladsen er der udgang til terrassen.",
+      "Førstesalen rummer to værelser og et badeværelse. Ejeren har renoveret badeværelset i 2024, mens resten af huset har et mindre renoveringsbehov.",
+      "Haven er overkommelig og vender mod syd. Her er der plads til et bord, et bed og en cykel eller to.",
+      "Vi viser boligen frem på søndag mellem 11 og 13. Kom forbi, hvis du vil se et utraditionelt hjem med sjæl.",
+    ]
+  },
+  tasks: [
+    {
+      id: "g8-op1",
+      no: 1,
+      label: "Genre",
+      category: "genrer",
+      prompt: "Genretræk: Hvilken genre er teksten?",
+      hint: METHOD.genre,
+      part: {
+        kind: "genre",
+        correct: "ejendomsannonce",
+        justify: {
+          id: "begrundelse",
+          label: "Hvordan kan du se det?",
+          help: "(brug mindst én ting fra teksten)",
+          placeholder: "Fx: Teksten vil overbevise os om..., fordi den bruger...",
+          rows: 3,
+        },
+      },
+      points: [
+        "Placerer teksten som sagprosa med et salgsformål.",
+        "Bestemmer genren som ejendomsannonce.",
+        "Begrunder med bylinen: skrevet af en ejendomsmægler.",
+        "Peger på de forskønnende ord, der dækker over svagheder.",
+      ],
+      modelAnswer: "Teksten er en ejendomsannonce: afsenderen er en ejendomsmægler, opbygningen følger boligen etage for etage, og den slutter med et fremvisningstidspunkt. Genren kendes især på ordvalget: 'autentisk' og 'originale detaljer' betyder, at der ikke er renoveret, 'overkommelig have' betyder lille, og 'et mindre renoveringsbehov' er en forskønnende omskrivning. Formålet er at sælge.",
+      feedback: "Annoncen kan ligne en informerende tekst, fordi den oplyser om kvadratmetre og etager. Forskellen er, at hvert ord er valgt for at sælge. Kig efter eufemismerne: de er genrens tydeligste kendetegn.",
+      examTip: ADVICE.genre,
+    },
+    {
+      id: "g8-op2",
+      no: 2,
+      label: "Kommunikationssituation",
+      category: "kommunikation",
+      prompt: "Kommunikationssituationen (Ciceros pentagram)",
+      hint: METHOD.kommunikation,
+      openEnded: true,
+      part: { kind: "fields", fields: PENTAGRAM_FIELDS },
+      points: [
+        "Afsender: ejendomsmægleren på sælgerens vegne : ikke en neutral beskriver.",
+        "Emne: et byhus fra 1936 til salg.",
+        "Modtager: boligsøgende, her især en familie med børn.",
+        "Situation: boligmarkedet, fremvisning på søndag.",
+        "Formål: at sælge huset ved at få folk til fremvisningen.",
+      ],
+      modelAnswer: "Afsenderen er ejendomsmægler Jonas Friis, som skriver på sælgerens vegne og derfor har en økonomisk interesse i teksten. Emnet er et byhus fra 1936. Modtagerne er boligsøgende, og især børnefamilier: teksten nævner skole, plads i hverdagen og to værelser. Situationen er en forestående fremvisning på søndag, så teksten skal virke NU. Genren er annoncen, og sproget er positivt ladet hele vejen igennem. Formålet er at sælge : første skridt er at få læseren til fremvisningen.",
+      feedback: "Vær præcis med afsenderen: mægleren skriver, men sælgeren betaler. Det forklarer, hvorfor intet i teksten er neutralt beskrevet.",
+      examTip: ADVICE.kommunikation,
+    },
+    {
+      id: "g8-op3",
+      no: 3,
+      label: "Sproglige særtræk",
+      category: "semantik",
+      prompt: "Sproglige særtræk",
+      hint: METHOD.saertraek,
+      openEnded: true,
+      part: { kind: "fields", fields: SAERTRAEK_FIELDS },
+      points: [
+        "Nævner mindst tre træk med citat.",
+        "Peger på eufemismerne: autentisk, overkommelig, mindre renoveringsbehov.",
+        "Bruger fagbegreberne: konnotation, eufemisme, semantisk felt, adjektiver.",
+        "Forklarer virkningen: svagheder bliver til charme.",
+      ],
+      modelAnswer: "Annoncen er fuld af adjektiver med positiv ladning: 'charmerende', 'hyggeligt', 'originale'. De vigtigste træk er eufemismerne, altså de forskønnende omskrivninger: 'autentisk' og 'originale detaljer' dækker over, at huset ikke er renoveret, 'overkommelig have' betyder en lille have, og 'et mindre renoveringsbehov' gør et arbejde til en detalje. Det semantiske felt er hjem og hygge (køkken, terrasse, sjæl), mens ord om pris og stand er næsten fraværende. Sætningerne er korte og parataktiske, så teksten kan skimmes.",
+      feedback: "I en annonce er det mest interessante tit det, der IKKE står. Kig efter, hvad de positive ord dækker over, og sig, hvad et neutralt ord ville have været.",
+      examTip: ADVICE.saertraek,
+    },
+    {
+      id: "g8-op4",
+      no: 4,
+      label: "Morfologi",
+      category: "morfologi",
+      prompt: "Morfologisk analyse",
+      hint: METHOD.morfologi,
+      part: {
+        kind: "morphology",
+        words: [
+          {
+            word: "overkommelig",
+            split: "over-komme-lig",
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Suffikset (afledningsendelsen)", placeholder: "Fx -hed", answer: "-lig", accepts: ["lig"] },
+            explain: "over- (præfiks) + komme (rodmorfem) + -lig (suffiks, der laver adjektivet).",
+          },
+          {
+            word: "badeværelset",
+            split: "bade-værelse-t",
+            splitAccepts: ["bad-e-værelse-t", "bade-værels-et"],
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Bøjningsendelsen (fleksiv)", placeholder: "Skriv morfemet her", answer: "-t", accepts: ["t", "-et", "et"] },
+            explain: "bade + værelse er rodmorfemerne, og -t er fleksiven (bestemt form ental i intetkøn).",
+          },
+          {
+            word: "renoveringsbehov",
+            split: "renover-ing-s-behov",
+            splitAccepts: ["renovering-s-behov"],
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Bindebogstavet", placeholder: "Fx -e-", answer: "-s-", accepts: ["s", "-s"] },
+            explain: "renover (rodmorfem) + -ing (suffiks, der laver substantivet) + -s- (bindebogstav) + behov (rodmorfem).",
+          },
+          {
+            word: "utraditionelt",
+            split: "u-tradition-el-t",
+            splitAccepts: ["u-traditionel-t"],
+            splitPlaceholder: "Fx stol-e-ben",
+            ask: { label: "Præfikset (forstavelsen)", placeholder: "Skriv morfemet her", answer: "u-", accepts: ["u"] },
+            explain: "u- (præfiks, der nægter) + tradition (rodmorfem) + -el (suffiks, der laver adjektivet) + -t (fleksiv).",
+          },
+        ],
+      },
+      points: [
+        "Deler ordene med bindestreger og navngiver delene.",
+        "Kender de fire slags morfemer og bindebogstavet.",
+        "Ser, at -ing og -lig er afledninger, mens -t er bøjning.",
+        "Kan forklare, hvad hver del gør ved ordet.",
+      ],
+      modelAnswer: "'overkommelig' = over + komme + -lig, hvor suffikset laver adjektivet. 'badeværelset' = bade + værelse + -t: sammensat plus bøjning. 'renoveringsbehov' = renover + -ing + s + behov: afledning, bindebogstav og sammensætning i ét ord. 'utraditionelt' = u- + tradition + -el + -t: præfiks, rod, afledning og bøjning.",
+      feedback: "Annoncesprog er fyldt med lange sammensatte ord : de er gode morfologi-opgaver, fordi de indeholder flere lag. Del først i de dele, der kan stå alene.",
+      examTip: ADVICE.morfologi,
+    },
+    {
+      id: "g8-op5",
+      no: 5,
+      label: "Syntaktisk analyse",
+      category: "saetningsled",
+      prompt: "Syntaktisk analyse (sætningsanalyse)",
+      hint: METHOD.syntaks,
+      part: {
+        kind: "analysis",
+        sentence: "Huset giver familien masser af plads i hverdagen.",
+        chunks: ["Huset", "giver", "familien", "masser af plads", "i hverdagen"],
+        correctMap: ["subjekt", "verbal", "dativ", "objekt", "adverbial"],
+        explain: "Huset = subjekt, giver = verballed, familien = indirekte objekt (til hvem?), 'masser af plads' = direkte objekt (hvad gives?), 'i hverdagen' = adverbial (tid). Præpositionsgruppen 'af plads' hører med til 'masser' og er ikke et selvstændigt led.",
+      },
+      points: [
+        "Verballed: giver.",
+        "Subjekt: Huset.",
+        "Indirekte objekt: familien.",
+        "Direkte objekt: masser af plads (hele gruppen).",
+        "Adverbial: i hverdagen.",
+      ],
+      modelAnswer: "Verballeddet er 'giver', subjektet er 'Huset'. 'familien' er indirekte objekt (til hvem gives pladsen?), og 'masser af plads' er direkte objekt : præpositionsgruppen 'af plads' beskriver 'masser' og hører derfor med i samme led. 'i hverdagen' er adverbial.",
+      feedback: "Den typiske fejl er at skille 'masser' og 'af plads' ad. Test det ved at flytte leddet: de flytter sammen, altså er det ét led.",
+      examTip: ADVICE.syntaks,
+    },
+    {
+      id: "g8-op6",
+      no: 6,
+      label: "Verballedets tid",
+      category: "tempus",
+      prompt: "Verballedets tid",
+      hint: METHOD.verbaltid,
+      part: {
+        kind: "tense",
+        items: [
+          {
+            id: "t1",
+            sentence: "Ejeren har renoveret badeværelset i 2024.",
+            verb: "har renoveret",
+            correct: "perfektum",
+            rewriteTo: "praeteritum",
+            rewriteAnswer: "Ejeren renoverede badeværelset i 2024.",
+            rewriteKeys: ["renoverede"],
+            explain: "'har renoveret' er perfektum (førnutid): hjælpeverbet i præsens + participium. I præteritum bliver det ét ord: 'renoverede'. Annoncen vælger perfektum, fordi den gør renoveringen til noget, der stadig gælder.",
+          },
+          {
+            id: "t2",
+            sentence: "Vi viser boligen frem på søndag mellem 11 og 13.",
+            verb: "viser",
+            correct: "praesens",
+            rewriteTo: "perfektum",
+            rewriteAnswer: "Vi har vist boligen frem på søndag mellem 11 og 13.",
+            rewriteKeys: ["har", "vist"],
+            explain: "'viser' er præsens, selvom handlingen ligger i fremtiden : tidsadverbialet 'på søndag' gør fremtiden tydelig. Perfektum ville hedde 'har vist'.",
+          },
+        ],
+      },
+      points: [
+        "Bestemmer tiderne: perfektum og præsens.",
+        "Omskriver korrekt til præteritum og perfektum.",
+        "Nævner, at dansk kan bruge præsens om fremtiden med et tidsadverbial.",
+        "Kan forklare, hvorfor annoncen vælger perfektum om renoveringen.",
+      ],
+      modelAnswer: "'har renoveret' er perfektum, fordi hjælpeverbet står i præsens og hovedverbet i participium ; i præteritum hedder det 'renoverede'. 'viser' er præsens, men betydningen er fremtidig på grund af 'på søndag'. Valget er ikke tilfældigt: perfektum får renoveringen til at gælde nu, og præsens gør fremvisningen nærværende.",
+      feedback: "Husk forskellen på præteritum og perfektum: præteritum lukker handlingen inde i fortiden, mens perfektum trækker den frem til nu. Det er præcis derfor, annoncer elsker perfektum.",
+      examTip: ADVICE.verbaltid,
+    },
+    {
+      id: "g8-op7",
+      no: 7,
+      label: "Hoved- og ledsætninger",
+      category: "syntaks",
+      prompt: "Hoved- og ledsætninger",
+      hint: METHOD.hovedled,
+      part: {
+        kind: "clause",
+        sentence: "Kom forbi, hvis du vil se et utraditionelt hjem med sjæl.",
+        parts: [
+          { text: "Kom forbi,", type: "hoved" },
+          { text: "hvis du vil se et utraditionelt hjem med sjæl.", type: "led" },
+        ],
+        indleder: "hvis",
+        funktion: "adverbial",
+        explain: "'Kom forbi' er hovedsætningen : en imperativ, der kan stå alene. 'hvis du vil se et utraditionelt hjem med sjæl' er ledsætningen: 'hvis du IKKE vil se' viser, at 'ikke' står mellem subjekt og verballed. Indlederen er 'hvis', og ledsætningen er adverbial (betingelse).",
+      },
+      points: [
+        "Markerer imperativen som hovedsætning.",
+        "Markerer hvis-sætningen som ledsætning.",
+        "Bruger ikke-reglen på begge dele.",
+        "Siger, at ledsætningen er adverbial (betingelse).",
+      ],
+      modelAnswer: "Hovedsætning: 'Kom forbi' : en bydeform, der kan stå alene. Ledsætning: 'hvis du vil se et utraditionelt hjem med sjæl' : ikke-testen giver 'hvis du IKKE vil se', altså 'ikke' mellem subjekt og verballed. Den indledes af 'hvis' og fungerer som adverbial, fordi den angiver betingelsen for at komme forbi.",
+      feedback: "Imperativer har ikke noget synligt subjekt, men de er stadig hovedsætninger. Test dem med 'ikke': 'Kom ikke forbi' : 'ikke' står efter verbet.",
+      examTip: ADVICE.hovedled,
+    },
+  ],
+};
+
 // ---------------------------------------------------------------------------
 // Samling + rotation. Eleven skal aldrig have det samme sæt to gange i
 // træk ; når ALLE sæt er prøvet, blandes puljen igen (og det får eleven at
@@ -2068,6 +2561,8 @@ export const HHX_EXAM_SATS: ExamSatsT[] = [
   SAT_4_LESERBREV,
   SAT_5_ELEVBLAD_Ai,
   SAT_6_FAGBLAD,
+  SAT_7_POLITISK_TALE,
+  SAT_8_EJENDOMSANNONCE,
 ];
 
 /**

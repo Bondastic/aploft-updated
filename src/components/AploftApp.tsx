@@ -195,7 +195,7 @@ export default function AploftApp() {
       >
         Spring til indhold
       </a>
-      <TopBar progress={progress} />
+      <TopBar progress={progress} onHome={() => requestNavigate("home")} />
       <main id="main-content" className="lg:pl-56">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div

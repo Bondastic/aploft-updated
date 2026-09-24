@@ -974,6 +974,13 @@ export default function ExamSatsPage({
         >
           <SparklesIcon className="h-4 w-4" /> Aflevér din opgave til AI-bedømmelse
         </button>
+        <p className="mt-2 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-[11px] leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+          <InfoIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+          <span>
+            <span className="font-bold">OBS fra din AP-lærer:</span> AI svarer nogle gange misvisende om grammatik, og særligt om morfologi.
+            Brug den til at få forklaringer og feedback på dine formuleringer : men tjek grammatikken i din bog eller hos din lærer.
+          </span>
+        </p>
         <p className="mt-2 text-[11px] text-ink/40">Indhold kopieres fra din browser ; intet sendes nogen steder automatisk.</p>
       </div>
 
@@ -1453,7 +1460,7 @@ function ClausePart({ part, ans, onChange }: PartProps<ExamClausePartT>) {
           type="text"
           value={ans.text["indleder"] ?? ""}
           onChange={(e) => onChange(setText("indleder", e.target.value))}
-          placeholder="Fx at, fordi, når, hvis, som eller der"
+          placeholder="Skriv indlederen her"
           className="mt-1 w-full rounded-xl border border-ink/15 bg-white px-3 py-2 text-base text-ink placeholder:text-ink/35 focus:border-blue-400 focus:outline-none"
         />
       </div>

@@ -4,7 +4,7 @@ import type { Progress } from "../types";
 import { getEducation } from "../lib/education";
 import { cn } from "../utils/cn";
 
-export default function TopBar({ progress }: { progress: Progress }) {
+export default function TopBar({ progress, onHome }: { progress: Progress; onHome?: () => void }) {
   const theme = getEducation(progress.education);
   const isHhx = progress.education === "hhx";
   return (
@@ -15,8 +15,17 @@ export default function TopBar({ progress }: { progress: Progress }) {
           mærke-ikonet skjules, så rækken aldrig bliver høj eller bred. */}
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3 lg:pl-60">
         <div className="flex min-w-0 items-center gap-1.5 sm:gap-2">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/banner.webp" alt="AP Klar" className="h-9 w-auto object-contain sm:h-10" />
+          {/* Logoet er en genvej til forsiden (elev-ønske fra testrunden). */}
+          <button
+            type="button"
+            onClick={onHome}
+            aria-label="AP Klar : gå til forsiden"
+            title="Gå til forsiden"
+            className="rounded-lg transition hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple active:scale-95"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/banner.webp" alt="AP Klar" className="h-9 w-auto object-contain sm:h-10" />
+          </button>
           <span
             className={cn(
               "inline-flex items-center gap-1 rounded-full px-1.5 py-1 text-[10px] font-bold sm:px-2 sm:text-[11px]",
