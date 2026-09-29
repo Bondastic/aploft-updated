@@ -24,7 +24,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Subjekt",
     description:
       "Den eller det, der udfører handlingen, eller som sætningen handler om. Spørg: hvem/hvad + verballed?",
-    example: "<b>Katten<b> sover på sofaen.",
+    example: "KATTEN sover på sofaen.",
     colorClasses: "bg-blue-100 text-blue-700 border-blue-300",
   },
   {
@@ -33,7 +33,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Verballed",
     description:
       "Det finitte verbum i sætningen. Det fortæller, hvad subjektet gør, eller hvad der sker.",
-    example: "Katten sover på sofaen.",
+    example: "Katten SOVER på sofaen.",
     colorClasses: "bg-red-100 text-red-700 border-red-300",
   },
   {
@@ -41,7 +41,7 @@ export const SYMBOLS: SymbolDef[] = [
     name: "Direkte objekt (genstandsled)",
     short: "Direkte objekt",
     description: "Det, som handlingen går ud over. Spørg: verballed + hvem/hvad?",
-    example: "Peter læser bogen.",
+    example: "Peter læser BOGEN.",
     colorClasses: "bg-emerald-100 text-emerald-700 border-emerald-300",
   },
   {
@@ -50,7 +50,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Indirekte objekt",
     description:
       "Den, som handlingen kommer til gode eller går ud over (skaber dativ). Spørg: til/for hvem?",
-    example: "Peter giver Mia bogen.",
+    example: "Peter giver MIA bogen.",
     colorClasses: "bg-teal-100 text-teal-700 border-teal-300",
   },
   {
@@ -59,7 +59,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Adverbial",
     description:
       "Fortæller om tid, sted, måde eller grad: omstændighederne omkring handlingen.",
-    example: "Peter læser bogen i går aftes.",
+    example: "Peter læste bogen I GÅR AFTES.",
     colorClasses: "bg-amber-100 text-amber-700 border-amber-300",
   },
   {
@@ -68,7 +68,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Subjektsprædikat",
     description:
       "Siger noget om subjektet og optræder ofte efter et kopulaverbum (er, bliver, hedder, kaldes).",
-    example: "Peter er glad.",
+    example: "Peter er GLAD.",
     colorClasses: "bg-purple-100 text-purple-700 border-purple-300",
   },
   {
@@ -77,7 +77,7 @@ export const SYMBOLS: SymbolDef[] = [
     short: "Objektsprædikat",
     description:
       "Siger noget om det direkte objekt og optræder ofte efter verber som kalde, gøre, nævne, vælge.",
-    example: "Vi kalder hunden Fido.",
+    example: "Vi kalder hunden BRIAN.",
     colorClasses: "bg-fuchsia-100 text-fuchsia-700 border-fuchsia-300",
   },
 ];
