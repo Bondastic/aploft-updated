@@ -206,13 +206,13 @@ export function isLessonPassed(p: Progress, lessonId: string): boolean {
 export function getLevelInfo(xp: number): { level: number; title: string; intoLevel: number; forNext: number } {
   const levels = [
     { threshold: 0, title: "Sprognovice" },
-    { threshold: 100, title: "Ordklasse-lærling" },
-    { threshold: 250, title: "Sætningsanalytiker" },
+    { threshold: 100, title: "AP-Cooker" },
+    { threshold: 250, title: "AP-Kværner" },
     { threshold: 500, title: "Morfem-mester" },
     { threshold: 900, title: "Syntaks-kender" },
     { threshold: 1400, title: "Latin-kandidat" },
     { threshold: 2000, title: "AP-ekspert" },
-    { threshold: 3000, title: "🐐AP-GED🐐" },
+    { threshold: 3000, title: "🐐AP-GOAT🐐" },
   ];
   let level = 0;
   for (let i = 0; i < levels.length; i++) {
