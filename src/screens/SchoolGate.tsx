@@ -62,7 +62,7 @@ export default function SchoolGatePage({
           canContinue ? cn("bg-gradient-to-r", theme.gradient) : "cursor-not-allowed bg-ink/15 text-ink/30"
         )}
       >
-        {canContinue ? "Gem mit skolevalg" : "Vælg først en skole (eller 'anden skole')"}
+        {canContinue ? "Gem mit skolevalg" : "Vælg først en skole (eller anden skole)"}
         {canContinue && <ChevronRightIcon className="h-5 w-5" />}
       </motion.button>
     </div>
