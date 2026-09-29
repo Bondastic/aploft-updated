@@ -37,7 +37,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Hvilken metode er mest effektiv til at huske nye gloser på et fremmedsprog?",
  ["Gentagne møder med ordet i forskellige sammenhænge, fx ordkort med jævne mellemrum", "At skrive ordet ned én gang i sin notesbog og aldrig se på det igen", "At læse ordet højt for sig selv én gang og gentage det dagen efter", "At undgå ordet, indtil man møder det igen i en helt ny tekst"],
  0,
- "Hjernen husker bedst ved gentagne møder spredt over tid (spaced repetition) og når ordet optræder i meningfulde sammenhænge ; ikke ved at proppe det på én gang."
+ "Hjernen husker bedst ved gentagne møder spredt over tid (spaced repetition) og når ordet optræder i meningfulde sammenhænge – ikke ved at proppe det på én gang."
  ),
  mc(
  "laeringsstrategier-5",
@@ -53,7 +53,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Hvornår er det klogt at slå et ord op i en ordbog eller et digitalt opslagsværk?",
  ["Når konteksten ikke er nok, og ordet er vigtigt for forståelsen", "Aldrig, man skal altid gætte sig frem i stedet for at slå op", "Altid, for hvert eneste ord man ikke kender med det samme", "Kun i eksamener, aldrig i hverdagen"],
  0,
- "Opslagsværker er et hjælpemiddel, man skal kunne bruge hensigtsmæssigt: slå op, når det betaler sig ; ikke for hvert eneste ord."
+ "Opslagsværker er et hjælpemiddel, man skal kunne bruge hensigtsmæssigt: slå op, når det betaler sig – ikke for hvert eneste ord."
  ),
  mc(
  "laeringsstrategier-7",
@@ -82,7 +82,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  mc(
  "laeringsstrategier-10",
  c,
- "Hvilken strategi bruger du, når du deler et langt engelsk ord op i dele for at forstå det : fx 'un-believ-able'?",
+ "Hvilken strategi bruger du, når du deler et langt engelsk ord op i dele for at forstå det – fx 'un-believ-able'?",
  ["Morfemanalyse: man deler ordet i betydningsbærende dele", "Kontekstgætning, hvor man gætter ud fra sætningen", "Transfer, man bruger et andet sprog", "Oversættelse ord-for-ord med en ordbog ved siden af"],
  0,
  "Morfemanalyse er at dele ordet i betydningsbærende dele: 'un-' (ikke), 'believe' (tro), '-able' (kan). Så kan man ofte gætte betydningen."
@@ -93,7 +93,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Hvorfor er læringsstrategier en del af HHX AP-pensum?",
  ["Fordi man skal kunne lære sprog effektivt gennem gymnasietiden og i erhvervslivet", "Fordi man skal undervise andre i at lære sprog, det er pensum", "Fordi det kun handler om at bestå eksamen med en god karakter", "Fordi alle strategier virker præcis ens, så man skal kende dem"],
  0,
- "Læreplanen kræver, at du kan anvende forskellige strategier til indlæring af fremmedsprog ; det er en studiekompetence, der rækker ud over selve AP."
+ "Læreplanen kræver, at du kan anvende forskellige strategier til indlæring af fremmedsprog – det er en studiekompetence, der rækker ud over selve AP."
  ),
  ck(
  "laeringsstrategier-9b",
@@ -101,7 +101,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Klik på det ord i sætningen, du lettest kan gætte betydningen af, hvis du kan engelsk.",
  "Appen er brugervenlig og meget intuitiv",
  [5],
- "'Intuitiv' ligner engelsk 'intuitive' (og fransk 'intuitif') ; transfer fra andre sprog afslører betydningen."
+ "'Intuitiv' ligner engelsk 'intuitive' (og fransk 'intuitif') – transfer fra andre sprog afslører betydningen."
  ),
  wr(
  "laeringsstrategier-12",
@@ -109,7 +109,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Hvad kaldes det, når man bruger viden fra ét sprog til at forstå eller lære et andet sprog?",
  "Skriv ordet:",
  "transfer",
- "Transfer er overførsel af viden mellem sprog : fx at genkende 'information' på tværs af dansk, engelsk og tysk.",
+ "Transfer er overførsel af viden mellem sprog – fx at genkende 'information' på tværs af dansk, engelsk og tysk.",
  ["sprogtransfer", "transfer mellem sprog"]
  ),
  mc(
@@ -118,7 +118,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Hvilken strategi er bedst, når du skal forberede dig til en mundtlig præsentation på engelsk?",
  ["Øv højt, gerne for andre, og lær nøglefraser udenad", "Læs præsentationen grundigt i hovedet et par gange", "Skriv den og glem den", "Undgå at forberede dig"],
  0,
- "At øve højt og bruge faste vendinger giver tryghed og flow. Sprogtilegnelse kræver aktiv produktion ; ikke kun passiv læsning."
+ "At øve højt og bruge faste vendinger giver tryghed og flow. Sprogtilegnelse kræver aktiv produktion – ikke kun passiv læsning."
  ),
  mc(
  "laeringsstrategier-14",
@@ -126,7 +126,7 @@ export const LAERINGSSTRATEGIER_TASKS: Task[] = [
  "Hvad er forskellen på at lære et ord 'receptivt' og 'produktivt'?",
  ["Receptivt = genkende; produktivt = selv bruge det i tale og skrift", "Receptivt betyder at skrive, og produktivt betyder at lytte og læse", "Der er ingen forskel, det er to navne for det samme", "Receptivt er kun for børn, produktivt for voksne"],
  0,
- "Man forstår typisk flere ord, end man selv bruger. At flytte ord fra det receptive til det produktive ordforråd kræver aktiv brug ; netop dét, strategierne handler om."
+ "Man forstår typisk flere ord, end man selv bruger. At flytte ord fra det receptive til det produktive ordforråd kræver aktiv brug – netop dét, strategierne handler om."
  ),
 
   mc("laeringsstrategier-15", c, "Hvad er 'spaced repetition'?", ["At gentage stof med stigende mellemrum over tid", "At lære alt på én gang lige før eksamen", "At gentage det samme ord 100 gange på én dag", "At lære uden at gentage noget"], 0, "Spaced repetition udnytter, at hjernen husker bedst, når man møder stoffet igen lige før man glemmer det - fx med ordkort."),

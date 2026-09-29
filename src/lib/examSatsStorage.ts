@@ -1,5 +1,5 @@
 // Lille localStorage-lagrer for hvilke eksamenssæt, eleven har prøvet.
-// Indeholder IKKE persondata : kun sæt-ids (og sidst spillede id), så
+// Indeholder IKKE persondata – kun sæt-ids (og sidst spillede id), så
 // rotationen ("aldrig det samme sæt to gange i træk") kan overleve genindlæsning.
 
 const KEY = "aploft.examsats.used.v1";
@@ -23,7 +23,7 @@ export function loadExamSatsUsage(): ExamSatsUsage {
       const u = parsed as ExamSatsUsage;
       return { usedIds: u.usedIds.filter((x): x is string => typeof x === "string"), lastId: u.lastId };
     }
-    // gammel/ugyldig struktur : start forfra (det er ikke data, vi er sure over at miste)
+    // gammel/ugyldig struktur – start forfra (det er ikke data, vi er sure over at miste)
     return EMPTY;
   } catch {
     return EMPTY;
@@ -38,7 +38,7 @@ export function markExamSatsUsed(satsId: string): ExamSatsUsage {
   try {
     window.localStorage.setItem(KEY, JSON.stringify(next));
   } catch {
-    // privat tilstand/fuld disk : rotationen holder bare pause indtil næste gang
+    // privat tilstand/fuld disk – rotationen holder bare pause indtil næste gang
   }
   return next;
 }

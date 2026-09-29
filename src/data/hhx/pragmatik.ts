@@ -3,7 +3,7 @@ import type { Task } from "../../types";
 
 const c = "pragmatik" as const;
 
-// PRAGMATIK ; sproget i brug (HHX-pensum: "sprog brugt i private, faglige og
+// PRAGMATIK – sproget i brug (HHX-pensum: "sprog brugt i private, faglige og
 // professionelle sammenhænge", "pragmatiske synsvinkler på tekster").
 // Pragmatik handler om, hvad konteksten gør ved betydningen.
 export const PRAGMATIK_TASKS: Task[] = [
@@ -13,7 +13,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Hvad er pragmatik?",
  ["Læren om, hvordan sprog bruges i konkrete situationer", "Læren om ordenes grundbetydning, som man finder den i ordbogen", "Læren om, hvordan man bygger sætninger op i et sprog", "Læren om ords oprindelse og historie"],
  0,
- "Hvor semantik ser på ordets faste betydning, ser pragmatik på, hvad ytringen BETYDER i den konkrete situation ; hvem siger det, til hvem, og hvorfor."
+ "Hvor semantik ser på ordets faste betydning, ser pragmatik på, hvad ytringen BETYDER i den konkrete situation – hvem siger det, til hvem, og hvorfor."
  ),
  mc(
  "pragmatik-2",
@@ -21,7 +21,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "En kollega siger 'Det var da en god idé' med sarkastisk tone efter et møde. Hvorfor forstår man, at det ikke er ros?",
  ["Fordi konteksten og tonen viser det modsatte, det er pragmatik", "Fordi ordet 'god' altid betyder det samme", "Fordi sætningen er grammatisk forkert", "Fordi man ikke kan sige 'god idé' efter et møde, det er upassende"],
  0,
- "Betydningen opstår i mødet mellem ord, tone og situation. At aflæse dét er pragmatisk forståelse ; og vigtigt i professionel kommunikation."
+ "Betydningen opstår i mødet mellem ord, tone og situation. At aflæse dét er pragmatisk forståelse – og vigtigt i professionel kommunikation."
  ),
  mc(
  "pragmatik-3",
@@ -45,7 +45,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Hvilken sætning er mest hensigtsmæssig, når man skriver til en ny, vigtig kunde?",
  ["Kære hr. Jensen. Tak for henvendelsen. Jeg vender tilbage med et tilbud.", "Hej! Sender lige et tilbud, ok? ;) Skriv endelig, hvis der er noget, jeg kan hjælpe med.", "Kære Jensen! Hvad så? Har du tænkt over tilbuddet, eller hvad?", "Hej du. Her er prisen. Mvh mig. Vi kan også tale sammen i morgen."],
  0,
- "Til en ukendt, vigtig modtager vælger man en formel, struktureret og høflig tone. Det er at tilpasse sproget til situationen ; pragmatisk kompetence."
+ "Til en ukendt, vigtig modtager vælger man en formel, struktureret og høflig tone. Det er at tilpasse sproget til situationen – pragmatisk kompetence."
  ),
  mc(
  "pragmatik-6",
@@ -61,12 +61,12 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Hvilken sammenhæng passer sproget 'Jeg beklager ulejligheden og vil straks undersøge sagen' bedst til?",
  ["En professionel kundeservice-situation", "En SMS til en god ven (uformel)", "En tale til en fødselsdag (festlig)", "Et opslag på sociale medier (offentligt)"],
  0,
- "Den formelle, ansvarlige tone passer til professionel kommunikation. Det samme indhold ville lyde forkert i en SMS til en ven ; derfor er registerbevidsthed vigtig."
+ "Den formelle, ansvarlige tone passer til professionel kommunikation. Det samme indhold ville lyde forkert i en SMS til en ven – derfor er registerbevidsthed vigtig."
  ),
  mc(
  "pragmatik-8",
  c,
- "Hvad kalder man de forskellige sproglige stillejer : fx privat, faglig og professionel ; som man skifter mellem efter situationen?",
+ "Hvad kalder man de forskellige sproglige stillejer – fx privat, faglig og professionel – som man skifter mellem efter situationen?",
  ["Registre", "Dialekter", "Sprogfamilier", "Synonymer"],
  0,
  "Et register er den variant af sproget, der passer til situationen: uformel tone til venner, fagudtryk til kolleger, formel tone til kunder og myndigheder."
@@ -101,7 +101,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "To venner skriver SMS'er til hinanden, og den ene svarer kun 'ok'. Hvordan skal det forstås?",
  ["Det afhænger af konteksten, fx tone, tidligere beskeder og relationen", "Det betyder altid, at vedkommende er sur og ikke gider skrive mere", "Det betyder altid, at vedkommende er glad og tilfreds med beskeden", "Det er en stavefejl, man skulle have skrevet 'okay'"],
  0,
- "Et kort 'ok' kan betyde alt fra 'fint' til 'jeg er irriteret' ; alt efter situationen. Pragmatik handler netop om at fortolke ytringer i kontekst."
+ "Et kort 'ok' kan betyde alt fra 'fint' til 'jeg er irriteret' – alt efter situationen. Pragmatik handler netop om at fortolke ytringer i kontekst."
  ),
  mc(
  "pragmatik-13",
@@ -109,7 +109,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Hvilken påstand om sprog og situation er korrekt?",
  ["En sætning kan være passende i én situation og upassende i en anden", "En sætning er enten altid passende eller også altid upassende", "Kun længden på sætningen afgør, om den passer", "Situationen har overhovedet ingen betydning for sprogbrugen"],
  0,
- "Hensigtsmæssig kommunikation betyder, at sproget passer til afsender, modtager, emne og situation ; læreplanens helt centrale krav."
+ "Hensigtsmæssig kommunikation betyder, at sproget passer til afsender, modtager, emne og situation – læreplanens helt centrale krav."
  ),
  ck(
  "pragmatik-14",
@@ -117,7 +117,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Klik på det ord, der gør denne sætning til UFORMEL (privat) kommunikation.",
  "Hej! Kan du lige sende mig priserne på nye kontorstole",
  [0],
- "'Hej!' og 'lige' er uformelle markører, der passer til en privat eller uformel relation ; ikke til en formel henvendelse."
+ "'Hej!' og 'lige' er uformelle markører, der passer til en privat eller uformel relation – ikke til en formel henvendelse."
  ),
  wr(
  "pragmatik-15",
@@ -125,7 +125,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Hvad kaldes den sprogvidenskabelige disciplin, der undersøger, hvordan sprog bruges i konkrete situationer?",
  "Skriv disciplinen:",
  "pragmatik",
- "Pragmatik er læren om sprog i brug ; hvordan kontekst og situation styrer betydning og valg af sprog.",
+ "Pragmatik er læren om sprog i brug – hvordan kontekst og situation styrer betydning og valg af sprog.",
  ["pragmatikken"]
  ),
  mc(
@@ -134,7 +134,7 @@ export const PRAGMATIK_TASKS: Task[] = [
  "Hvorfor er pragmatik et selvstændigt punkt i HHX AP-pensum?",
  ["Fordi man i erhvervslivet skal kunne tilpasse sprog til kunder og situationer", "Fordi man skal kunne stave ordet pragmatik korrekt i alle tekster", "Fordi det kun handler om ironi og humor i tekster og tale", "Fordi det er det samme som grammatik og semantik, bare et andet navn"],
  0,
- "Læreplanen lægger vægt på at kunne kommunikere hensigtsmæssigt i nationale og internationale, herunder erhvervsmæssige, sammenhænge ; dét er pragmatik i praksis."
+ "Læreplanen lægger vægt på at kunne kommunikere hensigtsmæssigt i nationale og internationale, herunder erhvervsmæssige, sammenhænge – dét er pragmatik i praksis."
  ),
 
   mc("pragmatik-17", c, "Hvorfor skriver man 'På forhånd tak' i slutningen af en mail?", ["Som en høflig formel, der forventer en handling fra modtageren", "Fordi man skal sige tak mindst én gang i hver mail", "For at gøre mailen længere og mere formel", "Det er en stavefejl, man skal undgå"], 0, "'På forhånd tak' er en fast høflighedsformel: Man takker på forhånd for det, man beder modtageren om at gøre."),

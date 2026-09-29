@@ -259,7 +259,7 @@ export default function ExamPage({
               {myFormat
                 ? `Eksamensformen på ${myFormat.school}: ${myFormat.status === "klar" ? "se hele forløbet, tidsrammen og hvad du bliver eksamineret i." : "vi er ved at færdigbeskrive de sidste detaljer."}`
                 : schoolDef
-                  ? "Vi har endnu ikke en udfoldet beskrivelse af din skoles form : tryk ind og se de former, vi har for dit spor, og hvad vi generelt ved om AP-eksamen."
+                  ? "Vi har endnu ikke en udfoldet beskrivelse af din skoles form – tryk ind og se de former, vi har for dit spor, og hvad vi generelt ved om AP-eksamen."
                   : "Vælg din skole under Profil, så viser vi præcis den eksamensform, din skole bruger. Indtil videre kan du se formen for dit spor."}
             </span>
           </span>
@@ -293,7 +293,7 @@ export default function ExamPage({
               <span className="mt-0.5 block text-xs leading-relaxed text-white/85">
                 Prøv den virkelige eksamen: du trækker en ukendt tekst med syv opgaver, markerer i teksten, skriver dine svar som på notepapiret
                 og svarer på delspørgsmål, der giver en vejledende karakter. Bagefter kan du kopiere hele besvarelsen over til en AI for
-                feedback : {schoolDef ? `formen er ${schoolDef.name}s egen.` : "formen er din skoles egen."}
+                feedback – {schoolDef ? `formen er ${schoolDef.name}s egen.` : "formen er din skoles egen."}
               </span>
             </span>
             <span className="shrink-0 rounded-full bg-white px-3.5 py-2 text-xs font-extrabold text-blue-600 shadow">Start →</span>
@@ -316,7 +316,7 @@ export default function ExamPage({
                   : " Går du på en af dem, kan du vælge din skole under Profil → Indstillinger."}
             </p>
             <p className="mt-1.5 leading-relaxed">
-              Indtil da træner prøvegeneratoren herunder præcis de samme fagbegreber : ordklasser, morfologi, syntaktisk analyse, verbaltider og
+              Indtil da træner prøvegeneratoren herunder præcis de samme fagbegreber – ordklasser, morfologi, syntaktisk analyse, verbaltider og
               hoved- og ledsætninger.
             </p>
           </div>
@@ -581,14 +581,14 @@ export default function ExamPage({
           <SparklesIcon className="h-4 w-4" /> Vil du have feedback på dine ordrette svar?
         </p>
         <p className="mt-1 text-sm leading-relaxed text-ink/60">
-          Kopiér prøvens opgaver og DINE svar som tekst : sæt ind i en AI efter eget valg (Copilot, ChatGPT, Claude, hvad du nu har) og bed om
-          retning og gode råd. Appen sender intet selv : teksten ligger kun i din udklipsholder.
+          Kopiér prøvens opgaver og DINE svar som tekst – sæt ind i en AI efter eget valg (Copilot, ChatGPT, Claude, hvad du nu har) og bed om
+          retning og gode råd. Appen sender intet selv – teksten ligger kun i din udklipsholder.
         </p>
         <p className="mt-2 flex gap-2 rounded-xl border border-amber-200 bg-amber-50 p-2.5 text-[11px] leading-relaxed text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
           <InfoIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>
             <span className="font-bold">OBS fra din AP-lærer:</span> AI svarer nogle gange misvisende om grammatik, og særligt om morfologi.
-            Brug den til at få forklaringer og feedback på dine formuleringer : men tjek grammatikken i din bog eller hos din lærer.
+            Brug den til at få forklaringer og feedback på dine formuleringer – men tjek grammatikken i din bog eller hos din lærer.
           </span>
         </p>
         <button

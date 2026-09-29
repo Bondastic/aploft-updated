@@ -240,7 +240,7 @@ export default function WelcomePage({
                     : "cursor-not-allowed bg-ink/15 text-ink/30"
                 )}
               >
-                {school ? "Bekræft skolevalg" : "Vælg din skole (eller &lsquo;anden skole&rsquo;)"}
+                {school ? "Bekræft skolevalg" : "Vælg din skole for at fortsætte"}
                 {school && <ChevronRightIcon className="h-5 w-5" />}
               </motion.button>
             </div>

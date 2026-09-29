@@ -1,4 +1,4 @@
-// "Fra nul til helt med" ; grundlæggende undervisningstrin, der indsættes
+// "Fra nul til helt med" – grundlæggende undervisningstrin, der indsættes
 // FØRST i hver kategoris allerførste forløbstrin (se paths.ts).
 //
 // Formålet er at gøre APklar til en lærer, ikke kun en quiz: eleven skal
@@ -24,17 +24,17 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "En kasus (også kaldet et 'fald') er den grammatiske form, et navneord, adjektiv eller pronomen får, for at vise, hvilken rolle det spiller i sætningen : fx om det er den, der handler, eller den, handlingen rammer.",
+ "En kasus (også kaldet et 'fald') er den grammatiske form, et navneord, adjektiv eller pronomen får, for at vise, hvilken rolle det spiller i sætningen – fx om det er den, der handler, eller den, handlingen rammer.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Sprog som latin (og til dels tysk) bruger kasusendelser til at vise sætningsled. Kender du kasussystemet, forstår du automatisk logikken bag danske sætningsled OGSÅ ; for de bygger på nøjagtig de samme grundfunktioner.",
+ "Sprog som latin (og til dels tysk) bruger kasusendelser til at vise sætningsled. Kender du kasussystemet, forstår du automatisk logikken bag danske sætningsled OGSÅ – for de bygger på nøjagtig de samme grundfunktioner.",
  },
  {
  heading: "Har dansk kasus?",
  body:
- "Dansk har næsten ingen kasusendelser tilbage ; bortset fra genitiv-s ('Peters bog') og forskellen på pronomenernes former ('jeg' over for 'mig'). Men de FUNKTIONER, kasus udtrykker, findes stadig i dansk: vi kalder dem bare sætningsled.",
+ "Dansk har næsten ingen kasusendelser tilbage – bortset fra genitiv-s ('Peters bog') og forskellen på pronomenernes former ('jeg' over for 'mig'). Men de FUNKTIONER, kasus udtrykker, findes stadig i dansk: vi kalder dem bare sætningsled.",
  },
  ],
  { examples: ["Peter (nominativ-agtig funktion: han handler) ser Mette (akkusativ-agtig funktion: hende rammer handlingen)."] }
@@ -46,7 +46,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Nominativ er den kasus, der bruges om sætningens subjekt ; den eller det, der udfører handlingen, eller som sætningen handler om.",
+ "Nominativ er den kasus, der bruges om sætningens subjekt – den eller det, der udfører handlingen, eller som sætningen handler om.",
  },
  {
  heading: "Sådan kender du den",
@@ -54,7 +54,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  },
  ],
  {
- examples: ["Puella cantat. (Pigen synger.) ; 'puella' er nominativ, fordi hun er den, der synger."],
+ examples: ["Puella cantat. (Pigen synger.) – 'puella' er nominativ, fordi hun er den, der synger."],
  tip: "Nominativ = grundformen. Når du er i tvivl, så spørg altid: hvem gør det?",
  }
  ),
@@ -72,14 +72,14 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Akkusativ: det direkte objekts kasus",
  [
  {
- body: "Akkusativ er den kasus, der markerer det direkte objekt ; det, som handlingen går direkte ud over.",
+ body: "Akkusativ er den kasus, der markerer det direkte objekt – det, som handlingen går direkte ud over.",
  },
  {
  heading: "Sådan kender du den",
  body: "Spørg 'verbet + hvem/hvad?'. Svaret er det direkte objekt og ville stå i akkusativ på latin.",
  },
  ],
- { examples: ["Puella puerum videt. (Pigen ser drengen.) ; 'puerum' er akkusativ, fordi han er den, der bliver set."] }
+ { examples: ["Puella puerum videt. (Pigen ser drengen.) – 'puerum' er akkusativ, fordi han er den, der bliver set."] }
  ),
  mc(
  "t-kasus-ex-2",
@@ -96,7 +96,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  heading: "Dativ",
- body: "Dativ markerer det indirekte objekt ; den, noget gives til eller gøres for. Spørg: 'til/for hvem?'.",
+ body: "Dativ markerer det indirekte objekt – den, noget gives til eller gøres for. Spørg: 'til/for hvem?'.",
  },
  {
  heading: "Genitiv",
@@ -105,10 +105,10 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  ],
  {
  examples: [
- "Do puellae rosam. (Jeg giver pigen en rose.) ; 'puellae' er dativ (til hvem).",
- "Liber puellae. (Pigens bog.) ; 'puellae' er her genitiv (hvis bog).",
+ "Do puellae rosam. (Jeg giver pigen en rose.) – 'puellae' er dativ (til hvem).",
+ "Liber puellae. (Pigens bog.) – 'puellae' er her genitiv (hvis bog).",
  ],
- tip: "Bemærk at 'puellae' kan være både dativ og genitiv i dette eksempel ; det er betydningen i sætningen, der afgør det, ikke kun formen.",
+ tip: "Bemærk at 'puellae' kan være både dativ og genitiv i dette eksempel – det er betydningen i sætningen, der afgør det, ikke kun formen.",
  }
  ),
  teach(
@@ -118,18 +118,18 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  heading: "Ablativ",
- body: "En bred 'omstændigheds-kasus' der dækker middel, sted, tid og måde ; svarer ofte til dansk 'med', 'i' eller 'fra'.",
+ body: "En bred 'omstændigheds-kasus' der dækker middel, sted, tid og måde – svarer ofte til dansk 'med', 'i' eller 'fra'.",
  },
  {
  heading: "Vokativ",
- body: "Bruges kun til direkte tiltale ; når man kalder på nogen.",
+ body: "Bruges kun til direkte tiltale – når man kalder på nogen.",
  },
  {
  heading: "Husk",
  body: "Latin har i alt 6 kasus: nominativ, genitiv, dativ, akkusativ, ablativ og vokativ.",
  },
  ],
- { examples: ["Cum amico venit. (Han kommer med vennen.) ; ablativ.", "Marce, veni! (Marcus, kom!) ; vokativ."] }
+ { examples: ["Cum amico venit. (Han kommer med vennen.) – ablativ.", "Marce, veni! (Marcus, kom!) – vokativ."] }
  ),
  info(
  "t-kasus-table",
@@ -137,12 +137,12 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Overblik: sætningsled ↔ kasus",
  "Nu hvor du kender begreberne enkeltvis, er her hele sammenhængen samlet i ét skema. Vend gerne tilbage til den, når du er i tvivl.",
  [
- { label: "Subjekt", value: "Nominativ ; hvem/hvad + verbum?" },
- { label: "Direkte objekt", value: "Akkusativ ; verbum + hvem/hvad?" },
- { label: "Indirekte objekt (indir. objekt)", value: "Dativ ; til/for hvem?" },
- { label: "Ejerskab ('-s')", value: "Genitiv ; hvis?" },
- { label: "Adverbial (middel/sted/måde)", value: "Ablativ ; hvordan/hvormed/hvorfra?" },
- { label: "Direkte tiltale", value: "Vokativ ; (ingen, direkte tiltale)" },
+ { label: "Subjekt", value: "Nominativ – hvem/hvad + verbum?" },
+ { label: "Direkte objekt", value: "Akkusativ – verbum + hvem/hvad?" },
+ { label: "Indirekte objekt (indir. objekt)", value: "Dativ – til/for hvem?" },
+ { label: "Ejerskab ('-s')", value: "Genitiv – hvis?" },
+ { label: "Adverbial (middel/sted/måde)", value: "Ablativ – hvordan/hvormed/hvorfra?" },
+ { label: "Direkte tiltale", value: "Vokativ – (ingen, direkte tiltale)" },
  ],
  "Videre til opgaverne →"
  ),
@@ -171,7 +171,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "En ordklasse er en gruppe af ord, der opfører sig grammatisk ens ; de har samme slags 'job' i en sætning. Dansk har 10 ordklasser i alt.",
+ "En ordklasse er en gruppe af ord, der opfører sig grammatisk ens – de har samme slags 'job' i en sætning. Dansk har 10 ordklasser i alt.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -215,14 +215,14 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  },
  {
  heading: "Adverbium (biord)",
- body: "Beskriver et verbum, et adjektiv eller et andet adverbium ; ofte 'hvordan' noget sker. Bøjes ikke på samme måde.",
+ body: "Beskriver et verbum, et adjektiv eller et andet adverbium – ofte 'hvordan' noget sker. Bøjes ikke på samme måde.",
  },
  {
  heading: "Sådan kender du forskel",
  body: "Spørg: beskriver ordet et navneord? Så er det adjektiv. Beskriver det i stedet en handling eller en egenskab? Så er det adverbium.",
  },
  ],
- { examples: ["En glad (adjektiv) hund løber glad-t → 'glad' som adverbium hedder 'gladeligt'/'glad' afhængigt af sammenhæng ; men 'hurtigt' er tydeligere: 'Han løber hurtigt' (adverbium) vs. 'en hurtig bil' (adjektiv)."] }
+ { examples: ["En glad (adjektiv) hund løber glad-t → 'glad' som adverbium hedder 'gladeligt'/'glad' afhængigt af sammenhæng – men 'hurtigt' er tydeligere: 'Han løber hurtigt' (adverbium) vs. 'en hurtig bil' (adjektiv)."] }
  ),
  mc(
  "t-ordkl-ex-2",
@@ -230,7 +230,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "'Hun synger smukt.' Hvorfor er 'smukt' her et adverbium?",
  ["Fordi det beskriver verbet 'synger' (hvordan hun synger)", "Fordi det står sidst i sætningen", "Fordi det ender på -t"],
  0,
- "'Smukt' fortæller, HVORDAN hun synger ; det beskriver altså verbet, ikke et substantiv, og er derfor adverbium."
+ "'Smukt' fortæller, HVORDAN hun synger – det beskriver altså verbet, ikke et substantiv, og er derfor adverbium."
  ),
  info(
  "t-ordkl-table",
@@ -238,16 +238,16 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Alle 10 ordklasser på ét overblik",
  "De sidste seks ordklasser møder du løbende i opgaverne. Her er hele listen samlet, så du altid kan slå op.",
  [
- { label: "Substantiv", value: "Navneord ; hund, glæde" },
- { label: "Verbum", value: "Udsagnsord ; løbe, være" },
- { label: "Adjektiv", value: "Tillægsord ; glad, stor" },
- { label: "Adverbium", value: "Biord ; hurtigt, meget" },
- { label: "Pronomen", value: "Stedord ; han, min, som" },
- { label: "Præposition", value: "Forholdsord ; i, på, med" },
- { label: "Konjunktion", value: "Bindeord ; og, men, fordi" },
- { label: "Numerale", value: "Talord ; tre, første" },
- { label: "Interjektion", value: "Udråbsord ; av, hurra" },
- { label: "Artikel", value: "Kendeord ; en, et, den" },
+ { label: "Substantiv", value: "Navneord – hund, glæde" },
+ { label: "Verbum", value: "Udsagnsord – løbe, være" },
+ { label: "Adjektiv", value: "Tillægsord – glad, stor" },
+ { label: "Adverbium", value: "Biord – hurtigt, meget" },
+ { label: "Pronomen", value: "Stedord – han, min, som" },
+ { label: "Præposition", value: "Forholdsord – i, på, med" },
+ { label: "Konjunktion", value: "Bindeord – og, men, fordi" },
+ { label: "Numerale", value: "Talord – tre, første" },
+ { label: "Interjektion", value: "Udråbsord – av, hurra" },
+ { label: "Artikel", value: "Kendeord – en, et, den" },
  ],
  "Videre til opgaverne →"
  ),
@@ -261,11 +261,11 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "En sætning kan deles op i 'led' ; byggeklodser, der hver har en bestemt funktion. Et sætningsled kan bestå af ét ord eller flere ord, der hører sammen ('den lille hund' er ét led).",
+ "En sætning kan deles op i 'led' – byggeklodser, der hver har en bestemt funktion. Et sætningsled kan bestå af ét ord eller flere ord, der hører sammen ('den lille hund' er ét led).",
  },
  {
  heading: "Hvorfor er det vigtigt?",
- body: "At kunne finde sætningsled er kernen i AP's grammatikdel ; og de 7 officielle symboler bruges i næsten alle analyseopgaver.",
+ body: "At kunne finde sætningsled er kernen i AP's grammatikdel – og de 7 officielle symboler bruges i næsten alle analyseopgaver.",
  },
  {
  heading: "Den gode nyhed",
@@ -279,12 +279,12 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Subjekt og verballed",
  [
  {
- heading: "Subjekt ; symbol: ×",
+ heading: "Subjekt – symbol: ×",
  body: "Den eller det, der udfører handlingen, eller som sætningen handler om. Spørg: 'hvem/hvad + verballed?'.",
  },
  {
- heading: "Verballed ; symbol: ○",
- body: "Det bøjede verbum i sætningen. Find altid dette FØRST ; det gør det meget nemmere at finde resten.",
+ heading: "Verballed – symbol: ○",
+ body: "Det bøjede verbum i sætningen. Find altid dette FØRST – det gør det meget nemmere at finde resten.",
  },
  ],
  { examples: ["Katten (subjekt, ×) sover (verballed, ○) på sofaen."] }
@@ -303,11 +303,11 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Direkte objekt og indirekte objekt",
  [
  {
- heading: "Direkte objekt ; symbol: △",
+ heading: "Direkte objekt – symbol: △",
  body: "Det, handlingen rammer direkte. Spørg: 'verballed + hvem/hvad?'.",
  },
  {
- heading: "Indirekte objekt ; symbol: □",
+ heading: "Indirekte objekt – symbol: □",
  body: "Den, handlingen kommer til gode eller gives til. Spørg: 'til/for hvem?'.",
  },
  ],
@@ -339,16 +339,16 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Subjektsprædikat og objektsprædikat",
  [
  {
- heading: "Subjektsprædikat ; symbol: ⊗",
+ heading: "Subjektsprædikat – symbol: ⊗",
  body: "Siger noget om subjektet. Optræder efter kopulaverber som 'er', 'bliver', 'hedder', 'virker'.",
  },
  {
- heading: "Objektsprædikat ; eget symbol (kryds det op på Symboler-siden)",
+ heading: "Objektsprædikat – eget symbol (kryds det op på Symboler-siden)",
  body: "Siger noget om det direkte objekt. Optræder efter verber som 'kalde', 'gøre', 'vælge', 'udnævne'.",
  },
  {
  heading: "Huskeregel",
- body: "Begge 'prædikater' beskriver et andet led i stedet for at være et selvstændigt objekt ; de fortæller, hvad nogen/noget ER eller BLIVER kaldt.",
+ body: "Begge 'prædikater' beskriver et andet led i stedet for at være et selvstændigt objekt – de fortæller, hvad nogen/noget ER eller BLIVER kaldt.",
  },
  ],
  { examples: ["Peter (×) er (○) glad (⊗, subjektsprædikat).", "Vi (×) kalder (○) hunden (△) Fido (objektsprædikat)."] }
@@ -359,7 +359,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "'Mette bliver lærer.' Hvad er 'lærer' for et led?",
  ["Direkte objekt", "Subjektsprædikat", "Indirekte objekt"],
  1,
- "'Lærer' siger noget om subjektet 'Mette' efter kopulaverbet 'bliver' ; det er derfor subjektsprædikat (⊗)."
+ "'Lærer' siger noget om subjektet 'Mette' efter kopulaverbet 'bliver' – det er derfor subjektsprædikat (⊗)."
  ),
  info(
  "t-sled-table",
@@ -367,13 +367,13 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Alle 7 symboler samlet",
  "Du har nu mødt alle 7 sætningsled. Du kan altid finde denne oversigt igen under fanen 'Symboler' i bunden af appen.",
  [
- { label: "Subjekt", value: "× ; hvem/hvad + verbum?" },
- { label: "Verballed", value: "○ ; det bøjede verbum" },
- { label: "Direkte objekt", value: "△ ; verbum + hvem/hvad?" },
- { label: "Indirekte objekt", value: "□ ; til/for hvem?" },
- { label: "Adverbial", value: "〰 ; hvornår/hvor/hvordan/hvorfor?" },
- { label: "Subjektsprædikat", value: "⊗ ; hvad ER/BLIVER subjektet?" },
- { label: "Objektsprædikat", value: "eget symbol ; hvad kaldes/gøres det direkte objekt til?" },
+ { label: "Subjekt", value: "× – hvem/hvad + verbum?" },
+ { label: "Verballed", value: "○ – det bøjede verbum" },
+ { label: "Direkte objekt", value: "△ – verbum + hvem/hvad?" },
+ { label: "Indirekte objekt", value: "□ – til/for hvem?" },
+ { label: "Adverbial", value: "〰 – hvornår/hvor/hvordan/hvorfor?" },
+ { label: "Subjektsprædikat", value: "⊗ – hvad ER/BLIVER subjektet?" },
+ { label: "Objektsprædikat", value: "eget symbol – hvad kaldes/gøres det direkte objekt til?" },
  ],
  "Videre til opgaverne →"
  ),
@@ -385,7 +385,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "tempus",
  "Hvad er tempus?",
  [
- { body: "Tempus er verbets tidsform ; det fortæller, om noget sker nu, er sket før, eller vil ske i fremtiden." },
+ { body: "Tempus er verbets tidsform – det fortæller, om noget sker nu, er sket før, eller vil ske i fremtiden." },
  {
  heading: "Hvorfor er det vigtigt?",
  body: "AP-prøven tester, om du kan genkende og navngive de forskellige tider korrekt på dansk, engelsk og latin.",
@@ -451,7 +451,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  body:
  "Et morfem er den mindste del af et ord, der bærer en betydning. Det kan være et helt ord i sig selv ('hund') eller en lille endelse ('-e' i 'hunde').",
  },
- { heading: "Hvorfor er det vigtigt?", body: "Morfologi handler om, hvordan ord er bygget op ; det hjælper dig med at gætte betydningen af ukendte ord." },
+ { heading: "Hvorfor er det vigtigt?", body: "Morfologi handler om, hvordan ord er bygget op – det hjælper dig med at gætte betydningen af ukendte ord." },
  ],
  { examples: ["'hunde' = 'hund' (grundmorfem) + '-e' (bøjningsmorfem, flertal)."] }
  ),
@@ -460,7 +460,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "morfologi",
  "Bøjning, afledning og sammensætning",
  [
- { heading: "Bøjning", body: "Ændrer aldrig ordklasse ; kun formen. 'Hund' → 'hunde' er stadig substantiv." },
+ { heading: "Bøjning", body: "Ændrer aldrig ordklasse – kun formen. 'Hund' → 'hunde' er stadig substantiv." },
  {
  heading: "Afledning",
  body: "Skifter ofte ordklasse eller betydning ved hjælp af en for-/endelse. 'Glad' (adj.) → 'glæde' (subst.).",
@@ -474,7 +474,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "'Uklar' er dannet af 'klar' + forstavelsen 'u-'. Hvad kalder vi denne proces?",
  ["Bøjning", "Afledning", "Sammensætning"],
  1,
- "Der dannes et nyt ord med en anden betydning (det modsatte) ved hjælp af en forstavelse ; det er afledning."
+ "Der dannes et nyt ord med en anden betydning (det modsatte) ved hjælp af en forstavelse – det er afledning."
  ),
  ],
 
@@ -484,18 +484,18 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "syntaks",
  "Hvad er syntaks?",
  [
- { body: "Syntaks handler om, hvordan ord og sætningsled sættes sammen til hele, korrekte sætninger ; reglerne for sætningsbygning." },
+ { body: "Syntaks handler om, hvordan ord og sætningsled sættes sammen til hele, korrekte sætninger – reglerne for sætningsbygning." },
  ]
  ),
  teach(
  "t-synt-2",
  "syntaks",
- "Helsætning og ledsætning",
+ "Hovedsætning og ledsætning",
  [
- { heading: "Helsætning", body: "Kan stå alene og give mening. Fx: 'Han spiser.'" },
+ { heading: "Hovedsætning", body: "Kan stå alene og give mening. Fx: 'Han spiser.'" },
  {
  heading: "Ledsætning",
- body: "Kan IKKE stå alene ; den er afhængig af en helsætning, og indledes ofte af ord som 'fordi', 'at', 'som', 'hvis'. Fx: '..., fordi han er sulten.'",
+ body: "Kan IKKE stå alene – den er afhængig af en hovedsætning, og indledes ofte af ord som 'fordi', 'at', 'som', 'hvis'. Fx: '..., fordi han er sulten.'",
  },
  ]
  ),
@@ -505,7 +505,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Hvilken af disse er en ledsætning (kan ikke stå alene)?",
  ["Hun løber hurtigt", "fordi hun er glad"],
  1,
- "'Fordi hun er glad' giver ikke fuld mening alene og er afhængig af en hovedsætning ; det er en ledsætning."
+ "'Fordi hun er glad' giver ikke fuld mening alene og er afhængig af en hovedsætning – det er en ledsætning."
  ),
  teach(
  "t-synt-3",
@@ -514,12 +514,12 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Dansk er et 'V2-sprog': det bøjede verbum (verballeddet) skal altid stå som sætningens andet led ; uanset hvad der står først.",
+ "Dansk er et 'V2-sprog': det bøjede verbum (verballeddet) skal altid stå som sætningens andet led – uanset hvad der står først.",
  },
  ],
  {
- examples: ["I går regnede det. ; Selvom sætningen starter med tidsangivelsen 'i går', er 'regnede' stadig andet led."],
- tip: "Engelsk er IKKE et V2-sprog ; det bruger i stedet 'do/does/did' i spørgsmål, hvor dansk bytter om på subjekt og verbum.",
+ examples: ["I går regnede det. – Selvom sætningen starter med tidsangivelsen 'i går', er 'regnede' stadig andet led."],
+ tip: "Engelsk er IKKE et V2-sprog – det bruger i stedet 'do/does/did' i spørgsmål, hvor dansk bytter om på subjekt og verbum.",
  }
  ),
  ],
@@ -560,7 +560,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Modellen beskriver, hvordan en afsender sender et budskab gennem en kanal til en modtager ; og hvordan 'støj' undervejs kan forstyrre budskabet.",
+ "Modellen beskriver, hvordan en afsender sender et budskab gennem en kanal til en modtager – og hvordan 'støj' undervejs kan forstyrre budskabet.",
  },
  ]
  ),
@@ -576,7 +576,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "Det vigtigste latinske verbum: esse",
  [
  {
- body: "'Esse' betyder 'at være' og er det mest brugte ; men også mest uregelmæssige ; verbum i latin.",
+ body: "'Esse' betyder 'at være' og er det mest brugte – men også mest uregelmæssige – verbum i latin.",
  },
  {
  heading: "Hvorfor starte her?",
@@ -591,8 +591,8 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  info(
  "t-sum-table",
  "sumesse",
- "Esse i nutid (præsens) ; hele tabellen på én gang",
- "Kig roligt på skemaet. Du skal ikke huske det udenad endnu ; de næste trin lærer dig hver form for sig.",
+ "Esse i nutid (præsens) – hele tabellen på én gang",
+ "Kig roligt på skemaet. Du skal ikke huske det udenad endnu – de næste trin lærer dig hver form for sig.",
  [
  { label: "jeg er", value: "sum" },
  { label: "du er", value: "es" },
@@ -617,7 +617,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  { label: "de er", value: "sunt" },
  ],
  [1, 4],
- "'Es' (du er) og 'estis' (I er) hører begge til 2. person ; ental og flertal.",
+ "'Es' (du er) og 'estis' (I er) hører begge til 2. person – ental og flertal.",
  ["erat", "amat"]
  ),
  ],
@@ -649,7 +649,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  heading: "Deklination",
- body: "Den bøjningsrække, et navneord følger gennem alle kasus. Latin har 5 deklinationer ; 1. og 2. er vigtigst at kunne først.",
+ body: "Den bøjningsrække, et navneord følger gennem alle kasus. Latin har 5 deklinationer – 1. og 2. er vigtigst at kunne først.",
  },
  {
  heading: "Konjugation",
@@ -657,7 +657,7 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  },
  {
  heading: "Hvorfor er det vigtigt?",
- body: "Når du kender mønstret, kan du 'regne ud' formen af ord, du aldrig har set før ; i stedet for at skulle huske dem enkeltvis.",
+ body: "Når du kender mønstret, kan du 'regne ud' formen af ord, du aldrig har set før – i stedet for at skulle huske dem enkeltvis.",
  },
  ],
  { examples: ["1. deklination (fx 'puella'): ender på '-a' i nominativ og er overvejende hunkøn."] }
@@ -670,12 +670,12 @@ export const CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  "oversaettelse",
  "Sådan oversætter du en latinsk sætning",
  [
- { heading: "1. Find verbet", body: "Find udsagnsordet først ; endelsen fortæller dig hvem der handler, og hvornår det sker." },
+ { heading: "1. Find verbet", body: "Find udsagnsordet først – endelsen fortæller dig hvem der handler, og hvornår det sker." },
  {
  heading: "2. Se på endelserne, ikke rækkefølgen",
  body: "Latinsk ordstilling er fri. Stol på kasusendelserne (nominativ = subjekt, akkusativ = objekt), ikke på hvor ordet står.",
  },
- { heading: "3. Brug oversættelsesarket", body: "Du må altid bruge oversættelsesarket til svære gloser ; også til den rigtige prøve." },
+ { heading: "3. Brug oversættelsesarket", body: "Du må altid bruge oversættelsesarket til svære gloser – også til den rigtige prøve." },
  ],
  { tip: "Byg altid sætningen op i denne rækkefølge: find verbet → find subjektet (nominativ) → find objektet (akkusativ) → resten." }
  ),

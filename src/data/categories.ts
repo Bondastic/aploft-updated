@@ -3,7 +3,7 @@ import type { CategoryDef, Education } from "../types";
 // Rækkefølgen herunder er bevidst: de mest grundlæggende og vigtigste emner
 // (dem alt andet bygger ovenpå) står øverst, mens mere overordnede/abstrakte
 // emner kommer sidst. Fx skal man kende kasus godt, før sætningsled og latinsk
-// grammatik giver mening ; derfor ligger "Kasus-masterclass" allerøverst.
+// grammatik giver mening – derfor ligger "Kasus-masterclass" allerøverst.
 export const ALMEN_CATEGORIES: CategoryDef[] = [
  {
  id: "kasus",
@@ -76,7 +76,7 @@ export const LATIN_CATEGORIES: CategoryDef[] = [
  track: "latin",
  title: "Sum, es, est-forløbet",
  short: "Sum, es, est",
- description: "Fra nul til hero: lær 'esse' (at være) udenad ; sum, es, est, sumus, estis, sunt.",
+ description: "Fra nul til hero: lær 'esse' (at være) udenad – sum, es, est, sumus, estis, sunt.",
  color: "fuchsia",
  icon: "sumesse",
  },
@@ -129,7 +129,7 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  track: "hhx",
  title: "Ordklasser",
  short: "Ordklasser",
- description: "Kend forskel på substantiver, verber, adjektiver og de andre ordklasser ; samme grundlag på HHX.",
+ description: "Kend forskel på substantiver, verber, adjektiver og de andre ordklasser – samme grundlag på HHX.",
  color: "blue",
  icon: "ordklasser",
  },
@@ -138,7 +138,7 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  track: "hhx",
  title: "Sætningsled & syntaktisk analyse",
  short: "Sætningsled",
- description: "Find subjekt, verballed og direkte objekt med de 7 symboler ; og brug dem på dansk og engelsk.",
+ description: "Find subjekt, verballed og direkte objekt med de 7 symboler – og brug dem på dansk og engelsk.",
  color: "cyan",
  icon: "saetningsled",
  },
@@ -147,7 +147,7 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  track: "hhx",
  title: "Morfologi & bøjning",
  short: "Morfologi",
- description: "Forstå hvordan ord er bygget op af forstavelser, rødder og endelser ; og hvordan ord bøjes.",
+ description: "Forstå hvordan ord er bygget op af forstavelser, rødder og endelser – og hvordan ord bøjes.",
  color: "teal",
  icon: "morfologi",
  },
@@ -165,7 +165,7 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  track: "hhx",
  title: "Sætningstyper & syntaks",
  short: "Syntaks",
- description: "Helsætninger, ledsætninger, komma og ordstilling ; også på engelsk.",
+ description: "Hovedsætninger, ledsætninger, komma og ordstilling – også på engelsk.",
  color: "violet",
  icon: "syntaks",
  },
@@ -183,7 +183,7 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  track: "hhx",
  title: "Sproghandlinger",
  short: "Sproghandlinger",
- description: "Hvad vi GØR med sprog: påstå, spørge, opfordre, love, råde ; direkte og indirekte.",
+ description: "Hvad vi GØR med sprog: påstå, spørge, opfordre, love, råde – direkte og indirekte.",
  color: "amber",
  icon: "sproghandlinger",
  },
@@ -201,7 +201,7 @@ export const HHX_CATEGORIES: CategoryDef[] = [
  track: "hhx",
  title: "Pragmatik (sprog i brug)",
  short: "Pragmatik",
- description: "Sprog i private, faglige og professionelle sammenhænge ; og det, der står mellem linjerne.",
+ description: "Sprog i private, faglige og professionelle sammenhænge – og det, der står mellem linjerne.",
  color: "teal",
  icon: "pragmatik",
  },

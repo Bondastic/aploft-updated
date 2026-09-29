@@ -269,7 +269,7 @@ export default function AploftApp() {
           <div className="w-full max-w-sm space-y-3 rounded-3xl bg-white p-5 shadow-2xl" onClick={(e) => e.stopPropagation()}>
             <h3 className="font-display text-lg font-extrabold text-ink">Du er midt i en opgave</h3>
             <p className="text-sm text-ink/60">
-              Går du væk nu, forlader du den igangværende opgave eller prøve : <span className="font-bold text-ink">fremdriften i netop den
+              Går du væk nu, forlader du den igangværende opgave eller prøve – <span className="font-bold text-ink">fremdriften i netop den
               session bliver ikke gemt</span>, og den skal startes forfra. Dine gemte resultater og dit XP er selvfølgelig sikre.
             </p>
             <div className="flex gap-2">

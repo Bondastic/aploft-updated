@@ -176,7 +176,7 @@ export default function ExamArticlePane({
       : tool === "klasse"
         ? "Klik på et ord for at sætte dets ordklasse"
         : eraser
-          ? "Sletter tusch : klik på ordet (eller første/sidste ord i området)"
+          ? "Sletter tusch – klik på ordet (eller første/sidste ord i området)"
           : sentenceMode
             ? "Klik på en sætning for at tusche den hele"
             : start
@@ -346,7 +346,7 @@ export default function ExamArticlePane({
       )}
 
       <div className="flex items-center justify-between gap-2 border-t border-ink/10 px-4 py-2">
-        <p className="text-[11px] text-ink/40">Markeringerne er dit læseværktøj ; de bliver ikke bedømt, men de ryger med i kopien af din besvarelse.</p>
+        <p className="text-[11px] text-ink/40">Markeringerne er dit læseværktøj – de bliver ikke bedømt, men de ryger med i kopien af din besvarelse.</p>
         {Object.keys(marks).length > 0 && (
           <button type="button" onClick={() => setMarks({})} className="shrink-0 rounded-full border border-ink/15 px-2.5 py-1 text-[11px] font-bold text-ink/60 hover:border-rose-300 hover:text-rose-600">
             Ryd alle markeringer

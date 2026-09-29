@@ -13,7 +13,7 @@
 //   indleder + funktion).
 //
 // Karakteren bygger på det, der kan rettes entydigt. Pentagrammet, de
-// sproglige observationer og begrundelserne rettes ALDRIG automatisk : de
+// sproglige observationer og begrundelserne rettes ALDRIG automatisk – de
 // følger med, når besvarelsen kopieres over til AI-feedback.
 // ---------------------------------------------------------------------------
 
@@ -191,7 +191,7 @@ async function copyToClipboard(text: string): Promise<boolean> {
 }
 
 // ---------------------------------------------------------------------------
-// Rettelse. Ét point pr. entydigt delsvar ; de åbne felter tæller ikke med.
+// Rettelse. Ét point pr. entydigt delsvar – de åbne felter tæller ikke med.
 // ---------------------------------------------------------------------------
 type Scored = { label: string; got: string; facit: string; ok: boolean };
 
@@ -214,7 +214,7 @@ function scoreTask(task: ExamTaskT, a: Ans | undefined): { rows: Scored[]; point
       const split = ans.text[`${i}-split`] ?? "";
       const ask = ans.text[`${i}-ask`] ?? "";
       rows.push({
-        label: `"${w.word}" : morfemer`,
+        label: `"${w.word}" – morfemer`,
         got: split.trim() || "(tomt)",
         facit: w.split,
         ok: matchSplit(split, w.split, w.splitAccepts),
@@ -244,7 +244,7 @@ function scoreTask(task: ExamTaskT, a: Ans | undefined): { rows: Scored[]; point
     p.items.forEach((it) => {
       const picked = ans.tense?.[it.id];
       rows.push({
-        label: `"${it.verb}" : tid`,
+        label: `"${it.verb}" – tid`,
         got: picked ? tenseLabel(picked) : "(ikke valgt)",
         facit: tenseLabel(it.correct),
         ok: picked === it.correct,
@@ -447,7 +447,7 @@ export default function ExamSatsPage({
       }
       if (p.kind === "analysis") {
         L.push(`  Sætning: "${p.sentence}"`);
-        L.push("  " + p.chunks.map((c, i) => `${c} → ${a.led?.[i] ? getSymbolDef(a.led[i]!).short : "(ikke valgt)"}`).join(" ; "));
+        L.push("  " + p.chunks.map((c, i) => `${c} → ${a.led?.[i] ? getSymbolDef(a.led[i]!).short : "(ikke valgt)"}`).join(" – "));
       }
       if (p.kind === "tense") {
         for (const it of p.items) {
@@ -484,7 +484,7 @@ export default function ExamSatsPage({
       "1. Skriv først kort, at bedømmelsen kun er til forberedelse (en AI-karakter kan sige noget om mit faglige niveau, men er ikke en officiel karakter, og den mundtlige del kan ikke bedømmes her).",
       "2. Giv mig derefter en vejledende karakter på 7-trinsskalaen (12, 10, 7, 4, 02, 00, -3) med en begrundelse. Vær mild, men præcis nok til, at jeg kan se mit faglige niveau.",
       "3. Gå så HVER opgave igennem én ad gangen: hvad er rigtigt, hvad mangler, og hvad skal jeg konkret sige til eksamen? Brug de latinske betegnelser for led (subjekt, verballed, direkte/indirekte objekt) som de primære.",
-      "4. Husk, at opgave 2 og 3 har mange rigtige svar : bedøm dem på dokumentationen (citater fra teksten) og fagsproget, ikke på om jeg ramte præcis dine eksempler.",
+      "4. Husk, at opgave 2 og 3 har mange rigtige svar – bedøm dem på dokumentationen (citater fra teksten) og fagsproget, ikke på om jeg ramte præcis dine eksempler.",
       "",
       "TEKSTGRUNDLAG (prøvens tekst, ordret):",
       `"${sats.article.title}" (${sats.article.byline})`,
@@ -537,7 +537,7 @@ export default function ExamSatsPage({
           <p className="mt-2 text-sm leading-relaxed">
             Eksamensprøven er bygget 1:1 efter én bestemt skoles eksamensark, og eksamensformen er forskellig fra skole til skole. Derfor kan
             den kun tages af elever på {schools.map((s) => s.name).join(", ") || "de skoler, vi har formen for"}. Vælg din skole under Profil →
-            Indstillinger, hvis du går der : ellers kan du bruge prøvegeneratoren, som træner præcis de samme fagbegreber.
+            Indstillinger, hvis du går der – ellers kan du bruge prøvegeneratoren, som træner præcis de samme fagbegreber.
           </p>
         </div>
       </div>
@@ -569,16 +569,16 @@ export default function ExamSatsPage({
             <span className="rounded-full bg-white/15 px-3 py-1.5">Mundtlig eksamen bagefter</span>
           </div>
           <p className="mt-3 text-xs font-semibold text-white/75">
-            Sæt prøvet før : {Math.min(usage.usedIds.length, HHX_EXAM_SATS.length)} af {HHX_EXAM_SATS.length}
+            Sæt prøvet før – {Math.min(usage.usedIds.length, HHX_EXAM_SATS.length)} af {HHX_EXAM_SATS.length}
             {usage.usedIds.includes(sats.id) ? " (du har prøvet netop dette sæt før)" : " (du har ikke prøvet dette sæt endnu)"}
           </p>
         </div>
 
         {allUsed && (
           <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-4 text-sm leading-relaxed text-amber-900 dark:border-amber-500/40 dark:bg-amber-500/10 dark:text-amber-200">
-            <p className="font-extrabold">Alle sæt er prøvet : nu blandes puljen igen</p>
+            <p className="font-extrabold">Alle sæt er prøvet – nu blandes puljen igen</p>
             <p className="mt-1">
-              Derfor kan du godt genkende en tekst eller en opgave denne gang : appen må nemlig ikke give dig det sæt, du lige har haft, men når
+              Derfor kan du godt genkende en tekst eller en opgave denne gang – appen må nemlig ikke give dig det sæt, du lige har haft, men når
               alle {HHX_EXAM_SATS.length} er blevet prøvet, er der ikke flere friske at vælge imellem. Gentagelsen er meningsfuld alligevel :
               anden gang ser du typisk de fejl, du manglede første gang.
             </p>
@@ -590,7 +590,7 @@ export default function ExamSatsPage({
             pose="explain"
             size="md"
             reduceMotion={reduceMotion}
-            speech="Tag det roligt. Læs teksten grundigt, og skriv svarene ned som på notepapiret ; her findes der ingen forkerte forsøg."
+            speech="Tag det roligt. Læs teksten grundigt, og skriv svarene ned som på notepapiret – her findes der ingen forkerte forsøg."
           />
           <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
             <p className="font-bold text-ink">Prøvens forløb</p>
@@ -621,7 +621,7 @@ export default function ExamSatsPage({
             <p className="mt-3 text-xs leading-relaxed text-ink/55">
               Hver opgave har sin egen svarform, præcis som på eksamensarket. Det, der kan rettes entydigt (genre, morfemer, led, tider,
               omskrivninger, indleder og ledfunktion), retter appen, og det giver den vejledende karakter. Pentagrammet og dine sproglige
-              observationer rettes ikke : de sendes til AI&apos;en, hvis du vil have feedback på dem.
+              observationer rettes ikke – de sendes til AI&apos;en, hvis du vil have feedback på dem.
             </p>
           </div>
 
@@ -658,7 +658,7 @@ export default function ExamSatsPage({
           <Modal title="Er du sikker på, at du vil starte prøven?" onClose={() => setConfirmStart(false)}>
             <p className="text-sm leading-relaxed text-ink/60">
               Uret på {sats.minutes} minutter <span className="font-bold text-ink">starter med det samme</span>, og du får &ldquo;{sats.title}&rdquo; :
-              en tekst med {tasks.length} opgaver. Undervejs kan du ikke gemme eller holde pause : afbryder du, forsvinder besvarelsen. Til
+              en tekst med {tasks.length} opgaver. Undervejs kan du ikke gemme eller holde pause – afbryder du, forsvinder besvarelsen. Til
               gengæld kan du altid fortryde, indtil du trykker &lsquo;Start nu&rsquo;.
             </p>
             <div className="mt-4 flex gap-2">
@@ -666,7 +666,7 @@ export default function ExamSatsPage({
                 Jeg vil ikke starte endnu
               </button>
               <button type="button" onClick={startExam} className={cn("flex-1 rounded-full bg-gradient-to-r py-2.5 text-sm font-bold text-white shadow-md", theme.gradient)}>
-                Start nu : uret går
+                Start nu – uret går
               </button>
             </div>
           </Modal>
@@ -701,7 +701,7 @@ export default function ExamSatsPage({
             transition={{ duration: reduceMotion ? 0.9 : 2.6, ease: "easeInOut" }}
           />
         </div>
-        <p className="mt-4 text-xs text-ink/40">Resultatet er klar om et øjeblik : du behøver ikke gøre noget.</p>
+        <p className="mt-4 text-xs text-ink/40">Resultatet er klar om et øjeblik – du behøver ikke gøre noget.</p>
       </motion.div>
     );
   }
@@ -776,7 +776,7 @@ export default function ExamSatsPage({
                 >
                   {fmtTime(secs)}
                 </p>
-                <p className="mt-1 text-[11px] text-ink/45">Ringeklokken lyder, når tiden er gået ; så afleverer du med det samme.</p>
+                <p className="mt-1 text-[11px] text-ink/45">Ringeklokken lyder, når tiden er gået – så afleverer du med det samme.</p>
               </div>
               <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
                 <p className="text-[10px] font-bold uppercase tracking-widest text-ink/40">Status</p>
@@ -823,7 +823,7 @@ export default function ExamSatsPage({
               </span>
               <h3 className="font-display text-xl font-extrabold text-ink">Tiden er gået!</h3>
               <p className="text-sm text-ink/60">
-                Klokken har ringet : præcis som i forberedelseslokalet. Nu beder vi dig om at aflevere din opgave med det samme.
+                Klokken har ringet – præcis som i forberedelseslokalet. Nu beder vi dig om at aflevere din opgave med det samme.
               </p>
               <button type="button" onClick={submit} className={cn("w-full rounded-full bg-gradient-to-r py-3 text-sm font-extrabold text-white shadow-md", theme.gradient)}>
                 Aflevér besvarelsen nu
@@ -836,7 +836,7 @@ export default function ExamSatsPage({
         {confirmSubmit && (
           <Modal title="Vil du aflevere nu?" onClose={() => setConfirmSubmit(false)}>
             <p className="text-sm text-ink/60">
-              Du er i gang med {touchedCount} af {tasks.length} opgaver. Til den virkelige eksamen tæller det, at du forsøger alle syv : vil du
+              Du er i gang med {touchedCount} af {tasks.length} opgaver. Til den virkelige eksamen tæller det, at du forsøger alle syv – vil du
               aflevere alligevel?
             </p>
             <div className="mt-4 flex gap-2">
@@ -885,15 +885,15 @@ export default function ExamSatsPage({
           reduceMotion={reduceMotion}
           speech={
             pct >= 85
-              ? "Wow : du har fat i både fagsproget og grammatikken. Det her kan du til eksamen."
+              ? "Wow – du har fat i både fagsproget og grammatikken. Det her kan du til eksamen."
               : pct >= 56
-                ? "Flot gennemført! Grundlaget er der : nu er det mønsteret i fejlene, vi skal have fat i."
+                ? "Flot gennemført! Grundlaget er der – nu er det mønsteret i fejlene, vi skal have fat i."
                 : pct >= 28
                   ? "Du er godt på vej. Gennemgangen herunder viser præcis, hvor du skal træne videre."
-                  : "Godt gået at gennemføre hele prøven : nu er det gennemgangen, der gør dig skarpere."
+                  : "Godt gået at gennemføre hele prøven – nu er det gennemgangen, der gør dig skarpere."
           }
         />
-        <h1 className="mt-2 font-display text-2xl font-extrabold text-ink">Prøven er afleveret : her er overblikket</h1>
+        <h1 className="mt-2 font-display text-2xl font-extrabold text-ink">Prøven er afleveret – her er overblikket</h1>
         <p className="mt-1 text-ink/60">
           Du var i gang med {written} af {tasks.length} opgaver og fik {fmtPoints(results?.points ?? 0)} af {maxPoints} point i de opgaver, der
           kan rettes ({pct}%).
@@ -903,10 +903,10 @@ export default function ExamSatsPage({
       {/* 1) Rammen om karakteren (står øverst) */}
       <div className="rounded-2xl border-2 border-amber-300 bg-amber-50 p-5 dark:border-amber-500/40 dark:bg-amber-500/10">
         <p className="text-sm font-semibold leading-relaxed text-amber-900 dark:text-amber-200">
-          <span className="font-extrabold">Vigtigt at læse først:</span> Denne prøve er lavet for at forberede dig : ikke for at dømme dig. Til
+          <span className="font-extrabold">Vigtigt at læse først:</span> Denne prøve er lavet for at forberede dig – ikke for at dømme dig. Til
           den virkelige eksamen besvarer du de syv opgaver MUNDTLIGT, og den del kan hverken appen eller en AI bedømme. Derfor er karakteren her
           vejledende: den bygger kun på det, der kan rettes entydigt (genre, morfemer, led, tider, omskrivninger, indleder og ledfunktion), og
-          den kan godt være ligegyldig for din egentlige besvarelse. Bruger du den rigtigt, kan den til gengæld vise dit faglige niveau : læg
+          den kan godt være ligegyldig for din egentlige besvarelse. Bruger du den rigtigt, kan den til gengæld vise dit faglige niveau – læg
           mærke til MØNSTRET i, hvad du mestrer. Pentagrammet og dine sproglige observationer får du feedback på ved at kopiere besvarelsen over
           til en AI længere nede.
         </p>
@@ -916,7 +916,7 @@ export default function ExamSatsPage({
             <div>
               <p className="text-sm font-bold">{grade.label}</p>
               <p className="text-[11px] text-ink/50">
-                Vejledende karakter (7-trinsskalaen). Opgave 2 og 3 tæller ikke med : der er mange rigtige svar, og dem bedømmer AI&apos;en.
+                Vejledende karakter (7-trinsskalaen). Opgave 2 og 3 tæller ikke med – der er mange rigtige svar, og dem bedømmer AI&apos;en.
               </p>
             </div>
           </div>
@@ -942,7 +942,7 @@ export default function ExamSatsPage({
       <div className="rounded-2xl border border-ink/10 bg-white p-5 shadow-sm">
         <p className="font-bold text-ink">Vil du gemme din prøve? Kopier din besvarelse til tekst her! Husk at indsætte det i et dokument.</p>
         <p className="mt-1 text-xs text-ink/50">
-          Teksten indeholder alle syv opgaver og alle dine svar : altså det, du kan tage med ind som notepapir.
+          Teksten indeholder alle syv opgaver og alle dine svar – altså det, du kan tage med ind som notepapir.
         </p>
         <button
           type="button"
@@ -964,7 +964,7 @@ export default function ExamSatsPage({
         </p>
         <p className="mt-1 text-sm text-ink/60">
           Knappen herunder kopierer en færdig censor-prompt med alle syv opgaver, DINE svar og hele tekstgrundlaget, og åbner Copilot i en ny
-          fane. Sæt ind (Ctrl/Cmd+V) og send : så får du en vejledende karakter og en gennemgang af hver opgave. Du kan også bruge en anden AI :
+          fane. Sæt ind (Ctrl/Cmd+V) og send – så får du en vejledende karakter og en gennemgang af hver opgave. Du kan også bruge en anden AI :
           teksten ligger i udklipsholderen.
         </p>
         <button
@@ -978,10 +978,10 @@ export default function ExamSatsPage({
           <InfoIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
           <span>
             <span className="font-bold">OBS fra din AP-lærer:</span> AI svarer nogle gange misvisende om grammatik, og særligt om morfologi.
-            Brug den til at få forklaringer og feedback på dine formuleringer : men tjek grammatikken i din bog eller hos din lærer.
+            Brug den til at få forklaringer og feedback på dine formuleringer – men tjek grammatikken i din bog eller hos din lærer.
           </span>
         </p>
-        <p className="mt-2 text-[11px] text-ink/40">Indhold kopieres fra din browser ; intet sendes nogen steder automatisk.</p>
+        <p className="mt-2 text-[11px] text-ink/40">Indhold kopieres fra din browser – intet sendes nogen steder automatisk.</p>
       </div>
 
       {/* 5) Gennemgang af hver opgave */}
@@ -1002,7 +1002,7 @@ export default function ExamSatsPage({
                 </span>
               ) : (
                 <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-amber-700">
-                  mange rigtige svar : rettes ikke
+                  mange rigtige svar – rettes ikke
                 </span>
               )}
             </div>
@@ -1144,7 +1144,7 @@ function TaskCard({
 
       {task.openEnded && (
         <p className="mt-2 text-[11px] font-semibold text-ink/45">
-          Her er der mange rigtige svar : det er dokumentationen (citater) og fagsproget, der tæller. Svaret rettes ikke automatisk.
+          Her er der mange rigtige svar – det er dokumentationen (citater) og fagsproget, der tæller. Svaret rettes ikke automatisk.
         </p>
       )}
 
@@ -1227,7 +1227,7 @@ function FieldsPart({ part, ans, onChange }: PartProps<ExamFieldsPartT>) {
   );
 }
 
-/** Opgave 4: fire ord : opdeling i morfemer + ét bestemt morfem. */
+/** Opgave 4: fire ord – opdeling i morfemer + ét bestemt morfem. */
 function MorphologyPart({ part, ans, onChange }: PartProps<ExamMorphologyPartT>) {
   return (
     <div className="space-y-3">
@@ -1357,7 +1357,7 @@ function AnalysisPart({ part, ans, onChange }: PartProps<ExamAnalysisPartT>) {
   );
 }
 
-/** Opgave 6: to sætninger : vælg tid + omskriv. */
+/** Opgave 6: to sætninger – vælg tid + omskriv. */
 function TensePart({ part, ans, onChange }: PartProps<ExamTensePartT>) {
   return (
     <div className="space-y-3">

@@ -3,7 +3,7 @@ import type { Task } from "../../types";
 
 // GENRER & MEDIER (HHX-pensum: "genrebevidst formidling", "genre- og
 // mediebevidst formidling"). En genre er en teksttype med genkendelige træk,
-// formål og struktur ; og mediebevidsthed handler om at tilpasse budskabet
+// formål og struktur – og mediebevidsthed handler om at tilpasse budskabet
 // til kanalen.
 const c = "genrer" as const;
 
@@ -22,7 +22,7 @@ export const GENRER_TASKS: Task[] = [
  "Hvad betyder 'genrebevidst formidling'?",
  ["At man vælger og former sin tekst, så den passer til genren og modtageren", "At man kun skriver i én genre hele livet", "At man altid efterligner andre tekster helt nøjagtigt, uden at ændre noget", "At man undgår genrer og bare skriver frit"],
  0,
- "Genrebevidst formidling er at kende genrens spilleregler ; og bevidst bruge eller bryde dem for at nå sit formål."
+ "Genrebevidst formidling er at kende genrens spilleregler – og bevidst bruge eller bryde dem for at nå sit formål."
  ),
  mc(
  "genrer-3",
@@ -110,7 +110,7 @@ export const GENRER_TASKS: Task[] = [
  "Klik på det ord, der tydeligst afslører, at denne tekst er en REKLAME.",
  "Køb to og få én gratis i hele denne uge",
  [0],
- "'Køb' er en direkte opfordring (imperativ) ; reklamens kendetegn. Også 'gratis' er et typisk reklameord."
+ "'Køb' er en direkte opfordring (imperativ) – reklamens kendetegn. Også 'gratis' er et typisk reklameord."
  ),
  wr(
  "genrer-14",
@@ -127,7 +127,7 @@ export const GENRER_TASKS: Task[] = [
  "En virksomhed skal informere kunder om en ændring af åbningstider. Hvilken genre er mest hensigtsmæssig?",
  ["En kort, venlig besked på hjemmesiden og i butikken", "En lang juridisk kontrakt med alle vilkår og betingelser", "En intern mail til ledelsen om ændringen af åbningstiderne", "Et hemmeligt referat, som kun de ansatte kan se"],
  0,
- "Man vælger genren efter modtager og formål: kunderne skal have en klar, tilgængelig besked ; ikke en kontrakt."
+ "Man vælger genren efter modtager og formål: kunderne skal have en klar, tilgængelig besked – ikke en kontrakt."
  ),
  mc(
  "genrer-16",
@@ -145,5 +145,5 @@ export const GENRER_TASKS: Task[] = [
   mc("genrer-21", c, "Hvilken genre bruger man til at klage over en vare?", ["Et klagebrev eller en klagemail med saglige oplysninger", "En reklame for varen", "Et referat fra et møde", "En pressemeddelelse"], 0, "En klage er en saglig genre: Man beskriver problemet, henviser til købet og skriver, hvad man forventer (refusion, ny vare osv.)."),
   mc("genrer-22", c, "Hvad er formålet med ledelsesberetningen i en årsrapport?", ["At forklare virksomhedens resultater og udvikling i ord", "At sælge produkter til læserne", "At referere fra personalemøder", "At underholde aktionærerne"], 0, "Ledelsesberetningen sætter ord på tallene: Den forklarer resultater, strategi og forventninger til fremtiden."),
   mc("genrer-23", c, "Hvorfor er SoMe-opslag typisk korte?", ["Fordi mediet og modtagernes opmærksomhed kræver korte, hurtige budskaber", "Fordi lange opslag er forbudt", "Fordi man kun må skrive fem ord", "Det er de ikke, de er altid lange"], 0, "Mediebevidst formidling: På sociale medier scroller man hurtigt, så budskabet skal fange opmærksomheden på få sekunder."),
-  mc("genrer-24", c, "Hvad er forskellen på en hjemmesidetekst og en trykt brochure?", ["Hjemmesiden kan opdateres og linke videre", "Brochuren er altid skrevet på engelsk", "Hjemmesiden indeholder aldrig tekst", "Der er ingen forskel på de to"], 0, "Mediet sætter rammerne: En hjemmeside kan være dynamisk med links og søgning, en brochure er et fast, afgrænset produkt.", ["", "Sproget afhænger af modtageren, ikke af mediet.", "Hjemmesider består i høj grad af tekst : linket og opdateringen er det, der adskiller dem.", "Mediet ændrer både opbygning, længde og levetid."]),
+  mc("genrer-24", c, "Hvad er forskellen på en hjemmesidetekst og en trykt brochure?", ["Hjemmesiden kan opdateres og linke videre", "Brochuren er altid skrevet på engelsk", "Hjemmesiden indeholder aldrig tekst", "Der er ingen forskel på de to"], 0, "Mediet sætter rammerne: En hjemmeside kan være dynamisk med links og søgning, en brochure er et fast, afgrænset produkt.", ["", "Sproget afhænger af modtageren, ikke af mediet.", "Hjemmesider består i høj grad af tekst – linket og opdateringen er det, der adskiller dem.", "Mediet ændrer både opbygning, længde og levetid."]),
 ];

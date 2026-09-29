@@ -25,7 +25,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Når du skal analysere en tekst ; også en erhvervsrelateret tekst ; er ordklasserne det første lag: de fortæller dig, hvad ordene GØR. Og når du lærer engelsk, er mange ordklasser genkendelige fra dansk.",
+ "Når du skal analysere en tekst – også en erhvervsrelateret tekst – er ordklasserne det første lag: de fortæller dig, hvad ordene GØR. Og når du lærer engelsk, er mange ordklasser genkendelige fra dansk.",
  },
  {
  heading: "Sådan kender du dem",
@@ -52,7 +52,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Syntaktisk analyse er et eksplicit krav i HHX-læreplanen ; på dansk OG på fremmedsprog. Og når du skriver klart, hjælper det at vide, hvem der gør hvad i dine egne sætninger.",
+ "Syntaktisk analyse er et eksplicit krav i HHX-læreplanen – på dansk OG på fremmedsprog. Og når du skriver klart, hjælper det at vide, hvem der gør hvad i dine egne sætninger.",
  },
  {
  heading: "Sådan finder du dem",
@@ -74,12 +74,12 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Morfologi er læren om, hvordan ord er bygget op af morfemer ; de mindste dele, der bærer betydning. 'Uvenlig' består af 'u-' (ikke), 'ven' (rod) og '-lig' (endelse).",
+ "Morfologi er læren om, hvordan ord er bygget op af morfemer – de mindste dele, der bærer betydning. 'Uvenlig' består af 'u-' (ikke), 'ven' (rod) og '-lig' (endelse).",
  },
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Når du kender morfemernes logik, kan du gætte betydningen af nye ord ; både på dansk og på engelsk: 'unhelpful' = u-hjælp(s)-fuld. Det er en direkte læringsstrategi.",
+ "Når du kender morfemernes logik, kan du gætte betydningen af nye ord – både på dansk og på engelsk: 'unhelpful' = u-hjælp(s)-fuld. Det er en direkte læringsstrategi.",
  },
  {
  heading: "Bøjning vs. afledning",
@@ -89,7 +89,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  ],
  {
  examples: ["sælge → sælgeren → salg → salgbar: samme rod, forskellige ord."],
- tip: "Del ukendte ord i forstavelse + rod + endelse ; så er de fleste ord gennemsigtige.",
+ tip: "Del ukendte ord i forstavelse + rod + endelse – så er de fleste ord gennemsigtige.",
  }
  ),
  ],
@@ -106,12 +106,12 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "I erhvervskommunikation er tid præcis: 'vi har sendt ordren' er ikke det samme som 'vi sender ordren'. På engelsk er tidssystemet en af de største fejlkilder ; og en af de vigtigste at mestre.",
+ "I erhvervskommunikation er tid præcis: 'vi har sendt ordren' er ikke det samme som 'vi sender ordren'. På engelsk er tidssystemet en af de største fejlkilder – og en af de vigtigste at mestre.",
  },
  {
  heading: "De sammensatte tider",
  body:
- "Førnutid, førdatid og fremtid dannes med et hjælpeverbum (har/havde/vil) + hovedverbets participium eller navnemåde: har sendt, havde sendt, vil sende.",
+ "Førnutid, førdatid og fremtid dannes med et hjælpeverbum (har/havde/vil) + hovedverbets participium eller infinitiv: har sendt, havde sendt, vil sende.",
  },
  ],
  {
@@ -128,7 +128,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Syntaks er læren om, hvordan ord sættes sammen til sætninger. En helsætning kan stå alene ('Vi sender ordren i dag'), en ledsætning kan ikke ('fordi vi har travlt').",
+ "Syntaks er læren om, hvordan ord sættes sammen til sætninger. En hovedsætning kan stå alene ('Vi sender ordren i dag'), en ledsætning kan ikke ('fordi vi har travlt').",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -142,8 +142,8 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  },
  ],
  {
- examples: ["Helsætning: 'Vi har modtaget din ordre.' Ledsætning: '...da vi modtog din ordre.'"],
- tip: "Kan sætningen stå alene og give mening? Så er den en helsætning.",
+ examples: ["Hovedsætning: 'Vi har modtaget din ordre.' Ledsætning: '...da vi modtog din ordre.'"],
+ tip: "Kan sætningen stå alene og give mening? Så er den en hovedsætning.",
  }
  ),
  ],
@@ -158,7 +158,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Kommunikation er altid en afsender, der sender et budskab gennem en kanal til en modtager ; i en kontekst, hvor støj kan forstyrre, og modtageren kan give feedback.",
+ "Kommunikation er altid en afsender, der sender et budskab gennem en kanal til en modtager – i en kontekst, hvor støj kan forstyrre, og modtageren kan give feedback.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -168,7 +168,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Verbal og non-verbal",
  body:
- "Kommunikation foregår med ord (verbal) ; og uden ord (non-verbal): kropssprog, mimik, gestik, stemmeføring, tegn og signaler. I skriftlige medier er layout og emojis også non-verbal kommunikation.",
+ "Kommunikation foregår med ord (verbal) – og uden ord (non-verbal): kropssprog, mimik, gestik, stemmeføring, tegn og signaler. I skriftlige medier er layout og emojis også non-verbal kommunikation.",
  },
  ],
  {
@@ -185,7 +185,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "I AP arbejder vi med et udvidet tekstbegreb: en 'tekst' er ikke kun en skreven artikel ; det er alt, der kommunikerer: reklamer, film, hjemmesider, SoMe-opslag, taler, grafik og meget mere.",
+ "I AP arbejder vi med et udvidet tekstbegreb: en 'tekst' er ikke kun en skreven artikel – det er alt, der kommunikerer: reklamer, film, hjemmesider, SoMe-opslag, taler, grafik og meget mere.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -206,17 +206,17 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Når vi taler og skriver, gør vi noget: vi påstår, spørger, opfordrer, lover, råder, advarer, undskylder. Det kaldes sproghandlinger ; og selve ytringen ER handlingen.",
+ "Når vi taler og skriver, gør vi noget: vi påstår, spørger, opfordrer, lover, råder, advarer, undskylder. Det kaldes sproghandlinger – og selve ytringen ER handlingen.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Læreplanen kræver, at du kan anvende elementær viden om sproghandlinger og kommunikationsteori i arbejdet med tekster ; både når du læser (receptivt) og når du selv skriver (produktivt).",
+ "Læreplanen kræver, at du kan anvende elementær viden om sproghandlinger og kommunikationsteori i arbejdet med tekster – både når du læser (receptivt) og når du selv skriver (produktivt).",
  },
  {
  heading: "Direkte og indirekte",
  body:
- "En direkte opfordring er 'Send mig rapporten'. En indirekte er 'Kan du sende mig rapporten?' ; formen er et spørgsmål, men funktionen er en opfordring. Indirekte sproghandlinger er ofte høfligere.",
+ "En direkte opfordring er 'Send mig rapporten'. En indirekte er 'Kan du sende mig rapporten?' – formen er et spørgsmål, men funktionen er en opfordring. Indirekte sproghandlinger er ofte høfligere.",
  },
  ],
  {
@@ -233,7 +233,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Semantik er læren om ordenes betydning. Et ord har en udtryksside (lyden/bogstaverne) og en indholdsside (betydningen). 'Hest' og 'hest' ; samme udtryk, samme indhold. 'Hest' og 'pony' ; forskelligt udtryk, næsten samme indhold.",
+ "Semantik er læren om ordenes betydning. Et ord har en udtryksside (lyden/bogstaverne) og en indholdsside (betydningen). 'Hest' og 'hest' – samme udtryk, samme indhold. 'Hest' og 'pony' – forskelligt udtryk, næsten samme indhold.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -247,7 +247,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  },
  ],
  {
- examples: ["'Vores team er et velsmurt maskineri' ; metafor: samarbejdet beskrives med et konkret billede."],
+ examples: ["'Vores team er et velsmurt maskineri' – metafor: samarbejdet beskrives med et konkret billede."],
  tip: "Skeln altid mellem ordets grundbetydning (denotation) og dets følelsesmæssige medbetydning (konnotation).",
  }
  ),
@@ -260,12 +260,12 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Pragmatik handler om, hvad en ytring BETYDER i den konkrete situation ; ikke kun hvad ordene betyder i sig selv. Den samme sætning kan være ros i én situation og hån i en anden.",
+ "Pragmatik handler om, hvad en ytring BETYDER i den konkrete situation – ikke kun hvad ordene betyder i sig selv. Den samme sætning kan være ros i én situation og hån i en anden.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Læreplanen kræver, at du kender karakteristiske træk ved sprog brugt i private, faglige og professionelle sammenhænge ; og at du kan kommunikere hensigtsmæssigt. Det er pragmatik i praksis.",
+ "Læreplanen kræver, at du kender karakteristiske træk ved sprog brugt i private, faglige og professionelle sammenhænge – og at du kan kommunikere hensigtsmæssigt. Det er pragmatik i praksis.",
  },
  {
  heading: "Registre",
@@ -299,7 +299,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Genre og medie",
  body:
- "Genren er teksttypen; mediet er kanalen, den udgives i. En reklame (genre) kan stå i en avis, på tv eller på Instagram (medier) ; og skal tilpasses hvert medie.",
+ "Genren er teksttypen; mediet er kanalen, den udgives i. En reklame (genre) kan stå i en avis, på tv eller på Instagram (medier) – og skal tilpasses hvert medie.",
  },
  ],
  {
@@ -321,16 +321,16 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  {
  heading: "Hvorfor er det vigtigt?",
  body:
- "Læreplanen kræver, at du kan identificere forskelle og ligheder mellem dansk og fremmedsprog med inddragelse af sproghistorisk viden. Sproghistorie gør sprogene gennemsigtige ; og hjælper dig med at lære dem.",
+ "Læreplanen kræver, at du kan identificere forskelle og ligheder mellem dansk og fremmedsprog med inddragelse af sproghistorisk viden. Sproghistorie gør sprogene gennemsigtige – og hjælper dig med at lære dem.",
  },
  {
  heading: "Sprog i en globaliseret verden",
  body:
- "Engelsk fungerer i dag som globalt lingua franca ; et fælles kommunikationssprog ; og dansk låner hele tiden ord (anglicismer). Sprog forandrer sig, og kontakt mellem sprog er normalt.",
+ "Engelsk fungerer i dag som globalt lingua franca – et fælles kommunikationssprog – og dansk låner hele tiden ord (anglicismer). Sprog forandrer sig, og kontakt mellem sprog er normalt.",
  },
  ],
  {
- examples: ["'Information' findes i næsten samme form på dansk, engelsk, fransk og tysk ; fælles rødder giver genkendelige mønstre."],
+ examples: ["'Information' findes i næsten samme form på dansk, engelsk, fransk og tysk – fælles rødder giver genkendelige mønstre."],
  tip: "Ligheder mellem sprog er din ven: genkend rødderne, så kan du gætte ordene.",
  }
  ),
@@ -343,7 +343,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  [
  {
  body:
- "Læringsstrategier er bevidste metoder til at lære sprog: transfer (bruge viden fra ét sprog i et andet), mønstergenkendelse (fx endelsen '-tion'), kontekstgætning, ordkort med gentagne møder ; og at lære af feedback.",
+ "Læringsstrategier er bevidste metoder til at lære sprog: transfer (bruge viden fra ét sprog i et andet), mønstergenkendelse (fx endelsen '-tion'), kontekstgætning, ordkort med gentagne møder – og at lære af feedback.",
  },
  {
  heading: "Hvorfor er det vigtigt?",
@@ -358,7 +358,7 @@ export const HHX_CATEGORY_INTRO: Partial<Record<CategoryId, Task[]>> = {
  ],
  {
  examples: ["'Un-believ-able' → u-tro-lig: del ordet i morfemer, og gæt betydningen."],
- tip: "Gentagne møder med ord i sammenhæng slår udenadslære ; også på engelsk.",
+ tip: "Gentagne møder med ord i sammenhæng slår udenadslære – også på engelsk.",
  }
  ),
  ],

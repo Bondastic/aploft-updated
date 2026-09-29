@@ -1,5 +1,5 @@
 // Hvilke emne-introduktioner eleven har læst. Gemmes lokalt (som resten af
-// appen) : intet sendes nogen steder. Læsesiden vises automatisk første gang,
+// appen) – intet sendes nogen steder. Læsesiden vises automatisk første gang,
 // man åbner et emne, og kan altid åbnes igen fra emnets forside.
 const KEY = "aploft.emneintro.seen.v1";
 

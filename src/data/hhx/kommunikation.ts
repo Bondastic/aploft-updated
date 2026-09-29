@@ -19,7 +19,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  mc(
  "kommunikation-2",
  c,
- "I kommunikationsmodellen ; hvad kaldes den vej eller det medie, budskabet sendes igennem?",
+ "I kommunikationsmodellen – hvad kaldes den vej eller det medie, budskabet sendes igennem?",
  ["Kanalen", "Koden", "Støjen", "Konteksten"],
  0,
  "Kanalen er mediet: fx tale, skrift, e-mail, telefon eller video. Valget af kanal påvirker, hvordan budskabet udformes."
@@ -30,7 +30,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "En kunde ringer ind og siger 'I har sendt mig en faktura, jeg ikke kan forstå'. Hvad er afsenderen i denne situation?",
  ["Kunden, fordi det er hende, der henvender sig", "Fakturaen, fordi den er genstand for samtalen", "Virksomhedens medarbejder, der taler med kunden", "Telefonen, fordi den bærer samtalen"],
  2,
- "Afsenderen er den, der kommunikerer ; her medarbejderen, der modtager og svarer på henvendelsen. Kunden er modtager af fakturaen, men afsender af klagen."
+ "Afsenderen er den, der kommunikerer – her medarbejderen, der modtager og svarer på henvendelsen. Kunden er modtager af fakturaen, men afsender af klagen."
  ),
  mc(
  "kommunikation-4",
@@ -51,11 +51,11 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  mc(
  "kommunikation-6",
  c,
- "Hvad kaldes modtagerens reaktion tilbage til afsenderen : fx et nik, et svar eller en mail tilbage?",
+ "Hvad kaldes modtagerens reaktion tilbage til afsenderen – fx et nik, et svar eller en mail tilbage?",
  ["Feedback", "Støj", "Kode", "Monolog"],
  0,
  "Feedback er modtagerens reaktion og gør kommunikationen til en dialog. Uden feedback kan afsenderen ikke vide, om budskabet nåede frem.",
- ["", "Støj er det, der forstyrrer budskabet undervejs : ikke modtagerens svar tilbage.", "Koden er det sprog eller system, budskabet er formuleret i.", "En monolog er netop kommunikation UDEN svar tilbage fra modtageren."]
+ ["", "Støj er det, der forstyrrer budskabet undervejs – ikke modtagerens svar tilbage.", "Koden er det sprog eller system, budskabet er formuleret i.", "En monolog er netop kommunikation UDEN svar tilbage fra modtageren."]
  ),
  mc(
  "kommunikation-7",
@@ -63,7 +63,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "Hvad forstås ved 'konteksten' i en kommunikationssituation?",
  ["De omstændigheder og den situation, kommunikationen foregår i", "Det sprog og det medie, som budskabet bliver sendt igennem", "Afsenderens personlige ejendele og private forhold", "Antallet af ord i selve budskabet"],
  0,
- "Konteksten er situationen omkring kommunikationen: hvem, hvornår, hvor, hvorfor ; og hvilke forventninger parterne har. Konteksten styrer, hvordan et budskab skal forstås."
+ "Konteksten er situationen omkring kommunikationen: hvem, hvornår, hvor, hvorfor – og hvilke forventninger parterne har. Konteksten styrer, hvordan et budskab skal forstås."
  ),
  mc(
  "kommunikation-8",
@@ -79,7 +79,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "Hvilken form for kommunikation er kropssprog, mimik, gestik og stemmeføring?",
  ["Non-verbal kommunikation", "Verbal kommunikation", "Skriftlig kommunikation", "Indirekte kommunikation"],
  0,
- "Non-verbal kommunikation foregår uden ord: kropssprog, ansigtsudtryk, håndbevægelser, øjenkontakt og stemmens tone. Verbal kommunikation er ord ; mundtlige eller skriftlige."
+ "Non-verbal kommunikation foregår uden ord: kropssprog, ansigtsudtryk, håndbevægelser, øjenkontakt og stemmens tone. Verbal kommunikation er ord – mundtlige eller skriftlige."
  ),
  mc(
  "kommunikation-10",
@@ -103,7 +103,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "En virksomhed laver et opslag på Instagram med et foto, en kort tekst og tre hashtags. Hvad er kanalen her?",
  ["Instagram", "Fotografen", "Hashtagene", "Virksomheden"],
  0,
- "Kanalen er mediet, budskabet sendes igennem ; her Instagram. Virksomheden er afsender, følgerne er modtagere."
+ "Kanalen er mediet, budskabet sendes igennem – her Instagram. Virksomheden er afsender, følgerne er modtagere."
  ),
  mc(
  "kommunikation-13",
@@ -135,7 +135,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "Klik på det ord, der er KANALEN i denne sætning.",
  "Mette sender en mail til kunden med det nye tilbud",
  [3],
- "'Mail' er kanalen ; den vej, budskabet sendes igennem. Mette er afsender, kunden er modtager."
+ "'Mail' er kanalen – den vej, budskabet sendes igennem. Mette er afsender, kunden er modtager."
  ),
  ck(
  "kommunikation-17",
@@ -143,7 +143,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "Klik på de to ord, der beskriver NON-VERBAL feedback i denne sætning.",
  "Kunden kvitterede med et smil og et nik",
  [4, 8],
- "'Smil' og 'nik' er non-verbal feedback ; kunden reagerer uden ord."
+ "'Smil' og 'nik' er non-verbal feedback – kunden reagerer uden ord."
  ),
  wr(
  "kommunikation-18",
@@ -151,7 +151,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "I en jobannonce fra virksomheden Nordlys står: 'Vi søger en serviceminded kundekonsulent.' Hvem er afsenderen af annoncen?",
  "Hvem er afsenderen?",
  "nordlys",
- "Afsenderen er den, der har udformet budskabet ; her virksomheden Nordlys (eller arbejdsgiveren).",
+ "Afsenderen er den, der har udformet budskabet – her virksomheden Nordlys (eller arbejdsgiveren).",
  ["virksomheden", "arbejdsgiveren", "nordlys a/s", "virksomheden nordlys"]
  ),
  mc(
@@ -160,7 +160,7 @@ export const KOMMUNIKATION_TASKS: Task[] = [
  "Hvorfor er det vigtigt at kunne analysere afsender, modtager, emne og situation i en tekst?",
  ["Fordi det forklarer, hvorfor teksten er skrevet, som den er", "Fordi man så kan undgå at læse hele teksten grundigt igennem", "Fordi eksamen kræver, at man tæller ordene i teksten, ikke andet", "Det er kun vigtigt for reklamer, ikke for andre tekster"],
  0,
- "En elementær kommunikationsanalyse går på: Hvem skriver? Til hvem? Om hvad? I hvilken situation (og medie)? ; og vurderer, om sprogbrugen passer dertil. Det er en central del af HHX AP-prøven."
+ "En elementær kommunikationsanalyse går på: Hvem skriver? Til hvem? Om hvad? I hvilken situation (og medie)? – og vurderer, om sprogbrugen passer dertil. Det er en central del af HHX AP-prøven."
  ),
  mc(
  "kommunikation-20",

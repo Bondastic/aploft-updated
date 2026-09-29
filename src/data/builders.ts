@@ -20,7 +20,7 @@ import type {
  *
  * `whyWrong` er valgfri og forklarer, hvorfor hver enkelt svarmulighed er
  * forkert (samme rækkefølge som `options`, tom streng hvor der ikke er noget
- * at sige : og feltet for det rigtige svar bruges ikke). Det er den feedback,
+ * at sige – og feltet for det rigtige svar bruges ikke). Det er den feedback,
  * eleverne efterspurgte: "giv en beskrivelse hvis man svarer forkert".
  */
 export function mc(

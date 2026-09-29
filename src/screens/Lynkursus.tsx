@@ -24,10 +24,10 @@ const ALMEN_LESSONS: Lesson[] = [
  title: "Ordklasser på 60 sekunder",
  icon: "ordklasser",
  points: [
- "Substantiv (navneord): navnet på en person, ting eller begreb : fx 'hund', 'Peter', 'glæde'",
- "Verbum (udsagnsord): en handling eller tilstand : fx 'løbe', 'spise', 'være'",
- "Adjektiv (tillægsord): beskriver et substantiv : fx 'en glad hund', 'et hurtigt løb'",
- "Adverbium (biord): beskriver et verbum, adjektiv eller andet adverbium : fx 'han løber hurtigt', 'meget glad'",
+ "Substantiv (navneord): navnet på en person, ting eller begreb – fx 'hund', 'Peter', 'glæde'",
+ "Verbum (udsagnsord): en handling eller tilstand – fx 'løbe', 'spise', 'være'",
+ "Adjektiv (tillægsord): beskriver et substantiv – fx 'en glad hund', 'et hurtigt løb'",
+ "Adverbium (biord): beskriver et verbum, adjektiv eller andet adverbium – fx 'han løber hurtigt', 'meget glad'",
  "De sidste fire ordklasser er: pronomen (fx 'han', 'min'), præposition (fx 'i', 'på'), konjunktion (fx 'og', 'men') og numerale, altså talord (fx 'tre')",
  ],
  },
@@ -49,9 +49,9 @@ const ALMEN_LESSONS: Lesson[] = [
  icon: "morfologi",
  points: [
  "Morfem: den mindste del af et ord, der betyder noget, fx grundordet 'hund' eller endelsen '-e' i 'hunde'",
- "Afledning: et ord skifter ordklasse eller betydning ved hjælp af en forstavelse eller endelse : fx adjektivet 'klar' bliver til adjektivet 'uklar' (modsat betydning), eller adjektivet 'glad' bliver til substantivet 'glæde'",
+ "Afledning: et ord skifter ordklasse eller betydning ved hjælp af en forstavelse eller endelse – fx adjektivet 'klar' bliver til adjektivet 'uklar' (modsat betydning), eller adjektivet 'glad' bliver til substantivet 'glæde'",
  "Sammensætning: to hele ord sættes sammen til ét nyt ord, fx 'sol' + 'skin' = 'solskin'",
- "Bøjning ændrer aldrig ordklasse, kun ordets form : fx substantivet 'hund' bøjes til 'hunde' (stadig substantiv), og verbet 'løbe' bøjes til 'løber' og 'løb' (stadig verbum, bare i en anden tid)",
+ "Bøjning ændrer aldrig ordklasse, kun ordets form – fx substantivet 'hund' bøjes til 'hunde' (stadig substantiv), og verbet 'løbe' bøjes til 'løber' og 'løb' (stadig verbum, bare i en anden tid)",
  ],
  },
  {
@@ -81,8 +81,8 @@ const ALMEN_LESSONS: Lesson[] = [
  title: "Kasus-masterclass: hvad danner hvad?",
  icon: "kasus",
  points: [
- "En kasus er den grammatiske form, der viser et ords funktion i sætningen ; dansk har kun rester af det (fx jeg/mig), mens latin har et fuldt system.",
- "Den vigtigste huskeregel: sætningsled og kasus hænger 1:1 sammen ; lær dem parvis.",
+ "En kasus er den grammatiske form, der viser et ords funktion i sætningen – dansk har kun rester af det (fx jeg/mig), mens latin har et fuldt system.",
+ "Den vigtigste huskeregel: sætningsled og kasus hænger 1:1 sammen – lær dem parvis.",
  "Ordstillingen i latin er fri, fordi det er kasusendelsen, ikke pladsen i sætningen, der viser ordets funktion.",
  "Et adjektiv skal altid 'kongruere' (stemme overens) med sit substantiv i køn, tal og kasus.",
  ],
@@ -96,7 +96,7 @@ const ALMEN_LESSONS: Lesson[] = [
  ["Indirekte objekt (hensynsled)", "Dativ", "til/for hvem?", "Puellae dono (jeg giver pigen)"],
  ["Ejerskab (dansk -s)", "Genitiv", "hvis?", "Liber puellae (pigens bog)"],
  ["Adverbial (middel/sted/måde)", "Ablativ", "hvordan/hvormed/hvorfra?", "Cum puella (med pigen)"],
- ["Direkte tiltale", "Vokativ", "(ingen ; direkte tiltale)", "Puella! (Pige!)"],
+ ["Direkte tiltale", "Vokativ", "(ingen – direkte tiltale)", "Puella! (Pige!)"],
  ],
  },
  {
@@ -117,9 +117,9 @@ const ALMEN_LESSONS: Lesson[] = [
  title: "Syntaks: sætningens orden",
  icon: "syntaks",
  points: [
- "Dansk er et V2-sprog: verbet (verballeddet) skal altid stå som sætningens andet led. Fx: 'I går regnede det' ; verbet 'regnede' er stadig andet led, selvom sætningen starter med tidsangivelsen",
- "En helsætning kan stå alene og give mening, fx 'Han spiser'. En ledsætning kan ikke stå alene, fx 'fordi han er sulten'",
- "Sideordning binder to ligestillede helsætninger sammen med fx 'og' eller 'men'. Underordning gør en ledsætning afhængig af en hovedsætning.",
+ "Dansk er et V2-sprog: verbet (verballeddet) skal altid stå som sætningens andet led. Fx: 'I går regnede det' – verbet 'regnede' er stadig andet led, selvom sætningen starter med tidsangivelsen",
+ "En hovedsætning kan stå alene og give mening, fx 'Han spiser'. En ledsætning kan ikke stå alene, fx 'fordi han er sulten'",
+ "Sideordning binder to ligestillede hovedsætninger sammen med fx 'og' eller 'men'. Underordning gør en ledsætning afhængig af en hovedsætning.",
  "Ledsætninger findes i tre hovedtyper: nominale (fungerer som subjekt/objekt), adverbielle (tid, årsag osv.) og relative (beskriver et substantiv).",
  "Topikalisering: man flytter et led frem foran verbet for at fremhæve det, fx 'Denne bog har jeg læst' i stedet for 'Jeg har læst denne bog'",
  "Engelsk er IKKE et V2-sprog og bruger 'do/does/did' til spørgsmål, hvor dansk i stedet bytter om på subjekt og verbum (inversion).",
@@ -132,7 +132,7 @@ const ALMEN_LESSONS: Lesson[] = [
  "Dansk hører til de germanske sprog, ligesom engelsk og tysk. Fransk, spansk og italiensk hører til de romanske sprog, som stammer fra latin",
  "Fonem: den mindste lydenhed i sproget, fx forskellen på lyden 'p' og 'b' i 'pil' og 'bil'",
  "Morfem: den mindste betydningsenhed i sproget, fx grundordet 'hund' eller endelsen '-e' i 'hunde'",
- "Kommunikationsmodellen beskriver, hvordan en afsender sender et budskab til en modtager ; og hvordan støj undervejs kan forstyrre budskabet",
+ "Kommunikationsmodellen beskriver, hvordan en afsender sender et budskab til en modtager – og hvordan støj undervejs kan forstyrre budskabet",
  "Sprog forandrer sig hele tiden. Det kaldes sprogforandring og ses fx ved, at nye ord kommer til, mens gamle går af brug",
  ],
  },
@@ -143,10 +143,10 @@ const HHX_LESSONS: Lesson[] = [
  title: "Ordklasser på 60 sekunder",
  icon: "ordklasser",
  points: [
- "Substantiv (navneord): navnet på en person, ting eller begreb : fx 'kunde', 'møde', 'glæde'",
- "Verbum (udsagnsord): en handling eller tilstand : fx 'sælge', 'forhandle', 'være'",
- "Adjektiv (tillægsord): beskriver et substantiv : fx 'en god kunde', 'et hurtigt svar'",
- "Adverbium (biord): beskriver et verbum, adjektiv eller andet adverbium : fx 'han sælger godt', 'meget vigtigt'",
+ "Substantiv (navneord): navnet på en person, ting eller begreb – fx 'kunde', 'møde', 'glæde'",
+ "Verbum (udsagnsord): en handling eller tilstand – fx 'sælge', 'forhandle', 'være'",
+ "Adjektiv (tillægsord): beskriver et substantiv – fx 'en god kunde', 'et hurtigt svar'",
+ "Adverbium (biord): beskriver et verbum, adjektiv eller andet adverbium – fx 'han sælger godt', 'meget vigtigt'",
  "De sidste fire ordklasser er: pronomen (fx 'han', 'min'), præposition (fx 'i', 'på'), konjunktion (fx 'og', 'men') og talord (fx 'tre')",
  ],
  },
@@ -159,7 +159,7 @@ const HHX_LESSONS: Lesson[] = [
  "Direkte objekt (genstandsled): hvem eller hvad rammes af handlingen? Fx: Virksomheden sender 'en faktura'",
  "Indirekte objekt (hensynsled): til eller for hvem sker handlingen? Fx: Virksomheden sender 'kunden' en faktura",
  "Adverbial: fortæller om tid, sted, måde eller grad. Fx: Virksomheden sender fakturaen 'hver fredag'",
- "Syntaktisk analyse er et krav i HHX-læreplanen ; på dansk OG på fremmedsprog",
+ "Syntaktisk analyse er et krav i HHX-læreplanen – på dansk OG på fremmedsprog",
  ],
  },
  {
@@ -170,7 +170,7 @@ const HHX_LESSONS: Lesson[] = [
  "Bøjning ændrer formen, men ikke ordklassen: kunde → kunder, sælge → sælger → solgte",
  "Afledning skaber nye ord, ofte i en ny ordklasse: kunde → kundevenlig (adjektiv), sælge → salg (substantiv)",
  "Sammensætning: to hele ord bliver ét: 'kunde' + 'service' = 'kundeservice'",
- "Kender du morfemerne, kan du gætte nye ord ; også på engelsk: 'unhelpful' = u-hjælpsom",
+ "Kender du morfemerne, kan du gætte nye ord – også på engelsk: 'unhelpful' = u-hjælpsom",
  ],
  },
  {
@@ -189,8 +189,8 @@ const HHX_LESSONS: Lesson[] = [
  title: "Syntaks: sætningens orden",
  icon: "syntaks",
  points: [
- "En helsætning kan stå alene: 'Vi sender ordren i dag'. En ledsætning kan ikke: '...fordi vi har travlt'",
- "Dansk er et V2-sprog: verbet står som andet led ; 'I går sendte vi ordren'",
+ "En hovedsætning kan stå alene: 'Vi sender ordren i dag'. En ledsætning kan ikke: '...fordi vi har travlt'",
+ "Dansk er et V2-sprog: verbet står som andet led – 'I går sendte vi ordren'",
  "Engelsk er IKKE et V2-sprog: 'Yesterday we sent the order'",
  "Engelsk bruger 'do/does/did' i spørgsmål ('Did you send it?'), dansk bytter om på subjekt og verbum (inversion)",
  "Ledsætninger findes i tre hovedtyper: nominale, adverbielle og relative",
@@ -200,11 +200,11 @@ const HHX_LESSONS: Lesson[] = [
  title: "Kommunikation & kommunikationsmodellen",
  icon: "kommunikation",
  points: [
- "Kommunikation er altid: en afsender → et budskab → en kanal → en modtager ; i en kontekst",
+ "Kommunikation er altid: en afsender → et budskab → en kanal → en modtager – i en kontekst",
  "Støj er alt, der forstyrrer budskabet: larm, uklart sprog, dårlig forbindelse eller fordomme",
- "Feedback er modtagerens reaktion tilbage til afsenderen ; den gør kommunikation til dialog",
+ "Feedback er modtagerens reaktion tilbage til afsenderen – den gør kommunikation til dialog",
  "Verbal kommunikation er ord; non-verbal er kropssprog, mimik, gestik, stemmeføring, tegn og signaler",
- "Det udvidede tekstbegreb: alt, der kommunikerer, er en tekst ; også reklamer, film, SoMe-opslag og grafik",
+ "Det udvidede tekstbegreb: alt, der kommunikerer, er en tekst – også reklamer, film, SoMe-opslag og grafik",
  "Kommunikationsanalyse: Hvem skriver? Til hvem? Om hvad? I hvilken situation? Gennem hvilket medie?",
  ],
  },
@@ -213,7 +213,7 @@ const HHX_LESSONS: Lesson[] = [
  icon: "sproghandlinger",
  points: [
  "Når vi taler og skriver, GØR vi noget: påstå, spørge, opfordre, love, råde, advare, undskylde, tilbyde",
- "Direkte opfordring: 'Send mig rapporten'. Indirekte: 'Kan du sende mig rapporten?' ; form og funktion passer ikke sammen",
+ "Direkte opfordring: 'Send mig rapporten'. Indirekte: 'Kan du sende mig rapporten?' – form og funktion passer ikke sammen",
  "Indirekte sproghandlinger er ofte høfligere og bruges meget i professionel kommunikation",
  "En påstand kan vurderes som sand eller falsk; et spørgsmål beder om svar; en opfordring beder om handling",
  "Spørg altid: hvad prøver denne tekst at GØRE ved mig?",
@@ -227,18 +227,18 @@ const HHX_LESSONS: Lesson[] = [
  "Synonymer: samme betydning (starte/begynde). Antonymer: modsat betydning (stigning/fald)",
  "Homonymer: samme form, uafhængig betydning ('bog' = læsestof/bøgetræ). Polysemi: beslægtede betydninger ('mus' = dyr/computer)",
  "Denotation = grundbetydning. Konnotation = følelsesmæssig medbetydning ('prisbevidst' vs. 'billig')",
- "Metafor: overført betydning ; 'teamet er et velsmurt maskineri'",
- "Fagudtryk er præcise for dem, der kender dem ; tilpas dem til modtageren",
+ "Metafor: overført betydning – 'teamet er et velsmurt maskineri'",
+ "Fagudtryk er præcise for dem, der kender dem – tilpas dem til modtageren",
  ],
  },
  {
  title: "Pragmatik: sproget i brug",
  icon: "pragmatik",
  points: [
- "Pragmatik = hvad en ytring betyder i den konkrete situation ; ikke kun ordene i sig selv",
+ "Pragmatik = hvad en ytring betyder i den konkrete situation – ikke kun ordene i sig selv",
  "Den samme sætning kan være ros i én situation og hån i en anden ('Det var da godt klaret')",
  "At læse mellem linjerne = at forstå det underforståede budskab",
- "Register: vi skifter stilleje efter situationen ; privat, faglig og professionel",
+ "Register: vi skifter stilleje efter situationen – privat, faglig og professionel",
  "Hensigtsmæssig kommunikation = sproget passer til afsender, modtager, emne og situation",
  ],
  },
@@ -249,7 +249,7 @@ const HHX_LESSONS: Lesson[] = [
  "En genre er en teksttype med genkendelige træk, formål og struktur",
  "Forretningsmail: emnelinje, formel hilsen, klart formål, høflig afslutning",
  "Reklamen vil overtale; pressemeddelelsen informerer medierne; jobannoncen tiltrækker kandidater",
- "Mediet er kanalen: en reklame kan stå i avisen, på tv eller på Instagram ; og skal tilpasses hvert medie",
+ "Mediet er kanalen: en reklame kan stå i avisen, på tv eller på Instagram – og skal tilpasses hvert medie",
  "Genrebevidst formidling: vælg og form teksten, så den passer til genre, modtager og formål",
  ],
  },
@@ -258,9 +258,9 @@ const HHX_LESSONS: Lesson[] = [
  icon: "sproghistorie",
  points: [
  "De fleste europæiske sprog er indoeuropæiske: germanske (dansk, engelsk, tysk), romanske (fransk, spansk) og slaviske (russisk, polsk)",
- "Dansk og engelsk ligner hinanden, fordi begge er germanske ; 'hus'/'house', 'mor'/'mother'",
+ "Dansk og engelsk ligner hinanden, fordi begge er germanske – 'hus'/'house', 'mor'/'mother'",
  "Låneord vandrer mellem sprog: 'chef' fra fransk, 'e-mail' fra engelsk",
- "Engelsk er i dag globalt lingua franca ; også i danske virksomheder",
+ "Engelsk er i dag globalt lingua franca – også i danske virksomheder",
  "Sprog forandrer sig hele tiden, og sprog følges ikke altid med nationalitet",
  ],
  },
@@ -268,11 +268,11 @@ const HHX_LESSONS: Lesson[] = [
  title: "Læringsstrategier",
  icon: "laeringsstrategier",
  points: [
- "Læringsstrategier er bevidste metoder til at lære sprog ; de er selv pensum på HHX",
- "Transfer: brug viden fra ét sprog i et andet ; 'information' findes på dansk, engelsk og fransk",
+ "Læringsstrategier er bevidste metoder til at lære sprog – de er selv pensum på HHX",
+ "Transfer: brug viden fra ét sprog i et andet – 'information' findes på dansk, engelsk og fransk",
  "Mønstergenkendelse: engelske '-tion'-ord ligner danske (information, kommunikation)",
- "Kontekstgætning: gæt ukendte ord ud fra sammenhængen ; slå kun op, når det er nødvendigt",
- "Lær gloser i sætninger og med gentagne møder (ordkort) ; ikke ved at proppe dem på én gang",
+ "Kontekstgætning: gæt ukendte ord ud fra sammenhængen – slå kun op, når det er nødvendigt",
+ "Lær gloser i sætninger og med gentagne møder (ordkort) – ikke ved at proppe dem på én gang",
  "Brug feedback: fejlene viser præcis, hvad du skal øve",
  ],
  },
@@ -289,17 +289,17 @@ const LATIN_LESSONS: Lesson[] = [
  ],
  },
  {
- title: "Esse i skemaer: sum, es, est ; og datid",
+ title: "Esse i skemaer: sum, es, est – og datid",
  icon: "sumesse",
  points: [
- "'Esse' (at være) er det vigtigste og mest uregelmæssige verbum på latin ; det bruges i næsten alle sætninger, du møder.",
- "Nutid (præsens) og datid (imperfectum) bruger de SAMME personendelser ; kun grundformen skifter fra 'su-/es-' (nutid) til 'era-' (datid).",
+ "'Esse' (at være) er det vigtigste og mest uregelmæssige verbum på latin – det bruges i næsten alle sætninger, du møder.",
+ "Nutid (præsens) og datid (imperfectum) bruger de SAMME personendelser – kun grundformen skifter fra 'su-/es-' (nutid) til 'era-' (datid).",
  "Huskereglen 'o/m – s – t – mus – tis – nt' virker også på 'esse': sum (-m), es (-s), est (-t), sumus (-mus), estis (-tis), sunt (-nt).",
- "Ordstillingen er fri: 'Puella laeta est' og 'Puella est laeta' betyder præcis det samme, fordi det er endelserne ; ikke pladsen i sætningen ; der bærer betydningen.",
+ "Ordstillingen er fri: 'Puella laeta est' og 'Puella est laeta' betyder præcis det samme, fordi det er endelserne – ikke pladsen i sætningen – der bærer betydningen.",
  ],
  tables: [
  {
- caption: "Esse i nutid (præsens) ; ental og flertal",
+ caption: "Esse i nutid (præsens) – ental og flertal",
  headers: ["Person", "Ental", "Betydning", "Flertal", "Betydning"],
  rows: [
  ["1. person (jeg/vi)", "sum", "jeg er", "sumus", "vi er"],
@@ -308,7 +308,7 @@ const LATIN_LESSONS: Lesson[] = [
  ],
  },
  {
- caption: "Esse i datid (imperfectum) ; ental og flertal",
+ caption: "Esse i datid (imperfectum) – ental og flertal",
  headers: ["Person", "Ental", "Betydning", "Flertal", "Betydning"],
  rows: [
  ["1. person (jeg/vi)", "eram", "jeg var", "eramus", "vi var"],
@@ -334,12 +334,12 @@ const LATIN_LESSONS: Lesson[] = [
  title: "De 6 kasus",
  icon: "grammatik",
  points: [
- "Nominativ: subjektet, den der handler : fx 'puella' (pigen) i 'Puella cantat' (Pigen synger)",
- "Akkusativ: det direkte objekt, den handlingen rammer : fx 'puellam' i 'Video puellam' (Jeg ser pigen)",
- "Dativ: det indirekte objekt, til eller for nogen : fx 'puellae' i 'Do puellae rosam' (Jeg giver pigen en rose)",
- "Genitiv: viser ejerskab, svarer til dansk '-s' : fx 'puellae' i 'liber puellae' (pigens bog)",
+ "Nominativ: subjektet, den der handler – fx 'puella' (pigen) i 'Puella cantat' (Pigen synger)",
+ "Akkusativ: det direkte objekt, den handlingen rammer – fx 'puellam' i 'Video puellam' (Jeg ser pigen)",
+ "Dativ: det indirekte objekt, til eller for nogen – fx 'puellae' i 'Do puellae rosam' (Jeg giver pigen en rose)",
+ "Genitiv: viser ejerskab, svarer til dansk '-s' – fx 'puellae' i 'liber puellae' (pigens bog)",
  "Ablativ: bruges bl.a. om middel, sted eller måde, og svarer ofte til dansk 'med', 'i' eller 'fra'",
- "Vokativ: bruges når man tiltaler nogen direkte : fx 'Marce!' ('Marcus!')",
+ "Vokativ: bruges når man tiltaler nogen direkte – fx 'Marce!' ('Marcus!')",
  ],
  },
  {
@@ -381,17 +381,17 @@ const LATIN_LESSONS: Lesson[] = [
  title: "Sådan oversætter du",
  icon: "oversaettelse",
  points: [
- "Find udsagnsordet (verbet) først ; endelsen fortæller dig hvem der handler, og hvornår det sker",
+ "Find udsagnsordet (verbet) først – endelsen fortæller dig hvem der handler, og hvornår det sker",
  "Kig på ordendelserne for at finde nominativ (subjekt) og akkusativ (direkte objekt). Det er endelsen, der afgør rollen, ikke ordets plads i sætningen",
  "Den latinske ordstilling er fri, så stol altid på endelserne frem for rækkefølgen af ordene",
- "Brug dit oversættelsesark til svære gloser, når du er til prøve ; det matcher altid ordene i oversættelsesopgaverne",
+ "Brug dit oversættelsesark til svære gloser, når du er til prøve – det matcher altid ordene i oversættelsesopgaverne",
  ],
  },
  {
  title: "Rom i korte træk",
  icon: "kultur",
  points: [
- "Forum var byens vigtigste torv ; centrum for handel, politik og retssager",
+ "Forum var byens vigtigste torv – centrum for handel, politik og retssager",
  "Senatet var en forsamling af de fornemste romerske borgere, som rådgav og traf beslutninger",
  "Romerne er berømte for deres infrastruktur: brede veje, akvædukter (vandledninger) og et omfattende retssystem",
  "Vestrom, den vestlige del af Romerriget, faldt traditionelt i år 476 e.Kr.",
@@ -441,7 +441,7 @@ export default function LynkursusPage({ education, progress }: { education: Educ
       <div>
         <h1 className="font-display text-2xl font-extrabold text-ink">Lynkursus</h1>
  <p className="text-sm text-ink/50">
- Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i "Øv dig" ; brug siden her til at
+ Et opslagsværk, du kan vende tilbage til. Al ny teori bliver allerede undervist trin for trin inde i "Øv dig" – brug siden her til at
  genopfriske, slå skemaer op eller få et hurtigt overblik, før du tager en prøve.
  </p>
  </div>

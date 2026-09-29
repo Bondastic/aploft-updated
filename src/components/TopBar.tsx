@@ -19,7 +19,7 @@ export default function TopBar({ progress, onHome }: { progress: Progress; onHom
           <button
             type="button"
             onClick={onHome}
-            aria-label="AP Klar : gå til forsiden"
+            aria-label="AP Klar – gå til forsiden"
             title="Gå til forsiden"
             className="rounded-lg transition hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple active:scale-95"
           >

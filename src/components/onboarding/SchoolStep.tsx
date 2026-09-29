@@ -68,19 +68,18 @@ export default function SchoolStep({
                   {school.city ? `${school.city} · ` : ""}
                   {fmt?.status === "klar" ? "Eksamensform: beskrivelsen er klar" : "Eksamensform: beskrivelse under udarbejdelse"}
                 </span>
-                <span className="mt-1 flex flex-wrap gap-1">
-                  {school.exams.length > 0 ? (
-                    school.exams.map((ex) => (
+                {/* Kun skoler, der HAR en prøve i appen, får et mærkat. Skoler
+                    uden fik før teksten "Ingen eksamensprøve endnu", som bare
+                    gjorde valget mindre attraktivt uden at oplyse noget. */}
+                {school.exams.length > 0 && (
+                  <span className="mt-1 flex flex-wrap gap-1">
+                    {school.exams.map((ex) => (
                       <span key={ex} className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", theme.accentChip)}>
                         {SCHOOL_EXAM_LABELS[ex].short} findes i appen
                       </span>
-                    ))
-                  ) : (
-                    <span className="rounded-full bg-ink/5 px-2 py-0.5 text-[10px] font-bold text-ink/45">
-                      Ingen eksamensprøve endnu : kun prøvegeneratoren
-                    </span>
-                  )}
-                </span>
+                    ))}
+                  </span>
+                )}
               </span>
             </motion.button>
           );
@@ -129,11 +128,11 @@ export default function SchoolStep({
               ))}
             </div>
             <p className="mt-2 text-[11px] text-ink/45">
-              Din skoles form kan afvige ; tjek altid meldingen hos din AP-lærer. Vi tilføjer flere skoler løbende.
+              Din skoles form kan afvige – tjek altid meldingen hos din AP-lærer. Vi tilføjer flere skoler løbende.
             </p>
             <p className="mt-1.5 rounded-xl bg-amber-50 px-3 py-2 text-[11px] leading-relaxed text-amber-800 dark:bg-amber-500/10 dark:text-amber-300">
               Bemærk: eksamensprøven i Prøve-fanen simulerer én bestemt skoles eksamensark, og den kan derfor ikke tages, når du har valgt
-              &quot;anden skole&quot;. Prøvegeneratoren og alle øvelser virker som normalt : de træner de samme fagbegreber.
+              &quot;anden skole&quot;. Prøvegeneratoren og alle øvelser virker som normalt – de træner de samme fagbegreber.
             </p>
           </div>
         </motion.div>
@@ -142,7 +141,7 @@ export default function SchoolStep({
       <p className="flex items-start gap-1.5 px-1 text-[11px] leading-relaxed text-ink/45">
         <InfoIcon className="mt-0.5 h-3.5 w-3.5 shrink-0" />
         <span>
-          Vi bruger kun skolevalget til at vise den rigtige eksamensform. Det gemmes lokalt på din enhed : ingen data indsamles, ingen
+          Vi bruger kun skolevalget til at vise den rigtige eksamensform. Det gemmes lokalt på din enhed – ingen data indsamles, ingen
           konto, ingen deling.
         </span>
       </p>

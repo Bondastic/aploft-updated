@@ -186,7 +186,7 @@ export default function ProfilePage({
         <div className="rounded-2xl border border-ink/10 bg-ink/[0.02] p-4">
           <p className="mb-1 text-sm font-bold text-ink">Skole</p>
           <p className="mb-3 text-xs text-ink/50">
-            Din skole afgør, hvilken eksamensform du ser under Prøve. Vælg kun lokalt : data sendes eller indsamles ikke.
+            Din skole afgør, hvilken eksamensform du ser under Prøve. Vælg kun lokalt – data sendes eller indsamles ikke.
           </p>
           <div className="flex items-center justify-between gap-3">
             <p className="text-sm font-semibold text-ink">

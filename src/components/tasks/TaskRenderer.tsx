@@ -139,7 +139,7 @@ export default function TaskRenderer({
         >
           <div className="flex items-center gap-2 font-semibold">
             {wasCorrect ? <CheckIcon className="h-4 w-4" /> : <XIcon className="h-4 w-4" />}
-            {wasCorrect ? "Rigtigt! 🎉" : "Ikke helt : her er hvorfor"}
+            {wasCorrect ? "Rigtigt! 🎉" : "Ikke helt – her er hvorfor"}
           </div>
           {!wasCorrect && <WrongAnswerDetails task={task} answer={lastAnswer} />}
           <p className={cn(!wasCorrect && "rounded-xl bg-white/70 p-2.5 text-ink/80")}>
@@ -163,7 +163,7 @@ export default function TaskRenderer({
 }
 
 // ---------------------------------------------------------------------------
-// "Hvorfor var mit svar forkert?" : den feedback, eleverne bad om i
+// "Hvorfor var mit svar forkert?" – den feedback, eleverne bad om i
 // testrunden. Panelet viser ALTID elevens eget svar, hvad der var det rigtige,
 // og (hvis opgaven har `whyWrong`) hvorfor netop den svarmulighed ikke holder.
 // ---------------------------------------------------------------------------

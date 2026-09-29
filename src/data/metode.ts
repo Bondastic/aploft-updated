@@ -1,8 +1,8 @@
 // ---------------------------------------------------------------------------
-// "Sådan tjekker du det selv" : den metode, eleven kan bruge NÆSTE gang.
+// "Sådan tjekker du det selv" – den metode, eleven kan bruge NÆSTE gang.
 //
 // Elevernes tilbagemelding fra testrunden var, at feedbacken skal give en reel
-// begrundelse. whyWrong forklarer, hvorfor netop DET svar er forkert : det her
+// begrundelse. whyWrong forklarer, hvorfor netop DET svar er forkert – det her
 // er det andet halve skridt: hvilket håndgreb man bruger for selv at nå frem
 // til det rigtige svar. Det vises i feedbacken, når et svar er forkert.
 //
@@ -18,7 +18,7 @@ export const CATEGORY_METODE: Partial<Record<CategoryId, string>> = {
   ordklasser:
     "Prøv at bøje ordet i stedet for at tænke på, hvad det betyder. Kan du sætte en/et foran og lave flertal, er det et substantiv. Kan du sætte at foran og bøje det i tid, er det et verbum. Kan du gradbøje det, er det et adjektiv.",
   morfologi:
-    "Find rodmorfemet først : den del, der bærer grundbetydningen. Spørg så om resten: laver delen et NYT ord (afledning: præfiks eller suffiks), eller kun en ny FORM af det samme ord (bøjning: fleksiv)?",
+    "Find rodmorfemet først – den del, der bærer grundbetydningen. Spørg så om resten: laver delen et NYT ord (afledning: præfiks eller suffiks), eller kun en ny FORM af det samme ord (bøjning: fleksiv)?",
   tempus:
     "Se på hjælpeverbet, hvis der er et. Står det i nutid (har, er), er det førnutid. Står det i datid (havde, var), er det førdatid. Er der intet hjælpeverbum, kigger du på hovedverbets egen form: nutid eller datid.",
   syntaks:
@@ -28,7 +28,7 @@ export const CATEGORY_METODE: Partial<Record<CategoryId, string>> = {
   sprog:
     "Hold de tre niveauer adskilt: fonem er den mindste LYD, morfem er den mindste DEL MED BETYDNING, og grafem er det skrevne TEGN. Ved sprogfamilier spørger du, om ligheden skyldes fælles ophav eller lån.",
   kommunikation:
-    "Gå pentagrammet igennem punkt for punkt: afsender, modtager, emne, omstændigheder og sprog. Peg på et konkret sted i teksten for hvert punkt : det er belægget, der giver point, ikke påstanden.",
+    "Gå pentagrammet igennem punkt for punkt: afsender, modtager, emne, omstændigheder og sprog. Peg på et konkret sted i teksten for hvert punkt – det er belægget, der giver point, ikke påstanden.",
   genrer:
     "Bestem genren ud fra TRÆKKENE, ikke ud fra emnet. Spørg: træder afsenderen frem som person? Er der kilder? Er der en holdning? Er der noget, der skal sælges? Skriv altid de træk, du bygger din bestemmelse på.",
   sproghandlinger:

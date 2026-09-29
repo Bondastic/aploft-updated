@@ -1,7 +1,7 @@
 // Latinsk ordforråd brugt i oversættelsesopgaverne. Dette er den "kilde",
 // som både opgaverne OG oversættelsesarket (TranslationSheet) bygger på, så
 // eleven altid kan slå de ord op, der rent faktisk optræder i øvelserne.
-// Alle sætninger/gloser er skrevet fra bunden til APLOFT ; intet er kopieret
+// Alle sætninger/gloser er skrevet fra bunden til APLOFT – intet er kopieret
 // fra andre undervisningsmaterialer.
 
 export interface VocabEntry {

@@ -46,7 +46,7 @@ export const EXAM_FORMATS: Record<string, SchoolExamFormat> = {
     summary:
       "AP-eksamen er MUNDTLIG med skriftlig forberedelse. Du trækker en ukendt tekst med syv opgaver til, og du har 40 minutter i et forberedelseslokale til at løse dem. Derefter går du ind til eksamen i 12-15 minutter, hvor du besvarer de syv opgaver mundtligt for din lærer og en censor. Karakteren kommer på eksamensbeviset og tæller med i gennemsnittet.",
     facts: [
-      { label: "Prøveform", value: "Mundtlig eksamen med skriftlig forberedelse ; ukendt tekst + syv faste opgaver" },
+      { label: "Prøveform", value: "Mundtlig eksamen med skriftlig forberedelse – ukendt tekst + syv faste opgaver" },
       { label: "Forberedelse", value: "40 minutter i et forberedelseslokale (muligvis flere elever i samme lokale) med en tilsynsførende" },
       { label: "Eksamination", value: "12-15 minutter hos din lærer og en censor (en anden sproglærer fra skolen), derefter ca. 5 minutters votering" },
       {
@@ -54,7 +54,7 @@ export const EXAM_FORMATS: Record<string, SchoolExamFormat> = {
         value:
           "1) genretræk i teksten, 2) kommunikationssituationen, 3) sproglige særtræk, 4) morfologisk analyse, 5) sætningsanalyse, 6) verbaltider, 7) hoved- og ledsætninger",
       },
-      { label: "Hjælpemidler", value: "Egne noter, bøger fra undervisningen og ordbog (ordnet.dk) ; lav gerne et notepapir med dine svar, som du tager med ind. Ingen computer, medmindre det er aftalt med din lærer" },
+      { label: "Hjælpemidler", value: "Egne noter, bøger fra undervisningen og ordbog (ordnet.dk) – lav gerne et notepapir med dine svar, som du tager med ind. Ingen computer, medmindre det er aftalt med din lærer" },
       { label: "Bedømmelse", value: "Én samlet karakter efter 7-trinsskalaen, givet ud fra din mundtlige besvarelse af de syv opgaver + uddybende spørgsmål" },
       { label: "Terminologi", value: "De latinske betegnelser er primære: subjekt, verballed, direkte og indirekte objekt, adverbial, subjektsprædikat (de danske må gerne nævnes som hjælp)" },
     ],
@@ -72,12 +72,12 @@ export const EXAM_FORMATS: Record<string, SchoolExamFormat> = {
       {
         heading: "Hvad lægges der vægt på?",
         body:
-          "I opgave 2 og 3 er der MANGE rigtige svar : det er meget individuelt, hvad der er værd at kommentere i netop din tekst, og hver skole gør den del på sin egen måde. Derfor tæller dokumentationen (citater fra teksten) og fagsproget mere end mængden. Opgave 4-7 har til gengæld præcise svar, og det er dem, eleverne typisk har sværest ved og bruger længst tid på at lære : morfologi, sætningsanalyse, omskrivning af verballeddets tid, hoved- og ledsætninger og de latinske begreber. Det er også dem, appen træner hårdest.",
+          "I opgave 2 og 3 er der MANGE rigtige svar – det er meget individuelt, hvad der er værd at kommentere i netop din tekst, og hver skole gør den del på sin egen måde. Derfor tæller dokumentationen (citater fra teksten) og fagsproget mere end mængden. Opgave 4-7 har til gengæld præcise svar, og det er dem, eleverne typisk har sværest ved og bruger længst tid på at lære – morfologi, sætningsanalyse, omskrivning af verballeddets tid, hoved- og ledsætninger og de latinske begreber. Det er også dem, appen træner hårdest.",
       },
       {
         heading: "Sådan hænger det sammen med appen",
         body:
-          "Eksamensprøven i Prøve-fanen simulerer præcis dette format: ukendt tekst, syv opgaver, ur på 40 minutter, klokke og aflevering. Du skriver dine svar i felterne, ligesom du ville skrive dem på notepapiret : og under hver opgave er der delspørgsmål med faste svar, som appen kan rette, så du får en vejledende karakter. Den mundtlige del kan appen ikke bedømme, så brug prøven som forberedelse og kopiér dine skrevne svar over til en AI, hvis du vil have feedback på dem. De almindelige prøvegeneratorer bruger du til at træne delelementerne.",
+          "Eksamensprøven i Prøve-fanen simulerer præcis dette format: ukendt tekst, syv opgaver, ur på 40 minutter, klokke og aflevering. Du skriver dine svar i felterne, ligesom du ville skrive dem på notepapiret – og under hver opgave er der delspørgsmål med faste svar, som appen kan rette, så du får en vejledende karakter. Den mundtlige del kan appen ikke bedømme, så brug prøven som forberedelse og kopiér dine skrevne svar over til en AI, hvis du vil have feedback på dem. De almindelige prøvegeneratorer bruger du til at træne delelementerne.",
       },
     ],
     note:
@@ -95,14 +95,14 @@ export const EXAM_FORMATS: Record<string, SchoolExamFormat> = {
     facts: [
       { label: "Prøveform", value: "Tekstbaseret prøve med faglige spørgsmål (detaljer pr. skole følger)" },
       { label: "Forberedelse", value: "Beskrivelse under udarbejdelse" },
-      { label: "Du bliver eksamineret i", value: "Dansk del: tekst- og sproganalyse ; latin del: bøjning, kasus og oversættelse (jf. pensum i STX-sporet)" },
+      { label: "Du bliver eksamineret i", value: "Dansk del: tekst- og sproganalyse – latin del: bøjning, kasus og oversættelse (jf. pensum i STX-sporet)" },
       { label: "Terminologi", value: "De latinske betegnelser er primære: subjekt, verballed, direkte og indirekte objekt" },
     ],
     sections: [
       {
         heading: "Kommer snart",
         body:
-          "Vi følger Egå Gymnasiums egne retningslinjer for AP-eksamen ; når de er godkendt hos os, lægger vi tidspunkter, hjælpemidler og bedømmelsesmodel ind her. På STX-siden i Prøve kan du indtil videre træne med prøvegeneratoren (almen del + latindel + den blandede prøve).",
+          "Vi følger Egå Gymnasiums egne retningslinjer for AP-eksamen – når de er godkendt hos os, lægger vi tidspunkter, hjælpemidler og bedømmelsesmodel ind her. På STX-siden i Prøve kan du indtil videre træne med prøvegeneratoren (almen del + latindel + den blandede prøve).",
       },
     ],
     note:
@@ -129,4 +129,4 @@ export function formatForSchoolId(formatId: string | null | undefined): SchoolEx
 export const EXAM_FORMAT_INTRO =
   "AP-eksamen er ikke den samme overalt: formerne er skolespecifikke, og det gælder både forberedelsen, opgaverne og den mundtlige del. Her ser du den form, der gælder for din skole og dit spor.";
 export const EXAM_FORMAT_OTHER_NOTE =
-  "Din skole er ikke på listen endnu. Vi arbejder på at få alle skolers former med ; indtil videre kan du se de beskrivelser, vi har for dit spor. Tjek altid den officielle melding hos din AP-lærer.";
+  "Din skole er ikke på listen endnu. Vi arbejder på at få alle skolers former med – indtil videre kan du se de beskrivelser, vi har for dit spor. Tjek altid den officielle melding hos din AP-lærer.";

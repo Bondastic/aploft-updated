@@ -8,7 +8,7 @@
 // Skærmen gør tre ting: den siger tydeligt HVAD du er på vej ind i, den viser
 // hvor meget der venter, og den giver dig et sidste valg, før du går i gang.
 //
-// Ved reduceMotion springes optællingen over : så står baren fuld med det
+// Ved reduceMotion springes optællingen over – så står baren fuld med det
 // samme, og knappen er klar fra start.
 // ---------------------------------------------------------------------------
 
@@ -43,7 +43,7 @@ export default function EmneLoader({
   useEffect(() => {
     if (reduceMotion) return;
     // Baren fyldes på ca. 1,1 sekund. Den er et signal om, at emnet gøres
-    // klar : ikke en rigtig indlæsning, for alt indhold ligger allerede lokalt.
+    // klar – ikke en rigtig indlæsning, for alt indhold ligger allerede lokalt.
     const steps = [18, 42, 67, 88, 100];
     const timers = steps.map((v, i) => window.setTimeout(() => setPct(v), 120 + i * 220));
     return () => timers.forEach(window.clearTimeout);
@@ -98,7 +98,7 @@ export default function EmneLoader({
             !klar && "cursor-not-allowed opacity-50"
           )}
         >
-          {klar ? "Ja, jeg er klar : gå i gang" : "Vent et øjeblik…"}
+          {klar ? "Ja, jeg er klar – gå i gang" : "Vent et øjeblik…"}
         </button>
         <button
           type="button"

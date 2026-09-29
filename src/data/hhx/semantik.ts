@@ -3,7 +3,7 @@ import type { Task } from "../../types";
 
 const c = "semantik" as const;
 
-// SEMANTIK ; sprogets udtryks- og indholdsside (HHX-pensum: "sprogets
+// SEMANTIK – sprogets udtryks- og indholdsside (HHX-pensum: "sprogets
 // udtryks- og indholdsside", "anvende viden om grammatik, semantik og
 // pragmatik i arbejdet med tekster"). Semantik er læren om betydning.
 export const SEMANTIK_TASKS: Task[] = [
@@ -13,7 +13,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Hvad er semantik?",
  ["Læren om ordenes og sætningers betydning", "Læren om sætningers opbygning", "Læren om lydene i et sprog", "Læren om, hvordan sprog bruges i situationer"],
  0,
- "Semantik handler om betydning: hvad ord og sætninger betyder ; uafhængigt af, hvem der siger dem, og i hvilken situation."
+ "Semantik handler om betydning: hvad ord og sætninger betyder – uafhængigt af, hvem der siger dem, og i hvilken situation."
  ),
  mc(
  "semantik-2",
@@ -26,7 +26,7 @@ export const SEMANTIK_TASKS: Task[] = [
  mc(
  "semantik-3",
  c,
- "Hvad kaldes to forskellige ord med samme eller næsten samme betydning : fx 'starte' og 'begynde'?",
+ "Hvad kaldes to forskellige ord med samme eller næsten samme betydning – fx 'starte' og 'begynde'?",
  ["Synonymer", "Antonymer", "Homonymer", "Polysemer"],
  0,
  "Synonymer er forskellige udtryk med samme eller næsten samme indhold. De giver sproget variation og nuancer."
@@ -34,7 +34,7 @@ export const SEMANTIK_TASKS: Task[] = [
  mc(
  "semantik-4",
  c,
- "Hvad kaldes ord med modsat betydning : fx 'stigning' og 'fald'?",
+ "Hvad kaldes ord med modsat betydning – fx 'stigning' og 'fald'?",
  ["Antonymer", "Synonymer", "Homonymer", "Hyperonymer"],
  0,
  "Antonymer er ordpar med modsat betydning: stigning/fald, køb/salg, underskud/overskud."
@@ -53,7 +53,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Ordet 'mus' betyder både dyret og computerens mus. Hvad kaldes det, når et ord har flere BESLÆGTEDE betydninger?",
  ["Polysemi", "Homonymi", "Synonymi", "Antonymi"],
  0,
- "Ved polysemi er betydningerne beslægtede ; computermusen er opkaldt efter dyret pga. formen. Ved homonymi er betydningerne helt uafhængige."
+ "Ved polysemi er betydningerne beslægtede – computermusen er opkaldt efter dyret pga. formen. Ved homonymi er betydningerne helt uafhængige."
  ),
  mc(
  "semantik-7",
@@ -61,7 +61,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "En virksomhed skriver 'prisbevidst' om sig selv og 'billig' om konkurrenten. Hvad kalder man forskellen i ordets følelsesmæssige medbetydning?",
  ["Konnotation", "Denotation", "Synonymi", "Syntaks"],
  0,
- "Denotation er ordets grundbetydning (lav pris). Konnotation er de følelser og associationer, ordet vækker ; 'prisbevidst' lyder positivt, 'billig' kan lyde negativt."
+ "Denotation er ordets grundbetydning (lav pris). Konnotation er de følelser og associationer, ordet vækker – 'prisbevidst' lyder positivt, 'billig' kan lyde negativt."
  ),
  mc(
  "semantik-8",
@@ -85,7 +85,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Ordet 'afkast' betyder i en årsrapport noget andet end i en skov. Hvad viser det?",
  ["At ords betydning afhænger af fagområde og kontekst", "At ord altid kun har én fast betydning i alle sammenhænge", "At årsrapporter er metaforiske", "At 'afkast' er et lånord"],
  0,
- "I økonomi er 'afkast' = det, en investering giver tilbage; i skovbrug = det, træerne kaster. Fagområdet afgør betydningen ; derfor er fagterminologi vigtig at kende."
+ "I økonomi er 'afkast' = det, en investering giver tilbage; i skovbrug = det, træerne kaster. Fagområdet afgør betydningen – derfor er fagterminologi vigtig at kende."
  ),
  mc(
  "semantik-11",
@@ -93,7 +93,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Hvorfor bruger økonomiske tekster fagudtryk som 'likviditet' og 'rentabilitet'?",
  ["Fordi fagudtryk er præcise for dem, der kender dem", "Fordi man vil forvirre læseren med svære ord og udtryk", "Fordi der ikke findes danske ord for det", "Fordi alle forstår dem uden videre"],
  0,
- "Fagudtryk (jargon) giver præcis og effektiv kommunikation inden for et fagområde ; men kun hvis modtageren kender dem. Derfor skal man tilpasse sproget til modtageren."
+ "Fagudtryk (jargon) giver præcis og effektiv kommunikation inden for et fagområde – men kun hvis modtageren kender dem. Derfor skal man tilpasse sproget til modtageren."
  ),
  mc(
  "semantik-12",
@@ -101,7 +101,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Hvad betyder udtrykket 'at slå to fluer med ét smæk'?",
  ["At løse to problemer med én handling", "At man er god til at fange fluer med et smæk", "At man arbejder hurtigt", "At man laver fejl"],
  0,
- "Det er et idiom: et fast udtryk, hvis betydning ikke kan udledes ord for ord. Idiomer skal læres som hele enheder ; også på fremmedsprog."
+ "Det er et idiom: et fast udtryk, hvis betydning ikke kan udledes ord for ord. Idiomer skal læres som hele enheder – også på fremmedsprog."
  ),
  mc(
  "semantik-13",
@@ -109,7 +109,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Engelsk 'awful' betød engang 'ærefrygtindgydende' og betyder nu 'forfærdelig'. Hvad kaldes det fænomen?",
  ["Betydningsforandring (semantisk forandring)", "Polysemi, et ord med flere beslægtede betydninger", "Konnotation, ordets følelsesmæssige medbetydning", "Låneord, et ord fra et andet sprog"],
  0,
- "Ords betydning ændrer sig over tid ; det kaldes semantisk forandring. Det er en af grundene til, at ældre tekster kan være svære at læse."
+ "Ords betydning ændrer sig over tid – det kaldes semantisk forandring. Det er en af grundene til, at ældre tekster kan være svære at læse."
  ),
  mc(
  "semantik-14",
@@ -117,7 +117,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Hvilken betydning har ordet 'bæredygtig' i en moderne virksomhedskontekst typisk?",
  ["Miljømæssigt og socialt holdbar på lang sigt", "At noget kan bæres på ryggen, fx en god rygsæk", "At noget er billigt og kan købes i store mængder", "At noget er gammelt og har holdt i mange år"],
  0,
- "'Bæredygtig' har fået en udvidet, moderne betydning om klimamæssig og social holdbarhed. Betydninger ændrer sig med tiden og samfundet ; det er også semantik."
+ "'Bæredygtig' har fået en udvidet, moderne betydning om klimamæssig og social holdbarhed. Betydninger ændrer sig med tiden og samfundet – det er også semantik."
  ),
  ck(
  "semantik-15",
@@ -130,7 +130,7 @@ export const SEMANTIK_TASKS: Task[] = [
  wr(
  "semantik-16",
  c,
- "Hvad kaldes et ord med samme eller næsten samme betydning som et andet ord : fx 'starte' og 'begynde'?",
+ "Hvad kaldes et ord med samme eller næsten samme betydning som et andet ord – fx 'starte' og 'begynde'?",
  "Skriv ordet:",
  "synonym",
  "Et synonym er et ord med samme eller næsten samme betydning som et andet ord.",
@@ -142,7 +142,7 @@ export const SEMANTIK_TASKS: Task[] = [
  "Hvorfor er viden om semantik vigtig i HHX AP?",
  ["Fordi man skal kunne vælge og forstå ord præcist i erhvervstekster", "Fordi man skal kunne stave alle ord korrekt, også de svære fagord og udtryk", "Fordi semantik kun handler om latin og græsk, som man skal kunne", "Fordi man skal kunne lave sin egen ordbog over alle fagudtryk"],
  0,
- "Læreplanen kræver, at du kan arbejde med sprogets udtryks- og indholdsside i tekster ; og i erhvervslivet kan ét ord valgt forkert ændre hele budskabet."
+ "Læreplanen kræver, at du kan arbejde med sprogets udtryks- og indholdsside i tekster – og i erhvervslivet kan ét ord valgt forkert ændre hele budskabet."
  ),
 
   mc("semantik-18", c, "Hvad betyder 'bundlinje' i en virksomhedskontekst?", ["Det endelige resultat - og i overført betydning: det vigtigste", "Den nederste linje i en kontrakt", "Et synonym for omsætning", "En måde at skrive tal på"], 0, "'Bundlinje' betyder bogstaveligt den sidste linje i et regnskab og bruges metaforisk om det vigtigste i en sag."),

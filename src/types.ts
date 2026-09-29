@@ -107,7 +107,7 @@ export interface ChoiceTaskT extends TaskBase {
   /**
    * Hvorfor netop DEN svarmulighed er forkert, index for index (samme
    * rækkefølge som `options`). Elevernes vigtigste ønske fra testrunden var
-   * at få at vide, hvorfor deres eget svar var forkert : ikke kun hvad det
+   * at få at vide, hvorfor deres eget svar var forkert – ikke kun hvad det
    * rigtige var. Feltet er valgfrit: mangler teksten, viser appen stadig
    * elevens svar, det rigtige svar og forklaringen.
    */
@@ -259,7 +259,7 @@ export interface Progress {
   // brugere med gemt progress migreres til true, så de ikke møder skærmen igen.
   onboarded: boolean;
   // Valgt skole (id fra src/data/schools.ts) eller "unknown" for "anden
-  // skole". Null = endnu ikke valgt ; så viser appen ét skolevalg-skærmen
+  // skole". Null = endnu ikke valgt – så viser appen ét skolevalg-skærmen
   // (også for opdaterede eksisterende brugere). Gemmes KUN lokalt - der
   // indsamles intet.
   school: string | null;
@@ -296,22 +296,22 @@ export interface CategoryDef {
 // ---------------------------------------------------------------------------
 // Eksamenssæt (kun HHX): appens simulering af den virkelige AP-eksamen, som
 // den afvikles på Risskov. Eleven trækker en ukendt tekst med SYV opgaver og
-// har 40 minutters skriftlig forberedelse ; til selve eksamen besvares de syv
+// har 40 minutters skriftlig forberedelse – til selve eksamen besvares de syv
 // opgaver mundtligt.
 //
 // Hver opgave har sin EGEN svarform, præcis som på skolens eksamensark:
-//   1. genre        : vælg blandt de fem genrer + begrund med tekstbelæg
-//   2. pentagram    : seks små felter (afsender, emne, modtager, situation,
+//   1. genre        – vælg blandt de fem genrer + begrund med tekstbelæg
+//   2. pentagram    – seks små felter (afsender, emne, modtager, situation,
 //                     genre/sprog + formålet i midten)
-//   3. særtræk      : ét observationsfelt (citater fra teksten)
-//   4. morfologi    : pr. ord : morfem-opdeling med bindestreger + fleksiv
-//   5. syntaks      : led-symboler på sætningens klumper
-//   6. verbaltid    : pr. sætning : vælg tid + omskriv sætningen
-//   7. hoved/led    : marker hoved- og ledsætning + indleder + ledfunktion
+//   3. særtræk      – ét observationsfelt (citater fra teksten)
+//   4. morfologi    – pr. ord – morfem-opdeling med bindestreger + fleksiv
+//   5. syntaks      – led-symboler på sætningens klumper
+//   6. verbaltid    – pr. sætning – vælg tid + omskriv sætningen
+//   7. hoved/led    – marker hoved- og ledsætning + indleder + ledfunktion
 //
 // Det, appen kan rette automatisk (genre, morfemer, led, tider, omskrivninger,
 // indleder og ledfunktion), giver karakteren. De åbne felter (begrundelser,
-// pentagram og særtræk) rettes ALDRIG automatisk : de kopieres med over til
+// pentagram og særtræk) rettes ALDRIG automatisk – de kopieres med over til
 // AI-feedback, præcis som AP-læreren har bedt om, fordi der er mange rigtige
 // svar netop dér.
 // Vigtigt: hverken hints eller opgavetekster må afsløre svarene.
@@ -410,7 +410,7 @@ export interface ExamAnalysisPartT {
   explain: string;
 }
 
-/** Opgave 6: pr. sætning : hvilken tid, og omskriv til en anden tid. */
+/** Opgave 6: pr. sætning – hvilken tid, og omskriv til en anden tid. */
 export interface ExamTenseItemT {
   id: string;
   sentence: string;
@@ -439,7 +439,7 @@ export interface ExamTensePartT {
 export interface ExamClausePartT {
   kind: "clause";
   sentence: string;
-  /** Sætningen delt i sine dele : eleven markerer hver del som HS eller LS. */
+  /** Sætningen delt i sine dele – eleven markerer hver del som HS eller LS. */
   parts: { text: string; type: "hoved" | "led" }[];
   /** Ledsætningens indleder (fx "når"). Accepteres uden hensyn til store bogstaver. */
   indleder: string;

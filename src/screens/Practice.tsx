@@ -118,7 +118,7 @@ export default function PracticePage({
   }
 
   // Ny skærm = start fra toppen. Uden det beholder browseren den gamle
-  // scroll-position, så man landede midt nede i den nye side : elevernes
+  // scroll-position, så man landede midt nede i den nye side – elevernes
   // "man kommer ind i bunden af emnet".
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "auto" });
@@ -207,7 +207,7 @@ export default function PracticePage({
   // SESSION (aktiv opgave)
   // ---------------------------------------------------------------------
   // Læsesiden for emnet (HHX). Den ligger før alle views, så eleven møder den
-  // som det første : både automatisk første gang og via knappen på emnesiden.
+  // som det første – både automatisk første gang og via knappen på emnesiden.
   if (loadingCategory) {
     const cat = getCategory(loadingCategory, education);
     const path = getCategoryPath(loadingCategory, education);
@@ -497,7 +497,7 @@ export default function PracticePage({
             <span className="flex-1">
               <span className="block font-bold text-ink">Læs om emnet først</span>
               <span className="block text-xs text-ink/50">
-                Et minut om, hvad du skal kunne, hvilke begreber vi bruger, og hvad du skal passe på : med diagram.
+                Et minut om, hvad du skal kunne, hvilke begreber vi bruger, og hvad du skal passe på – med diagram.
               </span>
             </span>
             <span className={cn("shrink-0 rounded-full px-3 py-1.5 text-xs font-bold text-white", theme.solidBg)}>Åbn</span>

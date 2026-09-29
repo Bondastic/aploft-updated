@@ -27,7 +27,7 @@ export type DiagramId =
 
 const BOX = "fill-white stroke-current";
 const LABEL = "fill-current text-[11px] font-bold";
-const SMALL = "fill-current text-[9px]";
+const SMALL = "fill-current text-[10px]";
 
 /** Analysepilen: den rækkefølge, man finder leddene i. */
 function Analysepilen() {
@@ -85,7 +85,7 @@ function Morfemer() {
         Femte type: bindebogstavet i sammensatte ord, fx stol-e-ben
       </text>
       <text x="170" y="120" textAnchor="middle" className={SMALL} opacity="0.7">
-        Afledning (præfiks/suffiks) laver et nyt ord : bøjning (fleksiv) gør ikke
+        Afledning (præfiks/suffiks) laver et nyt ord – bøjning (fleksiv) gør ikke
       </text>
     </svg>
   );
@@ -104,7 +104,7 @@ function Tempus() {
     <svg viewBox="0 0 320 196" className="w-full text-ink/80" role="img" aria-label="De fem tider fra førdatid til fremtid med eksempler">
       <line x1="12" y1="10" x2="12" y2="168" className="stroke-current" strokeWidth="1.5" opacity="0.35" />
       <polygon points="12,176 8,166 16,166" className="fill-current" opacity="0.45" />
-      <text x="24" y="190" className={SMALL} opacity="0.65">Tiden går nedad : i de sammensatte tider bøjes HJÆLPEVERBET (har → havde)</text>
+      <text x="24" y="190" className={SMALL} opacity="0.65">Tiden går nedad – i de sammensatte tider bøjes HJÆLPEVERBET (har → havde)</text>
       {items.map(([latin, dk, ex, hint], i) => {
         const y = 6 + i * 33;
         return (
@@ -127,12 +127,12 @@ function Hovedled() {
   return (
     <svg viewBox="0 0 320 160" className="w-full text-ink/80" role="img" aria-label="Ikke-reglen: i en hovedsætning står ikke efter verballeddet, i en ledsætning mellem subjekt og verballed">
       <rect x="4" y="6" width="312" height="60" rx="10" className={BOX} strokeWidth="1.2" />
-      <text x="14" y="22" className={LABEL}>Hovedsætning : kan stå alene</text>
+      <text x="14" y="22" className={LABEL}>Hovedsætning – kan stå alene</text>
       <text x="14" y="40" className="fill-current text-[12px]">Hun læser <tspan className="font-extrabold">ikke</tspan> bogen.</text>
       <text x="14" y="56" className={SMALL} opacity="0.7">&quot;ikke&quot; står EFTER verballeddet</text>
 
       <rect x="4" y="76" width="312" height="60" rx="10" className={BOX} strokeWidth="1.2" />
-      <text x="14" y="92" className={LABEL}>Ledsætning : kan ikke stå alene</text>
+      <text x="14" y="92" className={LABEL}>Ledsætning – kan ikke stå alene</text>
       <text x="14" y="110" className="fill-current text-[12px]">... fordi hun <tspan className="font-extrabold">ikke</tspan> læser bogen.</text>
       <text x="14" y="126" className={SMALL} opacity="0.7">&quot;ikke&quot; står MELLEM subjekt og verballed</text>
 
@@ -153,7 +153,7 @@ function Ordklasser() {
   ];
   let y = 6;
   return (
-    <svg viewBox="0 0 320 180" className="w-full text-ink/80" role="img" aria-label="Oversigt over ordklasserne grupperet efter, hvordan de bøjes">
+    <svg viewBox="0 0 320 220" className="w-full text-ink/80" role="img" aria-label="Oversigt over ordklasserne grupperet efter, hvordan de bøjes">
       {groups.map(([title, items]) => {
         const rows = Math.ceil(items.length / 3);
         const h = 20 + rows * 22;
@@ -208,9 +208,9 @@ function Pentagram() {
 function Genrer() {
   const rows = [
     ["Informerende artikel", "oplyser neutralt"],
-    ["Opinionsartikel", "kronik, leder, læserbrev : tager stilling"],
+    ["Opinionsartikel", "kronik, leder, læserbrev – tager stilling"],
     ["Reklame", "sælger, ofte med skjult hensigt"],
-    ["Politisk tale", "vinder tilslutning : etos, patos, logos"],
+    ["Politisk tale", "vinder tilslutning – etos, patos, logos"],
     ["Ejendomsannonce", "fremhæver styrker, nedtoner svagheder"],
   ];
   return (
@@ -232,11 +232,11 @@ function Genrer() {
 /** Kasus: hvilken form et ord får efter sin funktion i sætningen. */
 function Kasus() {
   const rows = [
-    ["Nominativ", "subjekt", "puella : pigen synger"],
-    ["Akkusativ", "direkte objekt", "puellam : jeg ser pigen"],
-    ["Dativ", "indirekte objekt", "puellae : jeg giver pigen bogen"],
-    ["Genitiv", "ejerforhold", "puellae : pigens bog"],
-    ["Ablativ", "middel, sted, måde", "puella : med pigen"],
+    ["Nominativ", "subjekt", "puella – pigen synger"],
+    ["Akkusativ", "direkte objekt", "puellam – jeg ser pigen"],
+    ["Dativ", "indirekte objekt", "puellae – jeg giver pigen bogen"],
+    ["Genitiv", "ejerforhold", "puellae – pigens bog"],
+    ["Ablativ", "middel, sted, måde", "puella – med pigen"],
   ];
   return (
     <svg viewBox="0 0 320 176" className="w-full text-ink/80" role="img" aria-label="Kasus og deres funktion i sætningen">
@@ -248,7 +248,7 @@ function Kasus() {
         </g>
       ))}
       <text x="160" y="172" textAnchor="middle" className={SMALL} opacity="0.7">
-        Endelsen viser funktionen : derfor er ordstillingen fri på latin
+        Endelsen viser funktionen – derfor er ordstillingen fri på latin
       </text>
     </svg>
   );
@@ -257,12 +257,12 @@ function Kasus() {
 /** Sproghandlinger: hvad man GØR med ordene. */
 function Sproghandlinger() {
   const rows = [
-    ["Assertiv (konstativ)", "påstår noget om verden : Solen er varm"],
-    ["Direktiv (regulativ)", "skal få modtageren til at handle : Luk vinduet"],
-    ["Kommissiv", "afsenderen binder sig selv : Jeg lover at komme"],
-    ["Ekspressiv", "udtrykker følelse eller holdning : Jeg elsker pizza"],
-    ["Deklarativ (kvalitativ)", "ændrer virkeligheden : Jeg erklærer jer for gift"],
-    ["Fatisk", "holder kontakten i gang : Hej, farvel, hvordan går det"],
+    ["Assertiv (konstativ)", "påstår noget om verden – Solen er varm"],
+    ["Direktiv (regulativ)", "skal få modtageren til at handle – Luk vinduet"],
+    ["Kommissiv", "afsenderen binder sig selv – Jeg lover at komme"],
+    ["Ekspressiv", "udtrykker følelse eller holdning – Jeg elsker pizza"],
+    ["Deklarativ (kvalitativ)", "ændrer virkeligheden – Jeg erklærer jer for gift"],
+    ["Fatisk", "holder kontakten i gang – Hej, farvel, hvordan går det"],
   ];
   return (
     <svg viewBox="0 0 320 204" className="w-full text-ink/80" role="img" aria-label="De seks typer sproghandlinger med eksempler">
@@ -343,9 +343,9 @@ function Pragmatik() {
 /** Arveord, låneord og fremmedord: hvor det danske ordforråd kommer fra. */
 function Laaneord() {
   const rows = [
-    ["Arveord", "har altid været i dansk : blod, fader, hjul, ko"],
-    ["Låneord", "lånt og tilpasset : kirke fra latin, borgmester fra tysk"],
-    ["Fremmedord", "optaget, men stadig fremmed : weekend, comeback"],
+    ["Arveord", "har altid været i dansk – blod, fader, hjul, ko"],
+    ["Låneord", "lånt og tilpasset – kirke fra latin, borgmester fra tysk"],
+    ["Fremmedord", "optaget, men stadig fremmed – weekend, comeback"],
   ];
   return (
     <svg viewBox="0 0 320 172" className="w-full text-ink/80" role="img" aria-label="Arveord, låneord og fremmedord i dansk">
@@ -360,7 +360,7 @@ function Laaneord() {
         Arveord er husets nødvendigheder, låneord gør livet bekvemt,
       </text>
       <text x="160" y="146" textAnchor="middle" className={SMALL} opacity="0.7">
-        og fremmedord peger på luksus : ordforrådet følger samfundet
+        og fremmedord peger på luksus – ordforrådet følger samfundet
       </text>
       <text x="160" y="164" textAnchor="middle" className={SMALL} opacity="0.55">
         Ca. 17 % af ordene kommer fra tysk, ca. 3 % fra fransk
@@ -426,7 +426,7 @@ function Gentagelse() {
   return (
     <svg viewBox="0 0 320 136" className="w-full text-ink/80" role="img" aria-label="Spaced repetition: gentag med stadig større mellemrum">
       <text x="160" y="22" textAnchor="middle" className={SMALL} opacity="0.7">
-        Hver gentagelse gør sporet stærkere : derfor må mellemrummet vokse
+        Hver gentagelse gør sporet stærkere – derfor må mellemrummet vokse
       </text>
       <line x1="24" y1="62" x2="296" y2="62" className="stroke-current" strokeWidth="1.2" opacity="0.4" />
       {nodes.map(([n, label], i) => (
@@ -471,15 +471,10 @@ export default function Diagram({ id }: { id: DiagramId }) {
       <div
         className="diagram-scroll -mx-1 overflow-x-auto px-1 pb-1"
         role="group"
-        aria-label="Diagram : kan trækkes til siden på små skærme"
+        aria-label="Diagram"
       >
-        <div className="min-w-[440px] sm:min-w-0">
-          <C />
-        </div>
+        <C />
       </div>
-      <figcaption className="mt-1 text-center text-[11px] text-ink/40 sm:hidden">
-        Træk til siden for at se hele diagrammet
-      </figcaption>
     </figure>
   );
 }

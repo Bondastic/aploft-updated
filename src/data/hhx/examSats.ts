@@ -10,18 +10,18 @@ import type { ExamSatsT, ExamWordClassTag } from "../../types";
 //   MUNDTLIGT for lærer og censor.
 //
 // Hver opgave har SIN EGEN svarform, præcis som på skolens ark:
-//   1) genre      : vælg blandt de fem genrer + begrund med tekstbelæg
-//   2) pentagram  : seks små felter (afsender, emne, modtager, situation,
+//   1) genre      – vælg blandt de fem genrer + begrund med tekstbelæg
+//   2) pentagram  – seks små felter (afsender, emne, modtager, situation,
 //                   genre/sprog + formålet i midten)
-//   3) særtræk    : ét observationsfelt (med citater fra teksten)
-//   4) morfologi  : fire ord : del i morfemer + træk ét bestemt morfem ud
-//   5) syntaks    : led-symboler på sætningens klumper
-//   6) verbaltid  : to sætninger : vælg tid + omskriv til en anden tid
-//   7) hoved/led  : del sætningen op + indleder + ledfunktion
+//   3) særtræk    – ét observationsfelt (med citater fra teksten)
+//   4) morfologi  – fire ord – del i morfemer + træk ét bestemt morfem ud
+//   5) syntaks    – led-symboler på sætningens klumper
+//   6) verbaltid  – to sætninger – vælg tid + omskriv til en anden tid
+//   7) hoved/led  – del sætningen op + indleder + ledfunktion
 //
 // Det, der kan rettes entydigt (genre, morfemer, led, tider, omskrivninger,
 // indleder og ledfunktion), giver karakteren. De åbne felter (begrundelse,
-// pentagram og særtræk) rettes ALDRIG automatisk : de kopieres med over til
+// pentagram og særtræk) rettes ALDRIG automatisk – de kopieres med over til
 // AI-feedback, fordi der er mange rigtige svar netop dér.
 //
 // De syv opgaver følger skolens eget ark, i den rækkefølge:
@@ -35,9 +35,9 @@ import type { ExamSatsT, ExamWordClassTag } from "../../types";
 //    individuelle fra tekst til tekst. De er derfor mærket `openEnded` og
 //    rettes aldrig som rigtigt/forkert. Til gengæld vægter opgave 4-7
 //    (morfologi, syntaks, verbaltid, hoved-/ledsætninger) tungest i
-//    karakteren : det er dem, eleverne har sværest ved.
+//    karakteren – det er dem, eleverne har sværest ved.
 // 3. Svarmuligheder må ALDRIG indeholde begrundelsen ('Nyhedsartikel fordi
-//    ...'). Genrelisten er bare de fem genrer ; begrundelsen skriver eleven
+//    ...'). Genrelisten er bare de fem genrer – begrundelsen skriver eleven
 //    selv i feltet nedenunder.
 // 3. Led-delene bruger de latinske betegnelser som primære (subjekt,
 //    verballed, direkte/indirekte objekt) med de danske som hjælp.
@@ -126,7 +126,7 @@ const METHOD = {
   morfologi:
     "Sådan gør du: Del ordet i morfemer, altså de mindste dele, der har betydning. Find først rodmorfemet (grundbetydningen, som ofte kan stå alene). Se derefter efter præfiks (forstavelse, fx gen-, u-), suffiks (afledningsendelse, som ofte ændrer ordklasse, fx -hed, -lig, -ning), fleksiv (bøjningsendelse for tid, tal eller bestemthed, fx -er, -ede, -en) og bindebogstav i sammensatte ord (stol-e-ben). Ved sammensatte ord: del først i rodmorfemer, og tag derefter for- og endelser.",
   syntaks:
-    "Sådan gør du: Følg analysepilen. 1) Find verballeddet (det bøjede verbum). 2) Spørg hvem/hvad + verbet, og find subjektet. 3) Spørg hvem/hvad + verbet + subjektet, og find det direkte objekt. 4) Er der et indirekte objekt (til/for hvem?)? Det kræver altid et direkte objekt. 5) Resten er typisk adverbialer (tid, sted, måde, årsag). 6) Er verbet kopulativt (være, blive, hedde, synes), står der et subjektsprædikat i stedet for et direkte objekt : de to kan ikke stå i samme sætning. Husk, at en præpositionsgruppe hører med til det led, den beskriver.",
+    "Sådan gør du: Følg analysepilen. 1) Find verballeddet (det bøjede verbum). 2) Spørg hvem/hvad + verbet, og find subjektet. 3) Spørg hvem/hvad + verbet + subjektet, og find det direkte objekt. 4) Er der et indirekte objekt (til/for hvem?)? Det kræver altid et direkte objekt. 5) Resten er typisk adverbialer (tid, sted, måde, årsag). 6) Er verbet kopulativt (være, blive, hedde, synes), står der et subjektsprædikat i stedet for et direkte objekt – de to kan ikke stå i samme sætning. Husk, at en præpositionsgruppe hører med til det led, den beskriver.",
   verbaltid:
     "Sådan gør du: Find verballeddet, og bestem tiden: præsens (nutid: læser), præteritum (datid: læste), perfektum (førnutid: har læst), pluskvamperfektum (førdatid: havde læst) eller futurum (fremtid: vil læse). Omskriv derefter sætningen til de andre tider, og hold øje med, at det er HJÆLPEVERBET, der skifter i de sammensatte tider, ikke kun endelsen. Sig til sidst, hvad tiden gør i teksten: præsens skaber nærhed, præteritum fortæller på afstand.",
   hovedled:
@@ -137,7 +137,7 @@ const ADVICE = {
   genre:
     "Til eksamen: Sig genren i din første sætning, og læg straks to eller tre genretræk fra teksten ovenpå (byline, formål, opbygning, sprog). Genre uden belæg tæller kun halvt, og censor spørger altid videre: hvorfor ikke den nærliggende nabogenre? Har du et svar på det, er opgaven i hus.",
   kommunikation:
-    "Til eksamen: Tegn pentagrammet på dit notepapir, og sæt et kort citat ved hvert hjørne, så du ikke går i stå. Nævn formålet til sidst som konklusion, ikke som det første. Og hold afsender og citerede kilder adskilt : det er en af de fejl, censor hurtigst hører.",
+    "Til eksamen: Tegn pentagrammet på dit notepapir, og sæt et kort citat ved hvert hjørne, så du ikke går i stå. Nævn formålet til sidst som konklusion, ikke som det første. Og hold afsender og citerede kilder adskilt – det er en af de fejl, censor hurtigst hører.",
   saertraek:
     "Til eksamen: Vælg TRE træk, du kan dokumentere, frem for otte du kun kan nævne. Sig trækket, citer eksemplet, forklar virkningen. Her er der mange rigtige svar, så det er dokumentationen og fagsproget (konnotation, semantisk felt, paratakse, stilleje), der giver point.",
   morfologi:
@@ -147,7 +147,7 @@ const ADVICE = {
   verbaltid:
     "Til eksamen: Sig tiden med både det latinske navn og det danske (præteritum/datid), og lav omskrivningerne HØJT, mens du peger på hjælpeverbet. Censor lytter efter, om du kan forklare forskellen mellem perfektum og præteritum, ikke kun ramme den.",
   hovedled:
-    "Til eksamen: Lav ikke-testen højt: det viser metoden, og du kan ikke huske forkert. Slut altid med at sige, hvilket LED ledsætningen er i hovedsætningen : det er den del, de fleste glemmer, og den, der løfter svaret.",
+    "Til eksamen: Lav ikke-testen højt: det viser metoden, og du kan ikke huske forkert. Slut altid med at sige, hvilket LED ledsætningen er i hovedsætningen – det er den del, de fleste glemmer, og den, der løfter svaret.",
 } as const;
 
 const PENTAGRAM_FIELDS: ExamFieldT[] = [
@@ -173,13 +173,13 @@ const SAERTRAEK_FIELDS: ExamFieldT[] = [
 const SAT_INTRO: ExamSatsT["intro"] = {
   heading: "Sådan er eksamensprøven",
   lead:
-    "Prøven er bygget som den rigtige AP-eksamen på HHX: Du trækker en ukendt tekst med syv opgaver og har 40 minutter til forberedelsen. Til selve eksamen besvarer du de syv opgaver mundtligt for din lærer og en censor ; her i appen skriver og markerer du svarene, præcis som på notepapiret, du må tage med ind.",
+    "Prøven er bygget som den rigtige AP-eksamen på HHX: Du trækker en ukendt tekst med syv opgaver og har 40 minutter til forberedelsen. Til selve eksamen besvarer du de syv opgaver mundtligt for din lærer og en censor – her i appen skriver og markerer du svarene, præcis som på notepapiret, du må tage med ind.",
   steps: [
-    "Læs teksten grundigt først ; brug tuschfarverne til at markere genretræk, ordvalg og de sætninger, du vil bruge i din analyse.",
+    "Læs teksten grundigt først – brug tuschfarverne til at markere genretræk, ordvalg og de sætninger, du vil bruge i din analyse.",
     "Gå opgaverne igennem én ad gangen. Hver opgave har sin egen svarform: genren vælges på en liste, pentagrammet skrives i seks små felter, morfemerne deles med bindestreger, leddene får symboler, tiderne vælges og omskrives, og til sidst deles sætningen i hoved- og ledsætning.",
-    "Er du i tvivl om, hvad en opgave kræver? Tryk på '?'-knappen ved opgaven : der får du metoden trin for trin, aldrig facit.",
+    "Er du i tvivl om, hvad en opgave kræver? Tryk på '?'-knappen ved opgaven – der får du metoden trin for trin, aldrig facit.",
     "Det, der kan rettes entydigt (genre, morfemer, led, tider, omskrivninger, indleder og ledfunktion), retter appen, og det er dét, karakteren bygger på.",
-    "Pentagrammet, dine sproglige observationer og dine begrundelser rettes ikke automatisk : der er mange rigtige svar. De kommer med, når du kopierer besvarelsen over til en AI bagefter.",
+    "Pentagrammet, dine sproglige observationer og dine begrundelser rettes ikke automatisk – der er mange rigtige svar. De kommer med, når du kopierer besvarelsen over til en AI bagefter.",
     "Til sidst trykker du 'Indsend'. Går tiden fra dig, lyder klokken, og du bedes aflevere med det samme, ligesom i forberedelseslokalet.",
   ],
   examIn: [
@@ -192,7 +192,7 @@ const SAT_INTRO: ExamSatsT["intro"] = {
       body: "Opgave 3: ordklasser, semantiske felter, konkrete og abstrakte ord, konnotationer, stilleje og sætningskonstruktion (paratakse, hypotakse, retoriske spørgsmål).",
     },
     {
-      title: "Grammatikken : den tunge del",
+      title: "Grammatikken – den tunge del",
       body: "Opgave 4-7: morfologisk analyse, syntaktisk analyse med led-symbolerne, verballedets tid (og omskrivningen) samt hoved- og ledsætninger med ikke-reglen.",
     },
   ],
@@ -209,7 +209,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Da kassen blev en skærm",
-    byline: "Kronik i Handels Nyt (fiktiv avis) ; af erhvervsredaktør Emil Holm ; 12. marts 2026",
+    byline: "Kronik i Handels Nyt (fiktiv avis) – af erhvervsredaktør Emil Holm – 12. marts 2026",
     paragraphs: [
       "I morges fjernede supermarkedet ved Åboulevarden sit sidste kassebånd. I stedet kan kunderne nu selv scanne varerne med butikkens app, mens en algoritme holder øje med, at alt bliver betalt. Ledelsen kalder det 'tidens naturlige udvikling', mens flere stamkunder på de sociale medier taler om 'en butik uden mennesker'.",
       "'Vi sparer tid og kan bruge pengene på kunderne i stedet,' siger afdelingsleder Sara Westergaard, mens hun låser døren ind til det gamle kassekontor. 'De fleste kunder er glade for, at de slipper for køen.'",
@@ -240,7 +240,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
       },
       points: [
         "Placerer teksten som sagprosa (ikke-fiktion).",
-        "Bestemmer genren som opinionsartikel : en kronik eller et debatindlæg.",
+        "Bestemmer genren som opinionsartikel – en kronik eller et debatindlæg.",
         "Begrunder med afsenderen: navngiven erhvervsredaktør, der skriver subjektivt.",
         "Peger på argumentationen, modargumenterne og det retoriske spørgsmål til sidst.",
       ],
@@ -304,13 +304,13 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         ],
       },
       points: [
-        "Afsender: erhvervsredaktør Emil Holm i Handels Nyt : en fagligt bevidst journaliststemme, ikke butikkens.",
+        "Afsender: erhvervsredaktør Emil Holm i Handels Nyt – en fagligt bevidst journaliststemme, ikke butikkens.",
         "Emne: selvscanning i detailhandlen og prisen for hastigheden.",
         "Modtager: avisens læsere med interesse for handel, altså både erhvervsfolk og kunder.",
         "Situation: aktuel anledning (butikken fjernede kassebåndet i morges) + debatten om teknologi i butikkerne.",
         "Formål: at få læseren til at sætte spørgsmålstegn ved, hvad teknologien koster menneskeligt.",
       ],
-      modelAnswer: "Afsenderen er erhvervsredaktør Emil Holm, som skriver i erhvervsavisen Handels Nyt : han har fagligt overblik og en holdning, men ingen økonomisk interesse i butikken. Emnet er selvbetjening i supermarkedet og de menneskelige omkostninger. Modtagerne er avisens læsere: erhvervsfolk og forbrugere, hvilket man kan se på fagordene (omsætning, myldretid) og på, at teksten forudsætter interesse for detailhandel. Situationen er helt aktuel: kassebåndet forsvandt 'i morges', og stamkunderne diskuterer det på de sociale medier. Genren er en kronik, og sproget er letforståeligt, men holdningspræget. I midten af pentagrammet står formålet: at overbevise læseren om, at vi skal tænke over prisen for hastigheden.",
+      modelAnswer: "Afsenderen er erhvervsredaktør Emil Holm, som skriver i erhvervsavisen Handels Nyt – han har fagligt overblik og en holdning, men ingen økonomisk interesse i butikken. Emnet er selvbetjening i supermarkedet og de menneskelige omkostninger. Modtagerne er avisens læsere: erhvervsfolk og forbrugere, hvilket man kan se på fagordene (omsætning, myldretid) og på, at teksten forudsætter interesse for detailhandel. Situationen er helt aktuel: kassebåndet forsvandt 'i morges', og stamkunderne diskuterer det på de sociale medier. Genren er en kronik, og sproget er letforståeligt, men holdningspræget. I midten af pentagrammet står formålet: at overbevise læseren om, at vi skal tænke over prisen for hastigheden.",
       feedback: "Her er mange rigtige svar, men to fælder koster point hver gang. 1) Afdelingsleder Sara Westergaard er en CITERET kilde, ikke tekstens afsender. 2) Formålet skal formuleres som en hensigt ('afsenderen vil have læseren til at ...'), ikke som et emne. Bind altid hvert punkt til et kort citat, så bliver redegørelsen dokumenteret i stedet for gættet.",
       examTip: ADVICE.kommunikation,
     },
@@ -341,7 +341,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         "Forklarer virkningen: hvad trækket gør ved læseren, ikke kun hvad det heder.",
       ],
       modelAnswer: "Teksten blander to semantiske felter: butikkens økonomiske sprog (kassebånd, omsætning, myldretid, regning, kort) og et menneskeligt felt (ensomme, mennesker, samtaler, trygt). Kontrasten er hele pointen, og den samles i billedsproget 'en regning, som ingen kan betale med kort', hvor det konkrete ord 'regning' bruges abstrakt om en menneskelig omkostning. Ordvalget er styret af konnotationer: 'tidens naturlige udvikling' lyder positivt og uundgåeligt (ledelsens ord), mens 'en butik uden mennesker' er negativt ladet (kundernes ord). Sætningerne er overvejende parataktiske og korte i referat-delen, men slutningen bruger et retorisk spørgsmål ('Spørgsmålet er, hvad den bruger os til') som appellerer direkte til læseren. Stillejet er neutralt til let højt: skrevet sagligt, men med tydelig holdning.",
-      feedback: "Denne opgave er meget individuel : hvad der er værd at kommentere, skifter fra tekst til tekst, og der er mange rigtige svar. Derfor tæller metoden mere end mængden: nævn trækket, citer eksemplet, forklar virkningen. Tre dokumenterede træk er bedre end otte, du kun kan nævne. I netop denne tekst er de lettest at dokumentere i ordvalget (konnotationerne i 'tidens naturlige udvikling' over for 'en butik uden mennesker'), i billedsproget og i det retoriske spørgsmål til sidst.",
+      feedback: "Denne opgave er meget individuel – hvad der er værd at kommentere, skifter fra tekst til tekst, og der er mange rigtige svar. Derfor tæller metoden mere end mængden: nævn trækket, citer eksemplet, forklar virkningen. Tre dokumenterede træk er bedre end otte, du kun kan nævne. I netop denne tekst er de lettest at dokumentere i ordvalget (konnotationerne i 'tidens naturlige udvikling' over for 'en butik uden mennesker'), i billedsproget og i det retoriske spørgsmål til sidst.",
       examTip: ADVICE.saertraek,
     },
     {
@@ -411,7 +411,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         "Bruger de rigtige navne: rodmorfem, præfiks, suffiks, fleksiv.",
         "Forklarer hvad delene GØR: -elig og -ning skifter ordklasse, -en er bestemt form.",
       ],
-      modelAnswer: "'uundgåelig' = u- + undgå + -elig. u- er et præfiks, der nægter betydningen ; undgå er rodmorfemet og kan stå alene som verbum ; -elig er et suffiks, der gør verbet til et adjektiv. 'omsætningen' = omsæt + -ning + -en. omsæt er rodmorfemet (verbet omsætte), -ning er et suffiks, der laver verbet om til et substantiv, og -en er en fleksiv (bøjningsendelse for bestemt form ental). Læg mærke til rækkefølgen: afledningen kommer før bøjningen.",
+      modelAnswer: "'uundgåelig' = u- + undgå + -elig. u- er et præfiks, der nægter betydningen – undgå er rodmorfemet og kan stå alene som verbum – -elig er et suffiks, der gør verbet til et adjektiv. 'omsætningen' = omsæt + -ning + -en. omsæt er rodmorfemet (verbet omsætte), -ning er et suffiks, der laver verbet om til et substantiv, og -en er en fleksiv (bøjningsendelse for bestemt form ental). Læg mærke til rækkefølgen: afledningen kommer før bøjningen.",
       feedback: "Den klassiske fejl er at kalde alt, der sidder bagerst, for en 'endelse'. Skil de to slags: en AFLEDNING (suffiks) ændrer ordklasse eller betydning og hører til ordets opbygning (-ning, -elig, -hed, -lig), mens en BØJNING (fleksiv) kun viser tal, bestemthed eller tid (-en, -er, -ede). Og husk bindebogstavet i sammensatte ord: betaling-s-kort.",
       examTip: ADVICE.morfologi,
     },
@@ -427,7 +427,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         sentence: "Butikken sender kunderne en påmindelse om ugens tilbud hver fredag.",
         chunks: ["Butikken", "sender", "kunderne", "en påmindelse om ugens tilbud", "hver fredag"],
         correctMap: ["subjekt", "verbal", "dativ", "objekt", "adverbial"],
-        explain: "Fuldt rigtige led: Butikken = subjekt (hvem sender?), sender = verballed, kunderne = indirekte objekt (til hvem?), 'en påmindelse om ugens tilbud' = direkte objekt, 'hver fredag' = adverbial (tid). Den hyppigste fejl her: at splitte 'en påmindelse' og 'om ugens tilbud' op i to led ; 'om ugens tilbud' beskriver 'påmindelse' og hører derfor til i det samme led.",
+        explain: "Fuldt rigtige led: Butikken = subjekt (hvem sender?), sender = verballed, kunderne = indirekte objekt (til hvem?), 'en påmindelse om ugens tilbud' = direkte objekt, 'hver fredag' = adverbial (tid). Den hyppigste fejl her: at splitte 'en påmindelse' og 'om ugens tilbud' op i to led – 'om ugens tilbud' beskriver 'påmindelse' og hører derfor til i det samme led.",
       },
       points: [
         "Verballed: sender.",
@@ -437,7 +437,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         "Adverbial: hver fredag (tid).",
       ],
       modelAnswer: "Verballeddet er 'sender'. Subjektet er 'Butikken' (hvem sender?). Det direkte objekt er 'en påmindelse om ugens tilbud' (hvad sender den?), og præpositionsgruppen 'om ugens tilbud' hører med til objektet, fordi den beskriver påmindelsen. Det indirekte objekt er 'kunderne' (til hvem?), og det kan kun stå der, fordi der også er et direkte objekt. 'hver fredag' er et adverbial, der svarer på hvornår.",
-      feedback: "Den hyppigste fejl i netop denne sætning er at splitte 'en påmindelse' og 'om ugens tilbud' i to led. Testen er, om delen kan flyttes alene : det kan den ikke, for den beskriver påmindelsen. Den næsthyppigste fejl er at bytte de to objekter om: spørg 'hvad sender den?' (direkte objekt) og 'til hvem?' (indirekte objekt), i den rækkefølge.",
+      feedback: "Den hyppigste fejl i netop denne sætning er at splitte 'en påmindelse' og 'om ugens tilbud' i to led. Testen er, om delen kan flyttes alene – det kan den ikke, for den beskriver påmindelsen. Den næsthyppigste fejl er at bytte de to objekter om: spørg 'hvad sender den?' (direkte objekt) og 'til hvem?' (indirekte objekt), i den rækkefølge.",
       examTip: ADVICE.syntaks,
     },
     {
@@ -479,7 +479,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         "Siger hvad tiden gør i teksten: datiden fortæller om en begivenhed, der er sket.",
       ],
       modelAnswer: "Verballeddet 'fjernede' står i præteritum (datid). Omskrevet: præsens 'I morges fjerner supermarkedet ...' (nutid, giver nærhed), perfektum 'I morges har supermarkedet fjernet ...' (førnutid: handlingen er sket, men rækker ind i nuet), pluskvamperfektum 'I morges havde supermarkedet fjernet ...' (førdatid: sket før et andet tidspunkt i fortiden) og futurum 'I morgen vil supermarkedet fjerne ...'. I teksten skifter tiderne bevidst: referatet står i datid og perfektum, mens holdningsdelen står i præsens ('Udviklingen er måske uundgåelig'), fordi den gælder nu.",
-      feedback: "Det er ikke nok at ramme tiden : du skal kunne omskrive. Læg mærke til, at det i perfektum og pluskvamperfektum er HJÆLPEVERBET, der bøjes (har → havde), mens hovedverbet står i participium (fjernet). Og bemærk, at nogle verber tager 'er' i stedet for 'har': køtiden ER faldet.",
+      feedback: "Det er ikke nok at ramme tiden – du skal kunne omskrive. Læg mærke til, at det i perfektum og pluskvamperfektum er HJÆLPEVERBET, der bøjes (har → havde), mens hovedverbet står i participium (fjernet). Og bemærk, at nogle verber tager 'er' i stedet for 'har': køtiden ER faldet.",
       examTip: ADVICE.verbaltid,
     },
     {
@@ -499,7 +499,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         ],
         indleder: "hvis",
         funktion: "adverbial",
-        explain: "'Hvis vi fjerner de samtaler' er en ledsætning (ikke står mellem subjekt og verballed: 'hvis vi IKKE fjerner'), den indledes af konjunktionen 'hvis' og er adverbial (betingelse) i hovedsætningen 'får teknologien en regning'. Den sidste del er også en ledsætning : en relativsætning med 'som', der beskriver 'regning'.",
+        explain: "'Hvis vi fjerner de samtaler' er en ledsætning (ikke står mellem subjekt og verballed: 'hvis vi IKKE fjerner'), den indledes af konjunktionen 'hvis' og er adverbial (betingelse) i hovedsætningen 'får teknologien en regning'. Den sidste del er også en ledsætning – en relativsætning med 'som', der beskriver 'regning'.",
       },
       points: [
         "Finder en hovedsætning, der kan stå alene, fx 'Ledelsen kalder det tidens naturlige udvikling'.",
@@ -507,8 +507,8 @@ export const HHX_EXAM_SAT: ExamSatsT = {
         "Bruger ikke-reglen korrekt: efter verballeddet = hovedsætning, mellem subjekt og verballed = ledsætning.",
         "Siger hvilket led ledsætningen er (adverbial, objekt, subjekt, attribut).",
       ],
-      modelAnswer: "Hovedsætning: 'Ledelsen kalder det tidens naturlige udvikling'. Ikke-testen: 'Ledelsen kalder det IKKE ...' : 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'Hvis vi fjerner de samtaler' (5. afsnit). Ikke-testen: 'Hvis vi IKKE fjerner de samtaler' : 'ikke' står mellem subjekt ('vi') og verballed ('fjerner'), og sætningen kan ikke stå alene. Den indledes af den hypotaktiske konjunktion 'hvis' og fungerer som et adverbial (betingelse) i hovedsætningen 'får teknologien en regning ...'. En anden mulighed er 'at alt bliver betalt' (1. afsnit), som er en at-ledsætning i objektsposition efter 'holder øje med'.",
-      feedback: "Svarer du kun 'det er en ledsætning', mangler du den halve opgave: sig ALTID hvilket led ledsætningen er i hovedsætningen. Og lav testen højt : det er den, censor vil høre, fordi den viser metoden frem for hukommelsen.",
+      modelAnswer: "Hovedsætning: 'Ledelsen kalder det tidens naturlige udvikling'. Ikke-testen: 'Ledelsen kalder det IKKE ...' – 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'Hvis vi fjerner de samtaler' (5. afsnit). Ikke-testen: 'Hvis vi IKKE fjerner de samtaler' – 'ikke' står mellem subjekt ('vi') og verballed ('fjerner'), og sætningen kan ikke stå alene. Den indledes af den hypotaktiske konjunktion 'hvis' og fungerer som et adverbial (betingelse) i hovedsætningen 'får teknologien en regning ...'. En anden mulighed er 'at alt bliver betalt' (1. afsnit), som er en at-ledsætning i objektsposition efter 'holder øje med'.",
+      feedback: "Svarer du kun 'det er en ledsætning', mangler du den halve opgave: sig ALTID hvilket led ledsætningen er i hovedsætningen. Og lav testen højt – det er den, censor vil høre, fordi den viser metoden frem for hukommelsen.",
       examTip: ADVICE.hovedled,
     },
   ],
@@ -516,7 +516,7 @@ export const HHX_EXAM_SAT: ExamSatsT = {
 
 // ---------------------------------------------------------------------------
 // YDERLIGERE EKSAMENSSÆT (2-6). Alle tekster er DIGTEDE fra bunden af os :
-// fiktive medier, fiktive personer, fiktive tal. Ingen ophavsret ; ingen
+// fiktive medier, fiktive personer, fiktive tal. Ingen ophavsret – ingen
 // kopiering fra virkelige aviser. Formålet er, at man kan træne
 // Eksamensprøven igen og igen uden at få det samme sæt to gange i træk
 // (se pickNextExamSats). Genrerne dækker dem, man kan komme op i.
@@ -529,7 +529,7 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Nu er det mælk fra ærter, der hældes i kaffen",
-    byline: "Nyhedsreferat i Dags Avisen (fiktiv avis) ; af reporter Laila Brandt ; 8. april 2026",
+    byline: "Nyhedsreferat i Dags Avisen (fiktiv avis) – af reporter Laila Brandt – 8. april 2026",
     paragraphs: [
       "Cafékæden Kaffevinken lægger i morgen alle komælkskartoner fra hylderne i sine 14 caféer. Fremover hældes drikke af havre, havtorn og ærteprotein i kaffemaskinerne. Kæden forventer at spare 300.000 kroner om året på mælkekøbet.",
       "'Vi følger simpelthen, hvad vores unge gæster efterspørger,' siger kædechef Nadia Bloch til fagbladet Fødevarewatch. Ifølge hende falder klimaaftrykket pr. kop med 40 procent ved de nye drikke.",
@@ -563,8 +563,8 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         "Begrunder med den neutrale, upartiske tone og reporter-bylinen.",
         "Peger på opbygningen: vinkel, citater fra to parter, tal fra en officiel kilde.",
       ],
-      modelAnswer: "Teksten er sagprosa, og genren er en informerende artikel : et nyhedsreferat i dagsavisen Dags Avisen. Afsenderen er en reporter (Laila Brandt), og der er ingen 'jeg' eller holdning: teksten refererer en beslutning ('lægger i morgen alle komælkskartoner fra hylderne') og lader to modsatrettede parter komme til orde, kædechefen og Forbrugerforeningen. Tallene kommer fra Danmarks Statistik, altså en kilde uden for teksten, og slutningen er en praktisk oplysning om, hvor menuen gælder : ikke en pointe til læseren. Formålet er at oplyse neutralt.",
-      feedback: "Fælden er at blande 'teksten fremstiller kæden pænt' sammen med 'teksten er en reklame'. Et nyhedsreferat MÅ gerne referere en virksomheds egen forklaring : det afgørende er, at teksten selv ikke tager stilling, og at modparten også kommer til orde. Brug altid modsætningsprøven: kan du finde en sætning, hvor afsenderen selv mener noget? Kan du ikke det, er teksten informerende.",
+      modelAnswer: "Teksten er sagprosa, og genren er en informerende artikel – et nyhedsreferat i dagsavisen Dags Avisen. Afsenderen er en reporter (Laila Brandt), og der er ingen 'jeg' eller holdning: teksten refererer en beslutning ('lægger i morgen alle komælkskartoner fra hylderne') og lader to modsatrettede parter komme til orde, kædechefen og Forbrugerforeningen. Tallene kommer fra Danmarks Statistik, altså en kilde uden for teksten, og slutningen er en praktisk oplysning om, hvor menuen gælder – ikke en pointe til læseren. Formålet er at oplyse neutralt.",
+      feedback: "Fælden er at blande 'teksten fremstiller kæden pænt' sammen med 'teksten er en reklame'. Et nyhedsreferat MÅ gerne referere en virksomheds egen forklaring – det afgørende er, at teksten selv ikke tager stilling, og at modparten også kommer til orde. Brug altid modsætningsprøven: kan du finde en sætning, hvor afsenderen selv mener noget? Kan du ikke det, er teksten informerende.",
       examTip: ADVICE.genre,
     },
     {
@@ -623,13 +623,13 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         ],
       },
       points: [
-        "Afsender: reporter Laila Brandt for Dags Avisen : ikke de citerede kilder.",
+        "Afsender: reporter Laila Brandt for Dags Avisen – ikke de citerede kilder.",
         "Emne: en cafékædes skifte fra komælk til plantedrikke og årsagerne til det.",
         "Modtager: avisens brede læserkreds med interesse for forbrug og erhverv.",
         "Situation: skiftet sker i morgen, midt i en tid med klimadebat og stigende kaffepriser.",
         "Formål: at oplyse neutralt, også om forbeholdet fra Forbrugerforeningen.",
       ],
-      modelAnswer: "Afsenderen er reporter Laila Brandt, der skriver for Dags Avisen : kædechef Nadia Bloch og analytiker Tim Sørensen er citerede kilder, ikke afsendere. Emnet er Kaffevinkens skifte til plantebaserede drikke og de tre årsager: efterspørgsel, klima og økonomi. Modtagerne er avisens almene læsere, og sproget er derfor letforståeligt med forklarede tal (9 procent, 40 procent, 300.000 kroner). Situationen er aktuel og konkret: skiftet gælder fra i morgen i fem byer, samtidig med at mælkesalget falder og kaffepriserne stiger. Genren er et nyhedsreferat med neutralt stilleje. Formålet i midten af pentagrammet er at oplyse : og netop derfor får modparten plads.",
+      modelAnswer: "Afsenderen er reporter Laila Brandt, der skriver for Dags Avisen – kædechef Nadia Bloch og analytiker Tim Sørensen er citerede kilder, ikke afsendere. Emnet er Kaffevinkens skifte til plantebaserede drikke og de tre årsager: efterspørgsel, klima og økonomi. Modtagerne er avisens almene læsere, og sproget er derfor letforståeligt med forklarede tal (9 procent, 40 procent, 300.000 kroner). Situationen er aktuel og konkret: skiftet gælder fra i morgen i fem byer, samtidig med at mælkesalget falder og kaffepriserne stiger. Genren er et nyhedsreferat med neutralt stilleje. Formålet i midten af pentagrammet er at oplyse – og netop derfor får modparten plads.",
       feedback: "Der er mange rigtige måder at beskrive situationen på, men to ting skal være på plads: afsenderen skal være journalisten (ikke kilderne), og formålet skal formuleres som en hensigt. Læg også mærke til, at MEDIET afgrænser modtagerne: en dagsavis rammer bredere end fagbladet Fødevarewatch, som nævnes inde i teksten.",
       examTip: ADVICE.kommunikation,
     },
@@ -659,8 +659,8 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         "Peger på det neutrale stilleje og de mange tal (fakta-markører).",
         "Forklarer virkningen, fx at tallene skaber troværdighed.",
       ],
-      modelAnswer: "Teksten har to tydelige semantiske felter: et klimafelt (klimaaftryk, grønt, planter) og et økonomifelt (spare, priser, bundlinje, omsætning). De to felter mødes i sætningen om, at branchen 'jagter både klima og bundlinje', hvor billedsproget (jagten) gør en forretningsstrategi konkret. Ordvalget er mest neutralt, som genren kræver, men konnotationerne er alligevel i spil: 'grønt' er positivt ladet, og derfor er analytikerens sætning ('Et produkt er ikke grønt i sig selv, fordi det kommer fra planter') en direkte korrektion af ordets ladning. Sprogets vigtigste særtræk er tæthed af tal: 14 caféer, 300.000 kroner, 40 procent, 9 procent : de virker som dokumentation og gør teksten troværdig. Sætningerne er hovedsagelig parataktiske og korte, med enkelte hypotaktiske at-sætninger efter verber som 'påpeger' og 'viser'.",
-      feedback: "Opgaven er individuel, og der er mange rigtige svar : det er dokumentationen, der tæller. Et godt greb i en informerende tekst er at undersøge, hvor teksten SELV kunne have taget stilling, men ikke gør: 'anerkender ... men påpeger' viser fx, at afsenderen balancerer parterne. Nævn også, hvad ordklasserne siger: her er mange substantiver og talord, få adjektiver med holdning.",
+      modelAnswer: "Teksten har to tydelige semantiske felter: et klimafelt (klimaaftryk, grønt, planter) og et økonomifelt (spare, priser, bundlinje, omsætning). De to felter mødes i sætningen om, at branchen 'jagter både klima og bundlinje', hvor billedsproget (jagten) gør en forretningsstrategi konkret. Ordvalget er mest neutralt, som genren kræver, men konnotationerne er alligevel i spil: 'grønt' er positivt ladet, og derfor er analytikerens sætning ('Et produkt er ikke grønt i sig selv, fordi det kommer fra planter') en direkte korrektion af ordets ladning. Sprogets vigtigste særtræk er tæthed af tal: 14 caféer, 300.000 kroner, 40 procent, 9 procent – de virker som dokumentation og gør teksten troværdig. Sætningerne er hovedsagelig parataktiske og korte, med enkelte hypotaktiske at-sætninger efter verber som 'påpeger' og 'viser'.",
+      feedback: "Opgaven er individuel, og der er mange rigtige svar – det er dokumentationen, der tæller. Et godt greb i en informerende tekst er at undersøge, hvor teksten SELV kunne have taget stilling, men ikke gør: 'anerkender ... men påpeger' viser fx, at afsenderen balancerer parterne. Nævn også, hvad ordklasserne siger: her er mange substantiver og talord, få adjektiver med holdning.",
       examTip: ADVICE.saertraek,
     },
     {
@@ -733,7 +733,7 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         "Forklarer forskellen på afledning (-ning) og bøjning (-er).",
       ],
       modelAnswer: "'komælkskartoner' er et sammensat ord: ko + mælk + karton er tre rodmorfemer, -s- er et bindebogstav, og -er er en fleksiv (ubestemt flertal). 'tilsætningsstoffer' er både afledt og sammensat: til- er et præfiks, sæt er rodmorfemet, -ning er et suffiks, der gør verbet til et substantiv, -s- er et bindebogstav, stof er endnu et rodmorfem, og -er er fleksiven. Rækkefølgen er værd at lægge mærke til: afledning før sammensætning, bøjning til sidst.",
-      feedback: "Sammensatte ord er en gave til eksamen, hvis du har metoden: del først i rodmorfemer (de dele, der kan stå alene), og tag derefter for- og endelser. Den typiske fejl er at kalde bindebogstavet -s- for en bøjningsendelse eller en genitiv : det er hverken, det binder kun ordene sammen (jf. stol-e-ben).",
+      feedback: "Sammensatte ord er en gave til eksamen, hvis du har metoden: del først i rodmorfemer (de dele, der kan stå alene), og tag derefter for- og endelser. Den typiske fejl er at kalde bindebogstavet -s- for en bøjningsendelse eller en genitiv – det er hverken, det binder kun ordene sammen (jf. stol-e-ben).",
       examTip: ADVICE.morfologi,
     },
     {
@@ -752,11 +752,11 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
       },
       points: [
         "Verballed: hældes (passiv).",
-        "Subjekt: drikke af havre, havtorn og ærteprotein : det står EFTER verbet.",
+        "Subjekt: drikke af havre, havtorn og ærteprotein – det står EFTER verbet.",
         "Adverbial: Fremover (tid) og i kaffemaskinerne (sted).",
         "Nævner omvendt ledstilling, fordi adverbialet står forrest.",
       ],
-      modelAnswer: "Verballeddet er 'hældes' (præsens passiv). Subjektet er 'drikke af havre, havtorn og ærteprotein', for det er det, der hældes : og præpositionsgruppen 'af havre, havtorn og ærteprotein' hører med til subjektet, fordi den beskriver drikkene. 'Fremover' er et adverbial (tid), som står på forpladsen, og derfor kommer subjektet EFTER verballeddet (omvendt ledstilling). 'i kaffemaskinerne' er et adverbial (sted). Der er intet objekt: i passiv er det, der ellers ville være objekt, blevet subjekt.",
+      modelAnswer: "Verballeddet er 'hældes' (præsens passiv). Subjektet er 'drikke af havre, havtorn og ærteprotein', for det er det, der hældes – og præpositionsgruppen 'af havre, havtorn og ærteprotein' hører med til subjektet, fordi den beskriver drikkene. 'Fremover' er et adverbial (tid), som står på forpladsen, og derfor kommer subjektet EFTER verballeddet (omvendt ledstilling). 'i kaffemaskinerne' er et adverbial (sted). Der er intet objekt: i passiv er det, der ellers ville være objekt, blevet subjekt.",
       feedback: "Omvendt ledstilling er en klassisk fælde: mange leder efter subjektet før verbet og ender med at kalde 'Fremover' for subjekt. Spørg altid 'hvem/hvad + verbet?' uanset ordstilling. Læg også mærke til passiven (-s på verbet): den skjuler, HVEM der handler, og det er værd at nævne både i syntaksopgaven og i opgaven om sproglige særtræk.",
       examTip: ADVICE.syntaks,
     },
@@ -788,7 +788,7 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
             rewriteTo: "pluskvamperfektum",
             rewriteAnswer: "Kæden havde forventet at spare 300.000 kroner om året på mælkekøbet.",
             rewriteKeys: ["havde", "forventet"],
-            explain: "'forventer' er præsens (nutid). Pluskvamperfektum dannes med hjælpeverbet i DATID: 'havde forventet'. Infinitiven 'at spare' ændrer sig ikke : det er kun verballeddet, der bøjes.",
+            explain: "'forventer' er præsens (nutid). Pluskvamperfektum dannes med hjælpeverbet i DATID: 'havde forventet'. Infinitiven 'at spare' ændrer sig ikke – det er kun verballeddet, der bøjes.",
           },
         ],
       },
@@ -798,7 +798,7 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         "Forklarer, at perfektum er hjælpeverbum i præsens + participium.",
         "Siger hvad tiden gør: forbindelsen mellem fortid og nu (udviklingen gælder stadig).",
       ],
-      modelAnswer: "'har købt' står i perfektum (førnutid): hjælpeverbet 'har' i præsens plus participiet 'købt'. Omskrevet: præsens 'danskerne køber 9 procent mindre komælk', præteritum 'danskerne købte 9 procent mindre komælk', pluskvamperfektum 'danskerne havde købt 9 procent mindre komælk' og futurum 'danskerne vil købe 9 procent mindre komælk'. Perfektum er valgt, fordi tallet dækker en periode fra 2021 og frem til nu : udviklingen er ikke slut. Det er også derfor, teksten kan bruge tallet som argument for, at skiftet sker 'i en tid', hvor markedet flytter sig.",
+      modelAnswer: "'har købt' står i perfektum (førnutid): hjælpeverbet 'har' i præsens plus participiet 'købt'. Omskrevet: præsens 'danskerne køber 9 procent mindre komælk', præteritum 'danskerne købte 9 procent mindre komælk', pluskvamperfektum 'danskerne havde købt 9 procent mindre komælk' og futurum 'danskerne vil købe 9 procent mindre komælk'. Perfektum er valgt, fordi tallet dækker en periode fra 2021 og frem til nu – udviklingen er ikke slut. Det er også derfor, teksten kan bruge tallet som argument for, at skiftet sker 'i en tid', hvor markedet flytter sig.",
       feedback: "Til eksamen skal du både ramme tiden og kunne forklare valget. Perfektum og præteritum forveksles tit: præteritum lukker handlingen inde i fortiden ('købte i 2021'), mens perfektum trækker den frem til nu ('har købt siden 2021'). Netop tidsadverbialet 'siden' er et fingerpeg om perfektum.",
       examTip: ADVICE.verbaltid,
     },
@@ -819,7 +819,7 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         ],
         indleder: "at",
         funktion: "objekt",
-        explain: "De to første dele er sideordnede HOVEDsætninger (paratakse med 'men'; subjektet er underforstået i den anden). Den sidste er en ledsætning indledt af 'at', og den er direkte objekt for 'påpeger' : hvad påpeger foreningen?",
+        explain: "De to første dele er sideordnede HOVEDsætninger (paratakse med 'men'; subjektet er underforstået i den anden). Den sidste er en ledsætning indledt af 'at', og den er direkte objekt for 'påpeger' – hvad påpeger foreningen?",
       },
       points: [
         "Finder en hovedsætning, fx 'Forbrugerforeningen anerkender kædens forsøg'.",
@@ -827,7 +827,7 @@ const SAT_2_GROENT_SKIFTE: ExamSatsT = {
         "Bruger ikke-reglen korrekt på begge.",
         "Siger, at at-ledsætningen er direkte objekt for 'påpeger'.",
       ],
-      modelAnswer: "Hovedsætning: 'Forbrugerforeningen anerkender kædens forsøg'. Ikke-testen: 'Forbrugerforeningen anerkender IKKE kædens forsøg' : 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'at mange bælgfrugtedrikke indeholder tilsætningsstoffer'. Ikke-testen: 'at mange bælgfrugtedrikke IKKE indeholder tilsætningsstoffer' : 'ikke' står mellem subjekt og verballed. Ledsætningen indledes af konjunktionen 'at' og er direkte objekt for verbet 'påpeger' (hvad påpeger foreningen?). En anden mulighed er 'at danskerne har købt 9 procent mindre komælk siden 2021', som er objekt for 'viser'.",
+      modelAnswer: "Hovedsætning: 'Forbrugerforeningen anerkender kædens forsøg'. Ikke-testen: 'Forbrugerforeningen anerkender IKKE kædens forsøg' – 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'at mange bælgfrugtedrikke indeholder tilsætningsstoffer'. Ikke-testen: 'at mange bælgfrugtedrikke IKKE indeholder tilsætningsstoffer' – 'ikke' står mellem subjekt og verballed. Ledsætningen indledes af konjunktionen 'at' og er direkte objekt for verbet 'påpeger' (hvad påpeger foreningen?). En anden mulighed er 'at danskerne har købt 9 procent mindre komælk siden 2021', som er objekt for 'viser'.",
       feedback: "Husk, at 'men' og 'og' SIDEORDNER hovedsætninger (paratakse), mens 'at', 'fordi', 'hvis', 'når' og 'da' UNDERORDNER (hypotakse). Det er den forskel, opgaven i virkeligheden tester. Og slut altid med ledfunktionen: uden den er svaret halvt.",
       examTip: ADVICE.hovedled,
     },
@@ -842,7 +842,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Sådan kommer du godt fra start med pension, også som helt ny i job",
-    byline: "Annonceforløb i Handels Nyt (fiktivt medie) ; bragt i samarbejde med PensionPartner ; marts 2026",
+    byline: "Annonceforløb i Handels Nyt (fiktivt medie) – bragt i samarbejde med PensionPartner – marts 2026",
     paragraphs: [
       "At få sit første rigtige job handler om løn, kolleger og faglighed. Men der er ét stykke papir, mange unge først griber ti år for sent: pensionsordningen.",
       "De tre gode vaner er at sætte et lille beløb til side hver måned. Lige så vigtigt er det at samle sine ordninger ét sted og opdatere sine data ved jobsift.",
@@ -871,12 +871,12 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
       },
       points: [
         "Placerer teksten som sagprosa med et salgsformål.",
-        "Bestemmer genren som reklame : et annonceforløb (advertorial), der er bygget som en guide.",
+        "Bestemmer genren som reklame – et annonceforløb (advertorial), der er bygget som en guide.",
         "Begrunder med bylinen: bragt i samarbejde med PensionPartner.",
         "Peger på salgstrækkene: du-tiltale, gode råd, produktnavn og en opfordring til at booke.",
       ],
-      modelAnswer: "Teksten er sagprosa, men genren er en reklame : nærmere bestemt et annonceforløb (en advertorial), der er skrevet, så det LIGNER en hjælpsom guide. Bylinen afslører det: 'Annonceforløb ... bragt i samarbejde med PensionPartner'. Genretrækkene er du-tiltale ('du kan booke'), gode råd i punktform, et navngivent produkt, et citat fra virksomhedens egen produktdirektør og til sidst en direkte opfordring med et gratis tilbud. Det er en hybrid: informationsformen er lånt fra den informerende artikel, men formålet er salg og tilslutning.",
-      feedback: "Netop hybriden er pointen i denne opgave, og den er værd at sige højt: teksten bruger den informerende artikels form (overskrift, gode råd, citat), men afsenderens formål er kommercielt. Kalder du den bare 'en artikel', har du overset det vigtigste. Den skjulte hensigt er et af reklamens kendetegn : reklamen ligner ofte underholdning eller fakta.",
+      modelAnswer: "Teksten er sagprosa, men genren er en reklame – nærmere bestemt et annonceforløb (en advertorial), der er skrevet, så det LIGNER en hjælpsom guide. Bylinen afslører det: 'Annonceforløb ... bragt i samarbejde med PensionPartner'. Genretrækkene er du-tiltale ('du kan booke'), gode råd i punktform, et navngivent produkt, et citat fra virksomhedens egen produktdirektør og til sidst en direkte opfordring med et gratis tilbud. Det er en hybrid: informationsformen er lånt fra den informerende artikel, men formålet er salg og tilslutning.",
+      feedback: "Netop hybriden er pointen i denne opgave, og den er værd at sige højt: teksten bruger den informerende artikels form (overskrift, gode råd, citat), men afsenderens formål er kommercielt. Kalder du den bare 'en artikel', har du overset det vigtigste. Den skjulte hensigt er et af reklamens kendetegn – reklamen ligner ofte underholdning eller fakta.",
       examTip: ADVICE.genre,
     },
     {
@@ -937,11 +937,11 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
       points: [
         "Afsender: PensionPartner (virksomheden), ikke mediet eller journalisten.",
         "Emne: pension for nyansatte og tre gode vaner.",
-        "Modtager: unge i deres første job : du-tiltale og enkelt sprog viser det.",
+        "Modtager: unge i deres første job – du-tiltale og enkelt sprog viser det.",
         "Situation: annonceforløb i et erhvervsmedie, hvor læseren er i job-humør.",
         "Formål: at sælge (få læseren til at booke en samtale og samle sin ordning hos PensionPartner).",
       ],
-      modelAnswer: "Den reelle afsender er PensionPartner, for teksten er bragt i samarbejde med virksomheden, og virksomhedens egen produktdirektør er den eneste kilde. Emnet er pension for helt nye på arbejdsmarkedet. Modtagerne er unge i deres første job : det kan man se på du-tiltalen, det enkle sprog og på at grundbegreber forklares. Situationen er et erhvervsmedie, hvor læseren i forvejen tænker på løn og karriere, og hvor en annonce derfor rammer godt. Genren er en advertorial med rådgivende, venlig tone. Formålet i midten af pentagrammet er salg og tilslutning: teksten skal få dig til at booke den gratis formuecheck og samle dine ordninger hos netop dem.",
+      modelAnswer: "Den reelle afsender er PensionPartner, for teksten er bragt i samarbejde med virksomheden, og virksomhedens egen produktdirektør er den eneste kilde. Emnet er pension for helt nye på arbejdsmarkedet. Modtagerne er unge i deres første job – det kan man se på du-tiltalen, det enkle sprog og på at grundbegreber forklares. Situationen er et erhvervsmedie, hvor læseren i forvejen tænker på løn og karriere, og hvor en annonce derfor rammer godt. Genren er en advertorial med rådgivende, venlig tone. Formålet i midten af pentagrammet er salg og tilslutning: teksten skal få dig til at booke den gratis formuecheck og samle dine ordninger hos netop dem.",
       feedback: "Den vigtigste skelnen her er mellem MEDIE og AFSENDER: Handels Nyt bringer teksten, men PensionPartner er afsenderen. Bemærk også, at 'gratis' og 'personlig oversigt' er argumenter i et salgsforløb, ikke neutrale oplysninger. Der er mange rigtige måder at beskrive modtageren på, men den skal kunne dokumenteres i sproget.",
       examTip: ADVICE.kommunikation,
     },
@@ -971,8 +971,8 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
         "Bruger fagbegreberne: konnotation, semantisk felt, imperativ/opfordring, stilleje.",
         "Forklarer virkningen: tryghed, overskuelighed og hastværk (lige nu).",
       ],
-      modelAnswer: "Det mest iøjnefaldende træk er pronominerne: 'du', 'dine', 'sine' og 'vi' gør teksten personlig og placerer læseren midt i den. Dernæst ordvalgets konnotationer: 'gode vaner', 'overskueligt', 'gratis' og 'personlig' er alle positivt ladede, mens den negative ladning er lagt på problemet ('ti år for sent'). Det semantiske felt er økonomi og orden (ordninger, beløb, formuecheck, oversigt), og stillejet er neutralt til let uformelt : korte sætninger, ingen fagtermer uden forklaring. Endelig er der tidspresset i adverbialet 'Lige nu', som skaber en mild hastværksfølelse, og tallet 'tyve minutter', der gør handlingen overkommelig. Sætningerne er hovedsagelig parataktiske og korte, hvilket gør teksten let at skimme.",
-      feedback: "Her er mange rigtige svar, men i en reklame bør du altid undersøge to ting: pronominerne (hvem taler til hvem?) og ordenes ladning. Læg også mærke til metaforen i 'ét stykke papir, mange unge først griber' : pensionen bliver noget håndgribeligt, man kan gribe eller miste. Tag ét citat med for hvert træk, og sig hvad det GØR.",
+      modelAnswer: "Det mest iøjnefaldende træk er pronominerne: 'du', 'dine', 'sine' og 'vi' gør teksten personlig og placerer læseren midt i den. Dernæst ordvalgets konnotationer: 'gode vaner', 'overskueligt', 'gratis' og 'personlig' er alle positivt ladede, mens den negative ladning er lagt på problemet ('ti år for sent'). Det semantiske felt er økonomi og orden (ordninger, beløb, formuecheck, oversigt), og stillejet er neutralt til let uformelt – korte sætninger, ingen fagtermer uden forklaring. Endelig er der tidspresset i adverbialet 'Lige nu', som skaber en mild hastværksfølelse, og tallet 'tyve minutter', der gør handlingen overkommelig. Sætningerne er hovedsagelig parataktiske og korte, hvilket gør teksten let at skimme.",
+      feedback: "Her er mange rigtige svar, men i en reklame bør du altid undersøge to ting: pronominerne (hvem taler til hvem?) og ordenes ladning. Læg også mærke til metaforen i 'ét stykke papir, mange unge først griber' – pensionen bliver noget håndgribeligt, man kan gribe eller miste. Tag ét citat med for hvert træk, og sig hvad det GØR.",
       examTip: ADVICE.saertraek,
     },
     {
@@ -1043,7 +1043,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
         "Forklarer, at -lig og -hed ændrer ordklasse, mens -en kun er bøjning.",
       ],
       modelAnswer: "'pensionsordningen' = pension + s + ordning + -en: to rodmorfemer, et bindebogstav og en fleksiv (bestemt ental). 'faglighed' = fag + -lig + -hed: rodmorfemet fag er et substantiv, -lig gør det til adjektivet faglig, og -hed gør adjektivet til et nyt substantiv. Ordet har altså to afledninger og ingen bøjning. Forskellen er vigtig: afledninger (suffikser) laver nye ord, bøjninger (fleksiver) bøjer det ord, du har.",
-      feedback: "Den typiske fejl er at kalde -s- i sammensatte ord for en genitiv (ejeform). Det er det ikke: det er et bindebogstav, præcis som -e- i stol-e-ben. Den anden typiske fejl er at stoppe ved én afledning : ord som faglighed, ensomhed og tryghed har to lag, og det er netop lagene, der viser, at du kan metoden.",
+      feedback: "Den typiske fejl er at kalde -s- i sammensatte ord for en genitiv (ejeform). Det er det ikke: det er et bindebogstav, præcis som -e- i stol-e-ben. Den anden typiske fejl er at stoppe ved én afledning – ord som faglighed, ensomhed og tryghed har to lag, og det er netop lagene, der viser, at du kan metoden.",
       examTip: ADVICE.morfologi,
     },
     {
@@ -1058,7 +1058,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
         sentence: "De tre gode vaner er at sætte et lille beløb til side hver måned.",
         chunks: ["De tre gode vaner", "er", "at sætte et lille beløb til side hver måned"],
         correctMap: ["subjekt", "verbal", "subjpred"],
-        explain: "Rigtigt: 'De tre gode vaner' = subjekt, 'er' = verballed (kopulumverbet), og 'at sætte et lille beløb til side hver måned' = subjektsprædikat (det fortæller, hvad subjektet ER). Leddet efter 'er' er altså IKKE et objekt : 'være'-sætninger har prædikat, ikke objekt.",
+        explain: "Rigtigt: 'De tre gode vaner' = subjekt, 'er' = verballed (kopulumverbet), og 'at sætte et lille beløb til side hver måned' = subjektsprædikat (det fortæller, hvad subjektet ER). Leddet efter 'er' er altså IKKE et objekt – 'være'-sætninger har prædikat, ikke objekt.",
       },
       points: [
         "Verballed: er (kopulaverbum).",
@@ -1067,7 +1067,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
         "Nævner reglen: kopulaverbum giver subjektsprædikat, ikke direkte objekt.",
       ],
       modelAnswer: "Verballeddet er 'er', som er et kopulaverbum (være, blive, hedde, synes). Subjektet er 'De tre gode vaner'. Leddet efter verbet, 'at sætte et lille beløb til side hver måned', er et subjektsprædikat: det siger, hvad subjektet ER, og der er lighedstegn mellem de to led. Prøven er, at man kan bytte om: 'At sætte et lille beløb til side hver måned er de tre gode vaner.' Fordi verbet er kopulativt, kan der ikke være et direkte objekt i sætningen.",
-      feedback: "Reglen, der afgør opgaven: subjektsprædikat og direkte objekt kan ikke optræde i samme sætning. Spørg derfor altid først, om verbet er kopulativt (er, bliver, hedder, synes, virker) eller et handlingsverbum. Bemærk også, at et helt led kan bestå af en infinitivkonstruktion med 'at' : det gør leddet langt, men det er stadig ét led.",
+      feedback: "Reglen, der afgør opgaven: subjektsprædikat og direkte objekt kan ikke optræde i samme sætning. Spørg derfor altid først, om verbet er kopulativt (er, bliver, hedder, synes, virker) eller et handlingsverbum. Bemærk også, at et helt led kan bestå af en infinitivkonstruktion med 'at' – det gør leddet langt, men det er stadig ét led.",
       examTip: ADVICE.syntaks,
     },
     {
@@ -1088,7 +1088,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
             rewriteTo: "praeteritum",
             rewriteAnswer: "Hos PensionPartner samlede medlemmerne sine ordninger med tre klik i appen.",
             rewriteKeys: ["samlede"],
-            explain: "'samler' er præsens (nutid) : reklamer bruger nutid, fordi tilbuddet skal gælde HER OG NU. I præteritum: 'samlede'.",
+            explain: "'samler' er præsens (nutid) – reklamer bruger nutid, fordi tilbuddet skal gælde HER OG NU. I præteritum: 'samlede'.",
           },
           {
             id: "t2",
@@ -1098,7 +1098,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
             rewriteTo: "futurum",
             rewriteAnswer: "Det vil tage tyve minutter.",
             rewriteKeys: ["vil", "tage"],
-            explain: "'tager' er præsens. Dansk har ingen egen fremtidsbøjning: futurum dannes med 'vil' eller 'skal' + infinitiv : 'vil tage'.",
+            explain: "'tager' er præsens. Dansk har ingen egen fremtidsbøjning: futurum dannes med 'vil' eller 'skal' + infinitiv – 'vil tage'.",
           },
         ],
       },
@@ -1129,7 +1129,7 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
         ],
         indleder: "hvad",
         funktion: "objekt",
-        explain: "'Vi gør det overskueligt at se' er hovedsætningen (ikke efter verballeddet: 'Vi gør det IKKE ...'). De to hv-ledsætninger er sideordnede og fungerer som objekt for infinitiven 'at se' : hvad skal man se?",
+        explain: "'Vi gør det overskueligt at se' er hovedsætningen (ikke efter verballeddet: 'Vi gør det IKKE ...'). De to hv-ledsætninger er sideordnede og fungerer som objekt for infinitiven 'at se' – hvad skal man se?",
       },
       points: [
         "Finder en hovedsætning, fx 'Lige nu kan du booke en gratis formuecheck-samtale'.",
@@ -1137,8 +1137,8 @@ const SAT_3_ADVERTORIAL: ExamSatsT = {
         "Bruger ikke-reglen korrekt på begge.",
         "Siger, at hv-ledsætningen er objekt for 'at se'.",
       ],
-      modelAnswer: "Hovedsætning: 'Lige nu kan du booke en gratis formuecheck-samtale hos PensionPartner på hjemmesiden.' Ikke-testen: 'Lige nu kan du IKKE booke ...' : 'ikke' står efter det bøjede verbum, og sætningen kan stå alene. Ledsætning: 'hvad du har' (3. afsnit). Ikke-testen: 'hvad du IKKE har' : 'ikke' står mellem subjekt og verballed. Den indledes af hv-ordet 'hvad' og er objekt for infinitiven 'at se'. Bemærk, at der står to sideordnede ledsætninger efter hinanden: 'hvad du har, og hvad du mangler'.",
-      feedback: "To ting løfter svaret: brug ikke-testen HØJT, og slut med ledfunktionen. Og læg mærke til, at ledsætninger kan være sideordnede indbyrdes ('hvad du har, OG hvad du mangler') : de er stadig ledsætninger, selvom de bindes sammen af 'og'.",
+      modelAnswer: "Hovedsætning: 'Lige nu kan du booke en gratis formuecheck-samtale hos PensionPartner på hjemmesiden.' Ikke-testen: 'Lige nu kan du IKKE booke ...' – 'ikke' står efter det bøjede verbum, og sætningen kan stå alene. Ledsætning: 'hvad du har' (3. afsnit). Ikke-testen: 'hvad du IKKE har' – 'ikke' står mellem subjekt og verballed. Den indledes af hv-ordet 'hvad' og er objekt for infinitiven 'at se'. Bemærk, at der står to sideordnede ledsætninger efter hinanden: 'hvad du har, og hvad du mangler'.",
+      feedback: "To ting løfter svaret: brug ikke-testen HØJT, og slut med ledfunktionen. Og læg mærke til, at ledsætninger kan være sideordnede indbyrdes ('hvad du har, OG hvad du mangler') – de er stadig ledsætninger, selvom de bindes sammen af 'og'.",
       examTip: ADVICE.hovedled,
     },
   ],
@@ -1152,12 +1152,12 @@ const SAT_4_LESERBREV: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Min mor købte også slik i den gamle kantine",
-    byline: "Læserbrev i Aarhus Stifts Avis (fiktiv avis) ; af Mette Dahl, forælder i Risskov ; 3. maj 2026",
+    byline: "Læserbrev i Aarhus Stifts Avis (fiktiv avis) – af Mette Dahl, forælder i Risskov – 3. maj 2026",
     paragraphs: [
       "I denne uge vedtog skolebestyrelsen at forbyde slik og sodavand i skolekiosken. Jeg forstår godt tanken om sundere mad, men jeg forstår ikke, at man glemmer, hvad kiosken også er: et sted, hvor børn og voksne taler sammen.",
       "Da jeg gik i skole, købte min mor også slik i kantinen. Hendes venner taler den dag i dag om frikatterne i frikvarteret. Det er netop de små ritualer, der gør en skoledag til mere end timer foran en tavle.",
       "Sundhedsstyrelsen har ret i, at for mange børn drikker sodavand. Løsningen er dog ikke et totalforbud, men et udvalg: Bed eleverne selv om at sammensætte den nye menu, og lad kiosken sælge både boller og knækbrød.",
-      "Jeg opfordrer skolebestyrelsen til at genoptage sagen på næste møde. Et forbud er nemt at vedtage ; tillid hos eleverne er svær at genoprette.",
+      "Jeg opfordrer skolebestyrelsen til at genoptage sagen på næste møde. Et forbud er nemt at vedtage – tillid hos eleverne er svær at genoprette.",
     ]
   },
   tasks: [
@@ -1186,7 +1186,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
         "Peger på jeg-formen, holdningen, det personlige eksempel og opfordringen til sidst.",
       ],
       modelAnswer: "Teksten er sagprosa og hører til opinionsgenrerne: det er et læserbrev i Aarhus Stifts Avis. Genretrækkene er tydelige: afsenderen er en privatperson (Mette Dahl, forælder i Risskov, ikke journalist), hun skriver i jeg-form ('Jeg forstår godt tanken'), hun bruger et personligt eksempel som argument (moderens slik i kantinen), hun anerkender modpartens ret ('Sundhedsstyrelsen har ret i ...') og hun slutter med en direkte opfordring til skolebestyrelsen. Formålet er at overbevise og påvirke en konkret beslutning.",
-      feedback: "Læserbrev og kronik forveksles let, og det er helt fair at nævne begge : forskellen ligger i afsenderen og i længden. Et læserbrev er kort og skrevet af en almindelig læser om en aktuel, ofte lokal sag; en kronik er længere og typisk skrevet af en fagperson. Her peger 'forælder i Risskov' og den lokale sag på læserbrevet. Husk at pege på jeg-formen og opfordringen som belæg.",
+      feedback: "Læserbrev og kronik forveksles let, og det er helt fair at nævne begge – forskellen ligger i afsenderen og i længden. Et læserbrev er kort og skrevet af en almindelig læser om en aktuel, ofte lokal sag; en kronik er længere og typisk skrevet af en fagperson. Her peger 'forælder i Risskov' og den lokale sag på læserbrevet. Husk at pege på jeg-formen og opfordringen som belæg.",
       examTip: ADVICE.genre,
     },
     {
@@ -1245,14 +1245,14 @@ const SAT_4_LESERBREV: ExamSatsT = {
         ],
       },
       points: [
-        "Afsender: Mette Dahl, forælder : en privat, men involveret afsender (etos som mor).",
+        "Afsender: Mette Dahl, forælder – en privat, men involveret afsender (etos som mor).",
         "Emne: forbuddet mod slik og sodavand i skolekiosken.",
         "Modtager: skolebestyrelsen som primær modtager, avisens lokale læsere som medlyttere.",
         "Situation: beslutningen blev vedtaget i denne uge, og næste møde er anledningen.",
         "Formål: at få bestyrelsen til at genoptage sagen og inddrage eleverne.",
       ],
       modelAnswer: "Afsenderen er Mette Dahl, forælder i Risskov. Hun har ingen faglig autoritet, men en stærk etos som mor og tidligere elev, og den bruger hun bevidst. Emnet er forbuddet mod slik og sodavand i skolekiosken. Modtagerne er dobbelte: skolebestyrelsen tiltales direkte ('Jeg opfordrer skolebestyrelsen'), men teksten står i avisen, så de lokale læsere er medlyttere, der kan skabe opbakning. Situationen er helt aktuel: beslutningen blev vedtaget i denne uge, og der er et møde på vej, hvilket gør indlægget rettidigt. Genren er et læserbrev med personlig, men saglig tone. Formålet er at få sagen genoptaget og en anden løsning i stedet for et totalforbud.",
-      feedback: "I opinionstekster er det næsten altid værd at skelne mellem den TILTALTE modtager (bestyrelsen) og de reelle læsere (avisens publikum): at skrive til en beslutningstager gennem en avis er i sig selv et retorisk valg, fordi det skaber vidner. Der er mange rigtige svar i denne opgave, men dokumentér med citater : særligt hvor afsenderen bygger sin etos op.",
+      feedback: "I opinionstekster er det næsten altid værd at skelne mellem den TILTALTE modtager (bestyrelsen) og de reelle læsere (avisens publikum): at skrive til en beslutningstager gennem en avis er i sig selv et retorisk valg, fordi det skaber vidner. Der er mange rigtige svar i denne opgave, men dokumentér med citater – særligt hvor afsenderen bygger sin etos op.",
       examTip: ADVICE.kommunikation,
     },
     {
@@ -1281,8 +1281,8 @@ const SAT_4_LESERBREV: ExamSatsT = {
         "Bruger fagbegreberne: konnotation, semantisk felt, konkret/abstrakt, antitese/modstilling.",
         "Forklarer virkningen: nærhed, troværdighed og den skarpe slutning.",
       ],
-      modelAnswer: "Det bærende træk er de personlige pronominer: 'jeg', 'min mor', 'hendes venner' skaber nærhed og bygger afsenderens etos. Dernæst kontrasten mellem to semantiske felter: et sundhedsfelt (sundere mad, sodavand, Sundhedsstyrelsen) og et fællesskabsfelt (taler sammen, ritualer, tillid). Ordene i fællesskabsfeltet er abstrakte og positivt ladede, mens 'totalforbud' er et negativt ladet ord, der er valgt frem for det neutrale 'forbud'. Slutningen bruger en modstilling (antitese) med parallel opbygning: 'Et forbud er nemt at vedtage ; tillid hos eleverne er svær at genoprette' : to sætninger med samme form, men modsat indhold, hvilket gør pointen let at huske. Sætningerne er en blanding af paratakse og hypotakse, og de hypotaktiske 'men jeg forstår ikke, at ...'-konstruktioner er dem, der bærer argumentationen.",
-      feedback: "Denne opgave er individuel : det, der er værd at kommentere, afhænger helt af teksten, og der findes mange rigtige svar. Et sikkert greb i en opinionstekst er at kigge på ordenes ladning (forbud vs. totalforbud) og på slutningens opbygning, for dér lægger afsendere næsten altid deres skarpeste virkemiddel.",
+      modelAnswer: "Det bærende træk er de personlige pronominer: 'jeg', 'min mor', 'hendes venner' skaber nærhed og bygger afsenderens etos. Dernæst kontrasten mellem to semantiske felter: et sundhedsfelt (sundere mad, sodavand, Sundhedsstyrelsen) og et fællesskabsfelt (taler sammen, ritualer, tillid). Ordene i fællesskabsfeltet er abstrakte og positivt ladede, mens 'totalforbud' er et negativt ladet ord, der er valgt frem for det neutrale 'forbud'. Slutningen bruger en modstilling (antitese) med parallel opbygning: 'Et forbud er nemt at vedtage – tillid hos eleverne er svær at genoprette' – to sætninger med samme form, men modsat indhold, hvilket gør pointen let at huske. Sætningerne er en blanding af paratakse og hypotakse, og de hypotaktiske 'men jeg forstår ikke, at ...'-konstruktioner er dem, der bærer argumentationen.",
+      feedback: "Denne opgave er individuel – det, der er værd at kommentere, afhænger helt af teksten, og der findes mange rigtige svar. Et sikkert greb i en opinionstekst er at kigge på ordenes ladning (forbud vs. totalforbud) og på slutningens opbygning, for dér lægger afsendere næsten altid deres skarpeste virkemiddel.",
       examTip: ADVICE.saertraek,
     },
     {
@@ -1354,7 +1354,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
         "Forklarer, at -else laver substantiv, og at -n er bestemt form.",
       ],
       modelAnswer: "'skolebestyrelsen' = skole + be- + styr + -else + -n: skole og styr er rodmorfemer, be- er et præfiks, -else er et suffiks, der gør verbet 'bestyre' til substantivet 'bestyrelse', og -n er fleksiven for bestemt form. 'genoprette' = gen- + op + rette: gen- er et præfiks med betydningen 'igen', og 'oprette' er selve verbet (partiklen op + rodmorfemet rette). Et ord kan altså godt have både præfiks, suffiks og fleksiv på én gang, og rækkefølgen er fast: præfiks, rod, suffiks, fleksiv.",
-      feedback: "Test hver del ved at spørge, om den betyder noget: kan du fjerne den og få et nyt, meningsfuldt ord? 'bestyrelse' minus -else giver 'bestyre' : altså er -else et morfem. Den typiske fejl er at dele efter lyd i stedet for betydning ('skolebe + styrelsen'). Del altid i dele, der BETYDER noget.",
+      feedback: "Test hver del ved at spørge, om den betyder noget: kan du fjerne den og få et nyt, meningsfuldt ord? 'bestyrelse' minus -else giver 'bestyre' – altså er -else et morfem. Den typiske fejl er at dele efter lyd i stedet for betydning ('skolebe + styrelsen'). Del altid i dele, der BETYDER noget.",
       examTip: ADVICE.morfologi,
     },
     {
@@ -1369,7 +1369,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
         sentence: "Hendes venner taler den dag i dag om frikatterne i frikvarteret.",
         chunks: ["Hendes venner", "taler", "den dag i dag", "om frikatterne i frikvarteret"],
         correctMap: ["subjekt", "verbal", "adverbial", "adverbial"],
-        explain: "Rigtigt: 'Hendes venner' = subjekt, 'taler' = verballed, 'den dag i dag' = adverbial (tid), 'om frikatterne i frikvarteret' = adverbial (præpositions-led). Fælden var at kalde 'om frikatterne' for et objekt : men tale-verbet kræver 'om', og det led er en valgfri tilføjelse (adverbial), ikke et obligatorisk objekt.",
+        explain: "Rigtigt: 'Hendes venner' = subjekt, 'taler' = verballed, 'den dag i dag' = adverbial (tid), 'om frikatterne i frikvarteret' = adverbial (præpositions-led). Fælden var at kalde 'om frikatterne' for et objekt – men tale-verbet kræver 'om', og det led er en valgfri tilføjelse (adverbial), ikke et obligatorisk objekt.",
       },
       points: [
         "Verballed: taler.",
@@ -1378,8 +1378,8 @@ const SAT_4_LESERBREV: ExamSatsT = {
         "Adverbial: om frikatterne i frikvarteret (indhold/emne for talen).",
         "Nævner, at der ikke er noget objekt: 'tale om noget' bruger en præpositionsgruppe.",
       ],
-      modelAnswer: "Verballeddet er 'taler', og subjektet er 'Hendes venner' (hvem taler?). 'den dag i dag' er et adverbial, der svarer på hvornår, og 'om frikatterne i frikvarteret' er også et adverbial : det knytter sig til verbet med præpositionen 'om' og fortæller, hvad de taler om. Der er intet direkte objekt, for verbet 'tale' tager ikke objekt, men en præpositionsgruppe. Læg mærke til, at 'i frikvarteret' hører med inde i den samme gruppe, fordi det beskriver frikatterne.",
-      feedback: "Mange vil kalde 'om frikatterne' for et objekt, fordi det føles som det, sætningen handler om. Testen er præpositionen: står der en præposition foran, er leddet et adverbial (eller en del af et andet led), ikke et direkte objekt. Prøv også at flytte leddene rundt : et adverbial kan typisk flyttes, et objekt kan ikke.",
+      modelAnswer: "Verballeddet er 'taler', og subjektet er 'Hendes venner' (hvem taler?). 'den dag i dag' er et adverbial, der svarer på hvornår, og 'om frikatterne i frikvarteret' er også et adverbial – det knytter sig til verbet med præpositionen 'om' og fortæller, hvad de taler om. Der er intet direkte objekt, for verbet 'tale' tager ikke objekt, men en præpositionsgruppe. Læg mærke til, at 'i frikvarteret' hører med inde i den samme gruppe, fordi det beskriver frikatterne.",
+      feedback: "Mange vil kalde 'om frikatterne' for et objekt, fordi det føles som det, sætningen handler om. Testen er præpositionen: står der en præposition foran, er leddet et adverbial (eller en del af et andet led), ikke et direkte objekt. Prøv også at flytte leddene rundt – et adverbial kan typisk flyttes, et objekt kan ikke.",
       examTip: ADVICE.syntaks,
     },
     {
@@ -1400,7 +1400,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
             rewriteTo: "perfektum",
             rewriteAnswer: "I denne uge har skolebestyrelsen vedtaget at forbyde slik og sodavand i skolekiosken.",
             rewriteKeys: ["har", "vedtaget"],
-            explain: "'vedtog' er præteritum (datid) : et stærkt verbum, der bøjes med vokalskifte i stedet for -ede. Perfektum: 'har vedtaget'.",
+            explain: "'vedtog' er præteritum (datid) – et stærkt verbum, der bøjes med vokalskifte i stedet for -ede. Perfektum: 'har vedtaget'.",
           },
           {
             id: "t2",
@@ -1410,7 +1410,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
             rewriteTo: "pluskvamperfektum",
             rewriteAnswer: "Da jeg gik i skole, havde min mor også købt slik i kantinen.",
             rewriteKeys: ["havde", "købt"],
-            explain: "'købte' er præteritum. Pluskvamperfektum (førdatid) dannes med 'havde' + participium : 'havde købt'. Bemærk den omvendte ledstilling, fordi ledsætningen ligger på forpladsen.",
+            explain: "'købte' er præteritum. Pluskvamperfektum (førdatid) dannes med 'havde' + participium – 'havde købt'. Bemærk den omvendte ledstilling, fordi ledsætningen ligger på forpladsen.",
           },
         ],
       },
@@ -1421,7 +1421,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
         "Siger hvad tidsskiftet gør: datid til referatet, præsens til holdningen.",
       ],
       modelAnswer: "'vedtog' står i præteritum (datid) og er et stærkt verbum: det bøjes med vokalskifte (vedtager, vedtog, har vedtaget) i stedet for med -ede. Omskrevet: præsens 'I denne uge vedtager skolebestyrelsen ...', perfektum 'I denne uge har skolebestyrelsen vedtaget ...', pluskvamperfektum 'havde skolebestyrelsen vedtaget ...' og futurum 'vil skolebestyrelsen vedtage ...'. Teksten skifter selv tid undervejs: beslutningen og barndommen står i datid, mens argumenterne og opfordringen står i præsens ('Løsningen er dog ikke ...', 'Jeg opfordrer ...'), fordi de gælder nu.",
-      feedback: "Det hæver svaret, hvis du både kan bestemme tiden OG forklare tidsskiftene i teksten: fortællingen om moderen står i datid, argumentationen i præsens. Husk også, at en infinitiv ('at forbyde') aldrig er verballeddet : verballeddet er det bøjede verbum.",
+      feedback: "Det hæver svaret, hvis du både kan bestemme tiden OG forklare tidsskiftene i teksten: fortællingen om moderen står i datid, argumentationen i præsens. Husk også, at en infinitiv ('at forbyde') aldrig er verballeddet – verballeddet er det bøjede verbum.",
       examTip: ADVICE.verbaltid,
     },
     {
@@ -1448,7 +1448,7 @@ const SAT_4_LESERBREV: ExamSatsT = {
         "Bruger ikke-reglen korrekt på begge.",
         "Siger ledfunktionen: 'Da jeg gik i skole' er adverbial (tid).",
       ],
-      modelAnswer: "Hovedsætning: 'Jeg opfordrer skolebestyrelsen til at genoptage sagen på næste møde.' Ikke-testen: 'Jeg opfordrer IKKE skolebestyrelsen ...' : 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'Da jeg gik i skole' (2. afsnit). Ikke-testen: 'Da jeg IKKE gik i skole' : 'ikke' står mellem subjekt og verballed. Den indledes af den hypotaktiske konjunktion 'da' og er et adverbial (tid) i hovedsætningen 'købte min mor også slik i kantinen'. Læg mærke til, at hovedsætningen får omvendt ledstilling (købte min mor), netop fordi ledsætningen fylder forpladsen.",
+      modelAnswer: "Hovedsætning: 'Jeg opfordrer skolebestyrelsen til at genoptage sagen på næste møde.' Ikke-testen: 'Jeg opfordrer IKKE skolebestyrelsen ...' – 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'Da jeg gik i skole' (2. afsnit). Ikke-testen: 'Da jeg IKKE gik i skole' – 'ikke' står mellem subjekt og verballed. Den indledes af den hypotaktiske konjunktion 'da' og er et adverbial (tid) i hovedsætningen 'købte min mor også slik i kantinen'. Læg mærke til, at hovedsætningen får omvendt ledstilling (købte min mor), netop fordi ledsætningen fylder forpladsen.",
       feedback: "Her er en ekstra pointe, som giver point: når en ledsætning står FØRST, overtager den forpladsen i hovedsætningen, og derfor kommer verbet før subjektet ('Da jeg gik i skole, KØBTE MIN MOR ...'). Kan du nævne det, viser du, at du forstår sammenhængen mellem ledsætning og ordstilling.",
       examTip: ADVICE.hovedled,
     },
@@ -1462,13 +1462,13 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
   minutes: 40,
   intro: SAT_INTRO,
   article: {
-    title: "Lektiehjælp fra en maskine : er det snyd eller redning?",
-    byline: "Leder i Elevbladet, Risskov Gymnasium (fiktivt skoleblad) ; skrevet af elevredaktør Albert Nyborg ; 19. september 2026",
+    title: "Lektiehjælp fra en maskine – er det snyd eller redning?",
+    byline: "Leder i Elevbladet, Risskov Gymnasium (fiktivt skoleblad) – skrevet af elevredaktør Albert Nyborg – 19. september 2026",
     paragraphs: [
-      "Næsten hver aften sidder en elev fra mit årgang og spørger en chatbot, hvordan en stil nu skal bygges op. Lærerne kalder det genvej ; eleverne kalder det læring. Måske har begge ret.",
-      "Kritikken har et point : hvis AI'en tænker for dig, bliver du ikke bedre af at tænke selv, og de skriftlige karakterer risikerer derfor at måle maskinen frem for eleven.",
-      "Til gengæld hjælper AI'en, hvor en lærer umuligt kan være : hjemme ved køkkenbordet klokken 22. Eleven bruger værktøjet hver aften. Når du sidder fast, behøver du ikke vente til i morgen med at få et skub i den rigtige retning.",
-      "Derfor : forbyd ikke værktøjet. Lær os i stedet at bruge det. Bed os fx om at aflevere AI-udkastet og forklare, hvad vi ændrede ved det, og hvorfor.",
+      "Næsten hver aften sidder en elev fra mit årgang og spørger en chatbot, hvordan en stil nu skal bygges op. Lærerne kalder det genvej – eleverne kalder det læring. Måske har begge ret.",
+      "Kritikken har et point – hvis AI'en tænker for dig, bliver du ikke bedre af at tænke selv, og de skriftlige karakterer risikerer derfor at måle maskinen frem for eleven.",
+      "Til gengæld hjælper AI'en, hvor en lærer umuligt kan være – hjemme ved køkkenbordet klokken 22. Eleven bruger værktøjet hver aften. Når du sidder fast, behøver du ikke vente til i morgen med at få et skub i den rigtige retning.",
+      "Derfor – forbyd ikke værktøjet. Lær os i stedet at bruge det. Bed os fx om at aflevere AI-udkastet og forklare, hvad vi ændrede ved det, og hvorfor.",
     ]
   },
   tasks: [
@@ -1496,8 +1496,8 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         "Begrunder med afsenderen: elevredaktøren, der taler på bladets og elevernes vegne.",
         "Peger på det afsluttende krav, imperativerne og det retoriske spørgsmål i overskriften.",
       ],
-      modelAnswer: "Teksten er sagprosa og hører til opinionsgenrerne: det er en leder i skolebladet Elevbladet. En leder kendes på, at redaktionen selv tager stilling til en aktuel sag, og at afsenderen taler på et fællesskabs vegne : her 'os' og 'vi' om eleverne. Genretrækkene er det retoriske spørgsmål i overskriften ('snyd eller redning?'), den afvejende opbygning (kritikken først, modsvaret bagefter), imperativerne til sidst ('Forbyd ikke værktøjet. Lær os i stedet at bruge det.') og et konkret forslag som afslutning. Formålet er at overbevise skolens lærere og ledelse.",
-      feedback: "En leder er en opinionsgenre, selvom den står i et blad sammen med nyheder : det er en klassisk fælde at kalde den en 'informerende artikel', fordi den ligner en artikel. Kig efter, om afsenderen tager stilling og taler på redaktionens vegne. Nævn også gerne, at teksten ikke har en neutral balance: kritikken får ét afsnit, modsvaret to.",
+      modelAnswer: "Teksten er sagprosa og hører til opinionsgenrerne: det er en leder i skolebladet Elevbladet. En leder kendes på, at redaktionen selv tager stilling til en aktuel sag, og at afsenderen taler på et fællesskabs vegne – her 'os' og 'vi' om eleverne. Genretrækkene er det retoriske spørgsmål i overskriften ('snyd eller redning?'), den afvejende opbygning (kritikken først, modsvaret bagefter), imperativerne til sidst ('Forbyd ikke værktøjet. Lær os i stedet at bruge det.') og et konkret forslag som afslutning. Formålet er at overbevise skolens lærere og ledelse.",
+      feedback: "En leder er en opinionsgenre, selvom den står i et blad sammen med nyheder – det er en klassisk fælde at kalde den en 'informerende artikel', fordi den ligner en artikel. Kig efter, om afsenderen tager stilling og taler på redaktionens vegne. Nævn også gerne, at teksten ikke har en neutral balance: kritikken får ét afsnit, modsvaret to.",
       examTip: ADVICE.genre,
     },
     {
@@ -1557,13 +1557,13 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
       },
       points: [
         "Afsender: elevredaktør Albert Nyborg, der taler på elevernes vegne (etos som insider).",
-        "Emne: elevernes brug af AI til lektier : snyd eller hjælp?",
+        "Emne: elevernes brug af AI til lektier – snyd eller hjælp?",
         "Modtager: lærere og ledelse primært, medelever sekundært.",
         "Situation: nyt skoleår, aktuel debat om AI i undervisningen, skolebladet som talerør.",
         "Formål: at overbevise om, at skolen skal lære eleverne at bruge AI frem for at forbyde det.",
       ],
-      modelAnswer: "Afsenderen er elevredaktør Albert Nyborg, som skriver i skolebladet og taler på elevernes vegne : hans etos er, at han selv ser, hvad der sker om aftenen ved køkkenbordet. Emnet er elevernes brug af AI til lektier. Modtagerne er dobbelte: lærerne og ledelsen tiltales indirekte gennem imperativerne ('Bed os fx om at aflevere AI-udkastet'), mens medeleverne er medlæsere, der skal føle sig repræsenteret. Situationen er et nyt skoleår i september, hvor reglerne er til diskussion, og mediet er skolens eget blad, hvor eleverne har taleret. Sproget er talesprogsnært og inkluderende ('mit årgang', 'os'). Formålet er at flytte skolen fra forbud til oplæring.",
-      feedback: "Læg mærke til, at 'vi/os' her ikke kun er stil, men strategi: afsenderen gør sig til talsperson for en gruppe og bliver dermed sværere at afvise. Der er mange rigtige måder at beskrive situationen på : det vigtige er, at du kan dokumentere hvert hjørne i pentagrammet med et citat, og at du slutter med formålet som konklusion.",
+      modelAnswer: "Afsenderen er elevredaktør Albert Nyborg, som skriver i skolebladet og taler på elevernes vegne – hans etos er, at han selv ser, hvad der sker om aftenen ved køkkenbordet. Emnet er elevernes brug af AI til lektier. Modtagerne er dobbelte: lærerne og ledelsen tiltales indirekte gennem imperativerne ('Bed os fx om at aflevere AI-udkastet'), mens medeleverne er medlæsere, der skal føle sig repræsenteret. Situationen er et nyt skoleår i september, hvor reglerne er til diskussion, og mediet er skolens eget blad, hvor eleverne har taleret. Sproget er talesprogsnært og inkluderende ('mit årgang', 'os'). Formålet er at flytte skolen fra forbud til oplæring.",
+      feedback: "Læg mærke til, at 'vi/os' her ikke kun er stil, men strategi: afsenderen gør sig til talsperson for en gruppe og bliver dermed sværere at afvise. Der er mange rigtige måder at beskrive situationen på – det vigtige er, at du kan dokumentere hvert hjørne i pentagrammet med et citat, og at du slutter med formålet som konklusion.",
       examTip: ADVICE.kommunikation,
     },
     {
@@ -1592,8 +1592,8 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         "Bruger fagbegreberne: konnotation, semantisk felt, konkret/abstrakt, konnektor, antitese.",
         "Forklarer virkningen: fællesskab, nærhed og en balanceret men styret argumentation.",
       ],
-      modelAnswer: "Teksten er bygget på en modstilling (antitese), der løber hele vejen: 'Lærerne kalder det genvej ; eleverne kalder det læring', 'snyd eller redning', 'Kritikken har et point ... Til gengæld hjælper AI'en'. Konnektoren 'Til gengæld' er derfor et centralt træk: den vender teksten og markerer, hvilken side afsenderen står på. Pronominerne gør resten af arbejdet: 'mit årgang', 'os', 'vi' skaber et fællesskab, mens 'du' i 'Når du sidder fast' trækker læseren ind i situationen. Ordvalget veksler mellem abstrakte ord (læring, snyd, karakterer) og meget konkrete billeder ('hjemme ved køkkenbordet klokken 22'), og det konkrete er tekstens stærkeste virkemiddel, fordi det gør argumentet sanseligt. Til sidst skifter sætningstypen til imperativ ('Forbyd ikke', 'Lær os'), hvilket gør slutningen til et krav i stedet for en betragtning.",
-      feedback: "Opgaven er individuel, og der er mange rigtige svar : vælg de træk, du kan dokumentere. I denne tekst er de tre stærkeste: modstillingerne, det konkrete billede med køkkenbordet klokken 22 og skiftet til imperativ i slutningen. Sig altid, hvad trækket GØR, ikke kun hvad det heder.",
+      modelAnswer: "Teksten er bygget på en modstilling (antitese), der løber hele vejen: 'Lærerne kalder det genvej – eleverne kalder det læring', 'snyd eller redning', 'Kritikken har et point ... Til gengæld hjælper AI'en'. Konnektoren 'Til gengæld' er derfor et centralt træk: den vender teksten og markerer, hvilken side afsenderen står på. Pronominerne gør resten af arbejdet: 'mit årgang', 'os', 'vi' skaber et fællesskab, mens 'du' i 'Når du sidder fast' trækker læseren ind i situationen. Ordvalget veksler mellem abstrakte ord (læring, snyd, karakterer) og meget konkrete billeder ('hjemme ved køkkenbordet klokken 22'), og det konkrete er tekstens stærkeste virkemiddel, fordi det gør argumentet sanseligt. Til sidst skifter sætningstypen til imperativ ('Forbyd ikke', 'Lær os'), hvilket gør slutningen til et krav i stedet for en betragtning.",
+      feedback: "Opgaven er individuel, og der er mange rigtige svar – vælg de træk, du kan dokumentere. I denne tekst er de tre stærkeste: modstillingerne, det konkrete billede med køkkenbordet klokken 22 og skiftet til imperativ i slutningen. Sig altid, hvad trækket GØR, ikke kun hvad det heder.",
       examTip: ADVICE.saertraek,
     },
     {
@@ -1677,7 +1677,7 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         sentence: "Eleven bruger værktøjet hver aften.",
         chunks: ["Eleven", "bruger", "værktøjet", "hver aften"],
         correctMap: ["subjekt", "verbal", "objekt", "adverbial"],
-        explain: "Rigtigt: Eleven = subjekt, bruger = verballed, værktøjet = direkte objekt, hver aften = adverbial (tid). Flytte-testen viser det: 'Hver aften bruger eleven værktøjet' virker (adverbialer kan flyttes) ; 'værktøjet bruger eleven hver aften' knækker objektets binding til verbet.",
+        explain: "Rigtigt: Eleven = subjekt, bruger = verballed, værktøjet = direkte objekt, hver aften = adverbial (tid). Flytte-testen viser det: 'Hver aften bruger eleven værktøjet' virker (adverbialer kan flyttes) – 'værktøjet bruger eleven hver aften' knækker objektets binding til verbet.",
       },
       points: [
         "Verballed: bruger.",
@@ -1687,7 +1687,7 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         "Nævner metoden: spørg hvem/hvad + verbet, og hvem/hvad + verbet + subjektet.",
       ],
       modelAnswer: "Verballeddet er 'bruger'. Subjektet er 'Eleven' (hvem bruger?). Det direkte objekt er 'værktøjet' (hvad bruger eleven?), og 'hver aften' er et adverbial, der svarer på hvornår. Der er intet indirekte objekt, for der er ingen modtager i sætningen, og verbet er ikke kopulativt, så der er heller intet subjektsprædikat.",
-      feedback: "Sætningen er kort, og derfor er det de rigtige NAVNE, der giver point: subjekt, verballed, direkte objekt, adverbial (de latinske betegnelser er de primære). En god vane er at sige spørgsmålene højt undervejs : 'hvem bruger? eleven. hvad bruger eleven? værktøjet. hvornår? hver aften.' Så kan du ikke bytte leddene om.",
+      feedback: "Sætningen er kort, og derfor er det de rigtige NAVNE, der giver point: subjekt, verballed, direkte objekt, adverbial (de latinske betegnelser er de primære). En god vane er at sige spørgsmålene højt undervejs – 'hvem bruger? eleven. hvad bruger eleven? værktøjet. hvornår? hver aften.' Så kan du ikke bytte leddene om.",
       examTip: ADVICE.syntaks,
     },
     {
@@ -1708,7 +1708,7 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
             rewriteTo: "perfektum",
             rewriteAnswer: "Eleven har brugt værktøjet hver aften.",
             rewriteKeys: ["har", "brugt"],
-            explain: "'bruger' er præsens (nutid) : sammen med 'hver aften' bliver det en generel præsens om noget, der gentager sig. Perfektum: 'har brugt'.",
+            explain: "'bruger' er præsens (nutid) – sammen med 'hver aften' bliver det en generel præsens om noget, der gentager sig. Perfektum: 'har brugt'.",
           },
           {
             id: "t2",
@@ -1729,7 +1729,7 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         "Siger hvad tiden gør: præsens gør påstanden almen og nærværende.",
       ],
       modelAnswer: "'bruger' står i præsens (nutid), og sammen med 'hver aften' bliver det en generel præsens: noget, der gentager sig og gælder i almindelighed. Omskrevet: præteritum 'Eleven brugte værktøjet hver aften', perfektum 'Eleven har brugt værktøjet hver aften', pluskvamperfektum 'Eleven havde brugt værktøjet hver aften' og futurum 'Eleven vil bruge værktøjet hver aften'. Valget af præsens er retorisk: det gør afsenderens påstand til en tilstand, der gælder nu, og dermed til noget, læseren skal forholde sig til i dag.",
-      feedback: "Bemærk, hvordan hele teksten bruger præsens (sidder, kalder, hjælper, bruger) : det skaber nærvær og gør debatten aktuel. Kan du sige det til eksamen, viser du, at tempus ikke kun er grammatik, men også et virkemiddel. Og husk at bøje hjælpeverbet i de sammensatte tider.",
+      feedback: "Bemærk, hvordan hele teksten bruger præsens (sidder, kalder, hjælper, bruger) – det skaber nærvær og gør debatten aktuel. Kan du sige det til eksamen, viser du, at tempus ikke kun er grammatik, men også et virkemiddel. Og husk at bøje hjælpeverbet i de sammensatte tider.",
       examTip: ADVICE.verbaltid,
     },
     {
@@ -1748,7 +1748,7 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         ],
         indleder: "når",
         funktion: "adverbial",
-        explain: "'Når du sidder fast' er ledsætningen : 'ikke' ville stå mellem subjekt og verballed ('når du IKKE sidder fast'). Den indledes af konjunktionen 'når' og er adverbial (tid) i hovedsætningen.",
+        explain: "'Når du sidder fast' er ledsætningen – 'ikke' ville stå mellem subjekt og verballed ('når du IKKE sidder fast'). Den indledes af konjunktionen 'når' og er adverbial (tid) i hovedsætningen.",
       },
       points: [
         "Finder en hovedsætning, fx 'Måske har begge ret' eller 'Eleven bruger værktøjet hver aften'.",
@@ -1756,8 +1756,8 @@ const SAT_5_ELEVBLAD_Ai: ExamSatsT = {
         "Bruger ikke-reglen korrekt på begge.",
         "Siger ledfunktionen: 'Når du sidder fast' er adverbial (tid).",
       ],
-      modelAnswer: "Hovedsætning: 'Måske har begge ret.' Ikke-testen: 'Måske har begge IKKE ret' : 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'Når du sidder fast' (3. afsnit). Ikke-testen: 'Når du IKKE sidder fast' : 'ikke' står mellem subjekt og verballed. Den indledes af konjunktionen 'når' og er adverbial (tid) i hovedsætningen 'behøver du ikke vente til i morgen'. Et andet godt eksempel er 'hvordan en stil nu skal bygges op' (1. afsnit), som er en nominal ledsætning i objektsposition efter 'spørger en chatbot'.",
-      feedback: "Den ekstra pointe, der løfter svaret: når ledsætningen står forrest, fylder den forpladsen i hovedsætningen, og derfor kommer verbet før subjektet ('Når du sidder fast, BEHØVER DU ...'). Nævn ledfunktionen hver gang : det er den, de fleste glemmer.",
+      modelAnswer: "Hovedsætning: 'Måske har begge ret.' Ikke-testen: 'Måske har begge IKKE ret' – 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'Når du sidder fast' (3. afsnit). Ikke-testen: 'Når du IKKE sidder fast' – 'ikke' står mellem subjekt og verballed. Den indledes af konjunktionen 'når' og er adverbial (tid) i hovedsætningen 'behøver du ikke vente til i morgen'. Et andet godt eksempel er 'hvordan en stil nu skal bygges op' (1. afsnit), som er en nominal ledsætning i objektsposition efter 'spørger en chatbot'.",
+      feedback: "Den ekstra pointe, der løfter svaret: når ledsætningen står forrest, fylder den forpladsen i hovedsætningen, og derfor kommer verbet før subjektet ('Når du sidder fast, BEHØVER DU ...'). Nævn ledfunktionen hver gang – det er den, de fleste glemmer.",
       examTip: ADVICE.hovedled,
     },
   ],
@@ -1771,12 +1771,12 @@ const SAT_6_FAGBLAD: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Din overenskomst er ikke bare papir",
-    byline: "Medlemsnyt fra Butiksansattes Fagforening (fiktiv) ; skrevet af kommunikationsansvarlig Kenan Yildiz ; juni 2026",
+    byline: "Medlemsnyt fra Butiksansattes Fagforening (fiktiv) – skrevet af kommunikationsansvarlig Kenan Yildiz – juni 2026",
     paragraphs: [
       "To gange om året forhandler vi en ny overenskomst på dit område. For de fleste af os er det bare en tyk bunke papir i indbakken. Men det er netop den bunke, der afgør, hvad din timeløn er, hvornår du har ret til fri, og hvad du får udbetalt, når du bliver syg.",
       "Denne gang kæmper vi for tre ting: et ekstra tillæg til dig, der møder ind før butikkens åbning, en fritvalgskonto til alle fuldtidsansatte og en skærpet regel om planlagte vagter. Forhandlingsudvalget møder arbejdsgiverne i august. Vi sender medlemmerne det nye forhandlingskatalog bagefter.",
-      "Husk at opdatere dit medlemskort, inden overenskomsten træder i kraft : uden et gyldigt kort kan din a-kasse nemlig ikke dokumentere dine timer, hvis uheldet er ude.",
-      "Vores styrke er fællesskabet. En enkelt, der klager alene, kan blive overset ; men 11.000 organiserede butiksansatte bliver ikke overset. Meld dig ind i netværket for unge, og følg os i august.",
+      "Husk at opdatere dit medlemskort, inden overenskomsten træder i kraft – uden et gyldigt kort kan din a-kasse nemlig ikke dokumentere dine timer, hvis uheldet er ude.",
+      "Vores styrke er fællesskabet. En enkelt, der klager alene, kan blive overset – men 11.000 organiserede butiksansatte bliver ikke overset. Meld dig ind i netværket for unge, og følg os i august.",
     ]
   },
   tasks: [
@@ -1804,7 +1804,7 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         "Begrunder med afsenderen: foreningens kommunikationsansvarlige, der skriver til medlemmerne.",
         "Peger på både informationen (tre krav, datoer, praktisk huskeregel) og opfordringen til sidst.",
       ],
-      modelAnswer: "Teksten er sagprosa: et medlemsnyt (nyhedsbrev) fra Butiksansattes Fagforening. Den er informerende i sin form : den oplyser om, hvad der forhandles, hvornår mødet er, og hvad man skal huske : men den har også et tydeligt tilslutningsformål, for den slutter med at bede læseren melde sig ind i netværket og følge foreningen. Derfor er den bedst beskrevet som en hybrid: intern organisationskommunikation, hvor informationen bruges til at skabe sammenhold. Afsenderen er navngiven (kommunikationsansvarlig Kenan Yildiz), og 'vi' er foreningen selv.",
+      modelAnswer: "Teksten er sagprosa: et medlemsnyt (nyhedsbrev) fra Butiksansattes Fagforening. Den er informerende i sin form – den oplyser om, hvad der forhandles, hvornår mødet er, og hvad man skal huske – men den har også et tydeligt tilslutningsformål, for den slutter med at bede læseren melde sig ind i netværket og følge foreningen. Derfor er den bedst beskrevet som en hybrid: intern organisationskommunikation, hvor informationen bruges til at skabe sammenhold. Afsenderen er navngiven (kommunikationsansvarlig Kenan Yildiz), og 'vi' er foreningen selv.",
       feedback: "Det er helt legitimt at kalde teksten informerende, men du skal have BEGGE dele med: den oplyser og den samler. Kig på sidste afsnit: 'Meld dig ind i netværket ... og følg os' er en opfordring, ikke en oplysning. Netop de hybride tekster er dem, hvor genrebestemmelsen bliver rigtig god, hvis du kan argumentere for to lag.",
       examTip: ADVICE.genre,
     },
@@ -1864,14 +1864,14 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         ],
       },
       points: [
-        "Afsender: fagforeningen ved sin kommunikationsansvarlige : en organisation, der taler som vi.",
+        "Afsender: fagforeningen ved sin kommunikationsansvarlige – en organisation, der taler som vi.",
         "Emne: den kommende overenskomstforhandling og medlemmernes rettigheder.",
-        "Modtager: foreningens egne medlemmer, butiksansatte : intern kommunikation.",
+        "Modtager: foreningens egne medlemmer, butiksansatte – intern kommunikation.",
         "Situation: før forhandlingen i august, hvor opbakning er vigtig.",
         "Formål: at informere OG at samle medlemmerne (tilslutning, indmeldelse, opdateret kort).",
       ],
-      modelAnswer: "Afsenderen er Butiksansattes Fagforening, repræsenteret af kommunikationsansvarlig Kenan Yildiz : og 'vi' i teksten er foreningen selv, hvilket er vigtigt for forståelsen. Emnet er den kommende overenskomst og de tre krav, foreningen går efter. Modtagerne er foreningens egne medlemmer, butiksansatte, og teksten regner med et fælles udgangspunkt (dit område, din timeløn, dit medlemskort). Situationen er tiden LIGE FØR forhandlingen i august, hvor sammenhold har værdi ved bordet. Genren er medlemsnyt, og sproget er konkret og henvendt. Formålet er dobbelt: at oplyse om forhandlingen og samtidig samle medlemmerne bag den : derfor slutningen om fællesskabet og indmeldelsen.",
-      feedback: "Intern kommunikation er en situationstype, der er værd at kunne: afsender og modtager er på samme hold, og derfor er tiltalen inkluderende og forudsætningerne fælles. Vær præcis med, hvem 'vi' dækker : her glider det mellem foreningen og medlemmerne, og det er et bevidst retorisk træk, ikke en fejl.",
+      modelAnswer: "Afsenderen er Butiksansattes Fagforening, repræsenteret af kommunikationsansvarlig Kenan Yildiz – og 'vi' i teksten er foreningen selv, hvilket er vigtigt for forståelsen. Emnet er den kommende overenskomst og de tre krav, foreningen går efter. Modtagerne er foreningens egne medlemmer, butiksansatte, og teksten regner med et fælles udgangspunkt (dit område, din timeløn, dit medlemskort). Situationen er tiden LIGE FØR forhandlingen i august, hvor sammenhold har værdi ved bordet. Genren er medlemsnyt, og sproget er konkret og henvendt. Formålet er dobbelt: at oplyse om forhandlingen og samtidig samle medlemmerne bag den – derfor slutningen om fællesskabet og indmeldelsen.",
+      feedback: "Intern kommunikation er en situationstype, der er værd at kunne: afsender og modtager er på samme hold, og derfor er tiltalen inkluderende og forudsætningerne fælles. Vær præcis med, hvem 'vi' dækker – her glider det mellem foreningen og medlemmerne, og det er et bevidst retorisk træk, ikke en fejl.",
       examTip: ADVICE.kommunikation,
     },
     {
@@ -1900,8 +1900,8 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         "Bruger fagbegreberne: semantisk felt, konnotation, konkret/abstrakt, kontrast, tal som virkemiddel.",
         "Forklarer virkningen: styrke i fællesskabet, konkrete gevinster, let hastværk (inden ... træder i kraft).",
       ],
-      modelAnswer: "Det stærkeste træk er pronominerne: 'vi' og 'os' (foreningen og medlemmerne som ét hold) sat over for 'arbejdsgiverne' (den fraværende modpart) og 'du/din' (den enkelte). Kombinationen giver både kollektiv styrke og personlig gevinst. Dernæst kontrasten i 4. afsnit: 'En enkelt, der klager alene, kan blive overset ; men 11.000 organiserede butiksansatte bliver ikke overset' : en modstilling, hvor tallet fungerer som dokumentation og styrkedemonstration. Det semantiske felt er arbejdsmarked og rettigheder (overenskomst, timeløn, tillæg, fritvalgskonto, a-kasse), og teksten oversætter bevidst det abstrakte (en overenskomst) til det konkrete (timeløn, fri, sygdom). Endelig er titlens negation ('er ikke bare papir') og billedet 'en tyk bunke papir' et greb, der først nedgør emnet, som læseren måske selv gør, og derefter vender det.",
-      feedback: "Opgaven er individuel : vælg de træk, du kan dokumentere. I organisationstekster er pronominerne næsten altid den bedste indgang: kortlæg dem (hvem er vi? hvem er de? hvem er du?), for det afslører hele den retoriske opstilling. Husk at forklare virkningen, ikke kun sætte navn på trækket.",
+      modelAnswer: "Det stærkeste træk er pronominerne: 'vi' og 'os' (foreningen og medlemmerne som ét hold) sat over for 'arbejdsgiverne' (den fraværende modpart) og 'du/din' (den enkelte). Kombinationen giver både kollektiv styrke og personlig gevinst. Dernæst kontrasten i 4. afsnit: 'En enkelt, der klager alene, kan blive overset – men 11.000 organiserede butiksansatte bliver ikke overset' – en modstilling, hvor tallet fungerer som dokumentation og styrkedemonstration. Det semantiske felt er arbejdsmarked og rettigheder (overenskomst, timeløn, tillæg, fritvalgskonto, a-kasse), og teksten oversætter bevidst det abstrakte (en overenskomst) til det konkrete (timeløn, fri, sygdom). Endelig er titlens negation ('er ikke bare papir') og billedet 'en tyk bunke papir' et greb, der først nedgør emnet, som læseren måske selv gør, og derefter vender det.",
+      feedback: "Opgaven er individuel – vælg de træk, du kan dokumentere. I organisationstekster er pronominerne næsten altid den bedste indgang: kortlæg dem (hvem er vi? hvem er de? hvem er du?), for det afslører hele den retoriske opstilling. Husk at forklare virkningen, ikke kun sætte navn på trækket.",
       examTip: ADVICE.saertraek,
     },
     {
@@ -1989,7 +1989,7 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         sentence: "Vi sender medlemmerne det nye forhandlingskatalog bagefter.",
         chunks: ["Vi", "sender", "medlemmerne", "det nye forhandlingskatalog", "bagefter"],
         correctMap: ["subjekt", "verbal", "dativ", "objekt", "adverbial"],
-        explain: "Rigtigt: Vi = subjekt, sender = verballed, medlemmerne = indirekte objekt (til hvem?), det nye forhandlingskatalog = direkte objekt (hvad?), bagefter = adverbial. Husk : ditransitive verber som 'sende' har TO objekter ; det uden præposition er det indirekte objekt (det led, der svarer på 'til hvem?').",
+        explain: "Rigtigt: Vi = subjekt, sender = verballed, medlemmerne = indirekte objekt (til hvem?), det nye forhandlingskatalog = direkte objekt (hvad?), bagefter = adverbial. Husk – ditransitive verber som 'sende' har TO objekter – det uden præposition er det indirekte objekt (det led, der svarer på 'til hvem?').",
       },
       points: [
         "Verballed: sender.",
@@ -1999,7 +1999,7 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         "Adverbial: bagefter (tid).",
       ],
       modelAnswer: "Verballeddet er 'sender', og subjektet er 'Vi' (hvem sender?). Det direkte objekt er 'det nye forhandlingskatalog' (hvad sender vi?), og det indirekte objekt er 'medlemmerne' (til hvem?). 'bagefter' er et adverbial (tid). Sætningen er et skoleeksempel på, at det indirekte objekt står FØRST af de to objekter, og at det kun kan være der, fordi der også er et direkte objekt.",
-      feedback: "Rækkefølgen i dansk er fast: indirekte objekt før direkte objekt ('sender MEDLEMMERNE KATALOGET'). Prøven er omskrivningen med præposition: 'sender kataloget TIL medlemmerne' : det, der kan få 'til' foran, er det indirekte objekt. Det er en sikker test, og den er værd at vise censor.",
+      feedback: "Rækkefølgen i dansk er fast: indirekte objekt før direkte objekt ('sender MEDLEMMERNE KATALOGET'). Prøven er omskrivningen med præposition: 'sender kataloget TIL medlemmerne' – det, der kan få 'til' foran, er det indirekte objekt. Det er en sikker test, og den er værd at vise censor.",
       examTip: ADVICE.syntaks,
     },
     {
@@ -2020,7 +2020,7 @@ const SAT_6_FAGBLAD: ExamSatsT = {
             rewriteTo: "praeteritum",
             rewriteAnswer: "To gange om året forhandlede vi en ny overenskomst på dit område.",
             rewriteKeys: ["forhandlede"],
-            explain: "'forhandler' er præsens (nutid) : sammen med 'to gange om året' bliver det en generel præsens om en fast rutine. Præteritum: 'forhandlede'.",
+            explain: "'forhandler' er præsens (nutid) – sammen med 'to gange om året' bliver det en generel præsens om en fast rutine. Præteritum: 'forhandlede'.",
           },
           {
             id: "t2",
@@ -2030,7 +2030,7 @@ const SAT_6_FAGBLAD: ExamSatsT = {
             rewriteTo: "futurum",
             rewriteAnswer: "Forhandlingsudvalget vil møde arbejdsgiverne i august.",
             rewriteKeys: ["vil", "møde"],
-            explain: "'møder' er præsens, men betydningen er fremtidig : dansk kan bruge præsens om fremtiden, når et tidsadverbial ('i august') gør det tydeligt. Futurum: 'vil møde'.",
+            explain: "'møder' er præsens, men betydningen er fremtidig – dansk kan bruge præsens om fremtiden, når et tidsadverbial ('i august') gør det tydeligt. Futurum: 'vil møde'.",
           },
         ],
       },
@@ -2060,7 +2060,7 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         ],
         indleder: "inden",
         funktion: "adverbial",
-        explain: "'Husk at opdatere dit medlemskort' er hovedsætningen (en imperativ, som kan stå alene). 'inden overenskomsten træder i kraft' er ledsætningen : 'ikke' står mellem subjekt og verballed, den indledes af 'inden' og svarer på hvornår : altså adverbial (tid).",
+        explain: "'Husk at opdatere dit medlemskort' er hovedsætningen (en imperativ, som kan stå alene). 'inden overenskomsten træder i kraft' er ledsætningen – 'ikke' står mellem subjekt og verballed, den indledes af 'inden' og svarer på hvornår – altså adverbial (tid).",
       },
       points: [
         "Finder en hovedsætning, fx 'Vores styrke er fællesskabet'.",
@@ -2068,14 +2068,14 @@ const SAT_6_FAGBLAD: ExamSatsT = {
         "Bruger ikke-reglen korrekt på begge.",
         "Siger ledfunktionen: inden-sætningen er adverbial (tid), der-sætningen er attribut.",
       ],
-      modelAnswer: "Hovedsætning: 'Vores styrke er fællesskabet.' Ikke-testen: 'Vores styrke er IKKE fællesskabet' : 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'inden overenskomsten træder i kraft' (3. afsnit). Ikke-testen: 'inden overenskomsten IKKE træder i kraft' : 'ikke' står mellem subjekt og verballed. Den indledes af konjunktionen 'inden' og er adverbial (tid). Et andet eksempel er relativsætningen 'der afgør, hvad din timeløn er' (1. afsnit), som beskriver 'den bunke' og altså er attribut : og inde i den ligger endnu en ledsætning ('hvad din timeløn er') som objekt for 'afgør'.",
-      feedback: "Vis gerne, at ledsætninger kan ligge inde i hinanden : det er den slags hypotakse, censor gerne spørger ind til. Og slut altid med ledfunktionen (adverbial, objekt, subjekt, attribut): det er den halve opgave.",
+      modelAnswer: "Hovedsætning: 'Vores styrke er fællesskabet.' Ikke-testen: 'Vores styrke er IKKE fællesskabet' – 'ikke' står efter verballeddet, og sætningen kan stå alene. Ledsætning: 'inden overenskomsten træder i kraft' (3. afsnit). Ikke-testen: 'inden overenskomsten IKKE træder i kraft' – 'ikke' står mellem subjekt og verballed. Den indledes af konjunktionen 'inden' og er adverbial (tid). Et andet eksempel er relativsætningen 'der afgør, hvad din timeløn er' (1. afsnit), som beskriver 'den bunke' og altså er attribut – og inde i den ligger endnu en ledsætning ('hvad din timeløn er') som objekt for 'afgør'.",
+      feedback: "Vis gerne, at ledsætninger kan ligge inde i hinanden – det er den slags hypotakse, censor gerne spørger ind til. Og slut altid med ledfunktionen (adverbial, objekt, subjekt, attribut): det er den halve opgave.",
       examTip: ADVICE.hovedled,
     },
   ],
 };
 
-// Sæt 7. Politisk tale : genren står på skolens liste, men manglede i puljen.
+// Sæt 7. Politisk tale – genren står på skolens liste, men manglede i puljen.
 const SAT_7_POLITISK_TALE: ExamSatsT = {
   id: "hhx-sats-07",
   title: "Eksamenssæt 7 · Tal for de unge, ikke om dem",
@@ -2084,7 +2084,7 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Tal for de unge, ikke om dem",
-    byline: "Tale ved et ungdomspolitisk møde i Nørreby (fiktiv by) ; af byrådskandidat Miriam Kold ; 4. februar 2026",
+    byline: "Tale ved et ungdomspolitisk møde i Nørreby (fiktiv by) – af byrådskandidat Miriam Kold – 4. februar 2026",
     paragraphs: [
       "Kære forsamling. Jeg er vokset op tre gader herfra, og jeg tog den samme bus som jer. Derfor ved jeg, hvad der sker, når den bus ikke kommer: man kommer for sent til skole, man dropper fritidsjobbet, og til sidst flytter man.",
       "Sidste år lukkede kommunen tre busruter. Tre ruter, som unge brugte hver eneste morgen. Man kaldte det en tilpasning. Jeg kalder det et fravalg af en hel generation.",
@@ -2118,8 +2118,8 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
         "Begrunder med den direkte tiltale til en forsamling ('Kære forsamling', 'jer').",
         "Peger på appelformerne: etos (jeg tog den samme bus), patos (man flytter) og logos (tre ruter).",
       ],
-      modelAnswer: "Teksten er en politisk tale: den er holdt mundtligt for en forsamling, den indledes med en tiltale ('Kære forsamling') og afsluttes med en tak. Afsenderen er en byrådskandidat, altså en, der vil vinde tilslutning. Talen bruger alle tre appelformer: etos, når hun fortæller, at hun selv tog bussen ; patos, når hun beskriver, at unge flytter ; og logos, når hun nævner de tre lukkede ruter. Til sidst kommer tre konkrete løfter, som er et typisk taletræk.",
-      feedback: "Talen ligner et debatindlæg, og det er ikke helt forkert set: begge vil overbevise. Forskellen er den mundtlige situation. Kig efter tiltalen, gentagelserne og de tre løfter til sidst : en tale er bygget til at blive HØRT én gang, så den gentager sine pointer.",
+      modelAnswer: "Teksten er en politisk tale: den er holdt mundtligt for en forsamling, den indledes med en tiltale ('Kære forsamling') og afsluttes med en tak. Afsenderen er en byrådskandidat, altså en, der vil vinde tilslutning. Talen bruger alle tre appelformer: etos, når hun fortæller, at hun selv tog bussen – patos, når hun beskriver, at unge flytter – og logos, når hun nævner de tre lukkede ruter. Til sidst kommer tre konkrete løfter, som er et typisk taletræk.",
+      feedback: "Talen ligner et debatindlæg, og det er ikke helt forkert set: begge vil overbevise. Forskellen er den mundtlige situation. Kig efter tiltalen, gentagelserne og de tre løfter til sidst – en tale er bygget til at blive HØRT én gang, så den gentager sine pointer.",
       examTip: ADVICE.genre,
     },
     {
@@ -2132,14 +2132,14 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
       openEnded: true,
       part: { kind: "fields", fields: PENTAGRAM_FIELDS },
       points: [
-        "Afsender: byrådskandidat Miriam Kold : hun vil vælges og bygger etos som lokal.",
+        "Afsender: byrådskandidat Miriam Kold – hun vil vælges og bygger etos som lokal.",
         "Emne: de nedlagte busruter og de unges muligheder i byen.",
         "Modtager: de unge til mødet, men også vælgerne bag dem.",
         "Situation: valgkamp og et ungdomspolitisk møde i februar.",
         "Formål: at vinde tilslutning og stemmer.",
       ],
       modelAnswer: "Afsenderen er byrådskandidat Miriam Kold, som taler til et ungdomspolitisk møde. Emnet er de tre lukkede busruter og de unges hverdag. Modtagerne er de unge i salen, men gennem dem også forældre og vælgere. Situationen er valgkamp: hun skal bruge stemmer, og derfor er talen både personlig og konkret. Sproget er talesprogsnært med korte sætninger og gentagelser. I midten af pentagrammet står formålet: at vinde tilslutning ved at vise, at hun kender problemet indefra.",
-      feedback: "Husk, at en tale har en dobbelt modtagerkreds: dem i salen og dem, der hører om den bagefter. Og vær præcis med afsenderens interesse : hun er ikke en neutral iagttager, hun er kandidat.",
+      feedback: "Husk, at en tale har en dobbelt modtagerkreds: dem i salen og dem, der hører om den bagefter. Og vær præcis med afsenderens interesse – hun er ikke en neutral iagttager, hun er kandidat.",
       examTip: ADVICE.kommunikation,
     },
     {
@@ -2211,7 +2211,7 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
         "Kan sige, hvad delen GØR: -skab laver et substantiv af et adjektiv.",
       ],
       modelAnswer: "'uretfærdigt' = u- + ret + færdig + -t: præfikset nægter, og -t er bøjning i intetkøn. 'ungdomskort' = ung + dom + s + kort: to sammensatte dele bundet af bindebogstavet -s-. 'busforbindelser' = bus + for + bind + else + r: både sammensat og afledt, med -r som flertalsendelse. 'fællesskab' = fælles + -skab, hvor suffikset laver substantivet.",
-      feedback: "Ord i en tale er ofte lange, sammensatte ord : del dem først i de dele, der kan stå alene, og tag derefter for- og endelser. Husk, at -s- mellem to dele er et bindebogstav, ikke en ejeform.",
+      feedback: "Ord i en tale er ofte lange, sammensatte ord – del dem først i de dele, der kan stå alene, og tag derefter for- og endelser. Husk, at -s- mellem to dele er et bindebogstav, ikke en ejeform.",
       examTip: ADVICE.morfologi,
     },
     {
@@ -2236,7 +2236,7 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
         "Adverbial: hvert år (tid).",
       ],
       modelAnswer: "Verballeddet er 'giver'. Subjektet er 'Kommunen'. Sætningen har to objekter: 'de unge' er indirekte objekt (til hvem gives kortet?), og 'et ungdomskort' er direkte objekt (hvad gives?). 'hvert år' er adverbial og svarer på hvornår. Prøven på det indirekte objekt er omskrivningen: kommunen giver et ungdomskort TIL de unge.",
-      feedback: "Rækkefølgen i dansk er fast: indirekte objekt før direkte objekt. Bliver du i tvivl, så sæt 'til' foran det ene led : kan det lade sig gøre, er det det indirekte objekt.",
+      feedback: "Rækkefølgen i dansk er fast: indirekte objekt før direkte objekt. Bliver du i tvivl, så sæt 'til' foran det ene led – kan det lade sig gøre, er det det indirekte objekt.",
       examTip: ADVICE.syntaks,
     },
     {
@@ -2267,7 +2267,7 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
             rewriteTo: "futurum",
             rewriteAnswer: "Vi vil bygge et fællesskab, der holder.",
             rewriteKeys: ["vil", "bygge"],
-            explain: "'bygger' er præsens (nutid). Futurum dannes med 'vil' eller 'skal' + infinitiv: 'vil bygge'. Bemærk, at præsens i en tale gør løftet nærværende : det er allerede i gang.",
+            explain: "'bygger' er præsens (nutid). Futurum dannes med 'vil' eller 'skal' + infinitiv: 'vil bygge'. Bemærk, at præsens i en tale gør løftet nærværende – det er allerede i gang.",
           },
         ],
       },
@@ -2305,14 +2305,14 @@ const SAT_7_POLITISK_TALE: ExamSatsT = {
         "Finder indlederen 'hvis'.",
         "Siger, at ledsætningen er adverbial (betingelse).",
       ],
-      modelAnswer: "Hovedsætning: 'skal vi gøre det nemt at komme frem' : 'skal vi ikke gøre' viser, at 'ikke' står efter det bøjede verbum. Ledsætning: 'Hvis vi vil have unge til at blive i byen' : 'hvis vi ikke vil have' viser, at 'ikke' står mellem subjekt og verballed. Indlederen er 'hvis', og ledsætningen er adverbial, fordi den angiver en betingelse for hovedsætningen.",
-      feedback: "Betingelsessætninger med 'hvis' er en favorit i taler, fordi de sætter et krav op og lover en gevinst. Husk ledfunktionen : den halve opgave ligger der.",
+      modelAnswer: "Hovedsætning: 'skal vi gøre det nemt at komme frem' – 'skal vi ikke gøre' viser, at 'ikke' står efter det bøjede verbum. Ledsætning: 'Hvis vi vil have unge til at blive i byen' – 'hvis vi ikke vil have' viser, at 'ikke' står mellem subjekt og verballed. Indlederen er 'hvis', og ledsætningen er adverbial, fordi den angiver en betingelse for hovedsætningen.",
+      feedback: "Betingelsessætninger med 'hvis' er en favorit i taler, fordi de sætter et krav op og lover en gevinst. Husk ledfunktionen – den halve opgave ligger der.",
       examTip: ADVICE.hovedled,
     },
   ],
 };
 
-// Sæt 8. Ejendomsannonce : den sidste af de fem genrer fra skolens liste.
+// Sæt 8. Ejendomsannonce – den sidste af de fem genrer fra skolens liste.
 const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
   id: "hhx-sats-08",
   title: "Eksamenssæt 8 · Charmerende byhus med overkommelig have",
@@ -2321,7 +2321,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
   intro: SAT_INTRO,
   article: {
     title: "Charmerende byhus med overkommelig have",
-    byline: "Boligannonce hos Nørreby Bolig (fiktiv mægler) ; udarbejdet af ejendomsmægler Jonas Friis ; maj 2026",
+    byline: "Boligannonce hos Nørreby Bolig (fiktiv mægler) – udarbejdet af ejendomsmægler Jonas Friis – maj 2026",
     paragraphs: [
       "Tæt på skole, bus og indkøb ligger dette charmerende byhus fra 1936. Boligen er autentisk og venter på nye ejere med lyst til at sætte deres eget præg.",
       "Stueetagen byder på et hyggeligt køkken og en stue med originale detaljer. Huset giver familien masser af plads i hverdagen, og fra spisepladsen er der udgang til terrassen.",
@@ -2369,13 +2369,13 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
       openEnded: true,
       part: { kind: "fields", fields: PENTAGRAM_FIELDS },
       points: [
-        "Afsender: ejendomsmægleren på sælgerens vegne : ikke en neutral beskriver.",
+        "Afsender: ejendomsmægleren på sælgerens vegne – ikke en neutral beskriver.",
         "Emne: et byhus fra 1936 til salg.",
         "Modtager: boligsøgende, her især en familie med børn.",
         "Situation: boligmarkedet, fremvisning på søndag.",
         "Formål: at sælge huset ved at få folk til fremvisningen.",
       ],
-      modelAnswer: "Afsenderen er ejendomsmægler Jonas Friis, som skriver på sælgerens vegne og derfor har en økonomisk interesse i teksten. Emnet er et byhus fra 1936. Modtagerne er boligsøgende, og især børnefamilier: teksten nævner skole, plads i hverdagen og to værelser. Situationen er en forestående fremvisning på søndag, så teksten skal virke NU. Genren er annoncen, og sproget er positivt ladet hele vejen igennem. Formålet er at sælge : første skridt er at få læseren til fremvisningen.",
+      modelAnswer: "Afsenderen er ejendomsmægler Jonas Friis, som skriver på sælgerens vegne og derfor har en økonomisk interesse i teksten. Emnet er et byhus fra 1936. Modtagerne er boligsøgende, og især børnefamilier: teksten nævner skole, plads i hverdagen og to værelser. Situationen er en forestående fremvisning på søndag, så teksten skal virke NU. Genren er annoncen, og sproget er positivt ladet hele vejen igennem. Formålet er at sælge – første skridt er at få læseren til fremvisningen.",
       feedback: "Vær præcis med afsenderen: mægleren skriver, men sælgeren betaler. Det forklarer, hvorfor intet i teksten er neutralt beskrevet.",
       examTip: ADVICE.kommunikation,
     },
@@ -2448,7 +2448,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
         "Kan forklare, hvad hver del gør ved ordet.",
       ],
       modelAnswer: "'overkommelig' = over + komme + -lig, hvor suffikset laver adjektivet. 'badeværelset' = bade + værelse + -t: sammensat plus bøjning. 'renoveringsbehov' = renover + -ing + s + behov: afledning, bindebogstav og sammensætning i ét ord. 'utraditionelt' = u- + tradition + -el + -t: præfiks, rod, afledning og bøjning.",
-      feedback: "Annoncesprog er fyldt med lange sammensatte ord : de er gode morfologi-opgaver, fordi de indeholder flere lag. Del først i de dele, der kan stå alene.",
+      feedback: "Annoncesprog er fyldt med lange sammensatte ord – de er gode morfologi-opgaver, fordi de indeholder flere lag. Del først i de dele, der kan stå alene.",
       examTip: ADVICE.morfologi,
     },
     {
@@ -2472,7 +2472,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
         "Direkte objekt: masser af plads (hele gruppen).",
         "Adverbial: i hverdagen.",
       ],
-      modelAnswer: "Verballeddet er 'giver', subjektet er 'Huset'. 'familien' er indirekte objekt (til hvem gives pladsen?), og 'masser af plads' er direkte objekt : præpositionsgruppen 'af plads' beskriver 'masser' og hører derfor med i samme led. 'i hverdagen' er adverbial.",
+      modelAnswer: "Verballeddet er 'giver', subjektet er 'Huset'. 'familien' er indirekte objekt (til hvem gives pladsen?), og 'masser af plads' er direkte objekt – præpositionsgruppen 'af plads' beskriver 'masser' og hører derfor med i samme led. 'i hverdagen' er adverbial.",
       feedback: "Den typiske fejl er at skille 'masser' og 'af plads' ad. Test det ved at flytte leddet: de flytter sammen, altså er det ét led.",
       examTip: ADVICE.syntaks,
     },
@@ -2504,7 +2504,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
             rewriteTo: "perfektum",
             rewriteAnswer: "Vi har vist boligen frem på søndag mellem 11 og 13.",
             rewriteKeys: ["har", "vist"],
-            explain: "'viser' er præsens, selvom handlingen ligger i fremtiden : tidsadverbialet 'på søndag' gør fremtiden tydelig. Perfektum ville hedde 'har vist'.",
+            explain: "'viser' er præsens, selvom handlingen ligger i fremtiden – tidsadverbialet 'på søndag' gør fremtiden tydelig. Perfektum ville hedde 'har vist'.",
           },
         ],
       },
@@ -2514,7 +2514,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
         "Nævner, at dansk kan bruge præsens om fremtiden med et tidsadverbial.",
         "Kan forklare, hvorfor annoncen vælger perfektum om renoveringen.",
       ],
-      modelAnswer: "'har renoveret' er perfektum, fordi hjælpeverbet står i præsens og hovedverbet i participium ; i præteritum hedder det 'renoverede'. 'viser' er præsens, men betydningen er fremtidig på grund af 'på søndag'. Valget er ikke tilfældigt: perfektum får renoveringen til at gælde nu, og præsens gør fremvisningen nærværende.",
+      modelAnswer: "'har renoveret' er perfektum, fordi hjælpeverbet står i præsens og hovedverbet i participium – i præteritum hedder det 'renoverede'. 'viser' er præsens, men betydningen er fremtidig på grund af 'på søndag'. Valget er ikke tilfældigt: perfektum får renoveringen til at gælde nu, og præsens gør fremvisningen nærværende.",
       feedback: "Husk forskellen på præteritum og perfektum: præteritum lukker handlingen inde i fortiden, mens perfektum trækker den frem til nu. Det er præcis derfor, annoncer elsker perfektum.",
       examTip: ADVICE.verbaltid,
     },
@@ -2534,7 +2534,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
         ],
         indleder: "hvis",
         funktion: "adverbial",
-        explain: "'Kom forbi' er hovedsætningen : en imperativ, der kan stå alene. 'hvis du vil se et utraditionelt hjem med sjæl' er ledsætningen: 'hvis du IKKE vil se' viser, at 'ikke' står mellem subjekt og verballed. Indlederen er 'hvis', og ledsætningen er adverbial (betingelse).",
+        explain: "'Kom forbi' er hovedsætningen – en imperativ, der kan stå alene. 'hvis du vil se et utraditionelt hjem med sjæl' er ledsætningen: 'hvis du IKKE vil se' viser, at 'ikke' står mellem subjekt og verballed. Indlederen er 'hvis', og ledsætningen er adverbial (betingelse).",
       },
       points: [
         "Markerer imperativen som hovedsætning.",
@@ -2542,8 +2542,8 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
         "Bruger ikke-reglen på begge dele.",
         "Siger, at ledsætningen er adverbial (betingelse).",
       ],
-      modelAnswer: "Hovedsætning: 'Kom forbi' : en bydeform, der kan stå alene. Ledsætning: 'hvis du vil se et utraditionelt hjem med sjæl' : ikke-testen giver 'hvis du IKKE vil se', altså 'ikke' mellem subjekt og verballed. Den indledes af 'hvis' og fungerer som adverbial, fordi den angiver betingelsen for at komme forbi.",
-      feedback: "Imperativer har ikke noget synligt subjekt, men de er stadig hovedsætninger. Test dem med 'ikke': 'Kom ikke forbi' : 'ikke' står efter verbet.",
+      modelAnswer: "Hovedsætning: 'Kom forbi' – en bydeform, der kan stå alene. Ledsætning: 'hvis du vil se et utraditionelt hjem med sjæl' – ikke-testen giver 'hvis du IKKE vil se', altså 'ikke' mellem subjekt og verballed. Den indledes af 'hvis' og fungerer som adverbial, fordi den angiver betingelsen for at komme forbi.",
+      feedback: "Imperativer har ikke noget synligt subjekt, men de er stadig hovedsætninger. Test dem med 'ikke': 'Kom ikke forbi' – 'ikke' står efter verbet.",
       examTip: ADVICE.hovedled,
     },
   ],
@@ -2551,7 +2551,7 @@ const SAT_8_EJENDOMSANNONCE: ExamSatsT = {
 
 // ---------------------------------------------------------------------------
 // Samling + rotation. Eleven skal aldrig have det samme sæt to gange i
-// træk ; når ALLE sæt er prøvet, blandes puljen igen (og det får eleven at
+// træk – når ALLE sæt er prøvet, blandes puljen igen (og det får eleven at
 // vide, forklaringen står på prøveskærmen).
 // ---------------------------------------------------------------------------
 export const HHX_EXAM_SATS: ExamSatsT[] = [
@@ -2569,7 +2569,7 @@ export const HHX_EXAM_SATS: ExamSatsT[] = [
  * Vælg næste prøve-sæt ud fra hvilke, eleven allerede har prøvet.
  * - Ubetydelige sæt først: et tilfældigt ubenyttet sæt.
  * - Alle prøvet: et tilfældigt sæt, der er ANDET end sidst brugte
- *   (så man aldrig får det samme to gange i træk) ; `allUsed` fortæller
+ *   (så man aldrig får det samme to gange i træk) – `allUsed` fortæller
  *   UI'en, at den skal forklare, hvorfor gentagelser nu kan forekomme.
  */
 export function pickNextExamSats(

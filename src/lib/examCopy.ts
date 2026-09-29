@@ -33,7 +33,7 @@ function describeAnswer(task: Task, answer: SavedAnswer | undefined): string {
           const sym = syms[i];
           return `${c} = ${sym ? getSymbolDef(sym).short : "(ikke valgt)"}`;
         });
-        return parts.join(" ; ");
+        return parts.join(" – ");
       }
       return "(ikke besvaret)";
     }
@@ -50,7 +50,7 @@ function describeAnswer(task: Task, answer: SavedAnswer | undefined): string {
         return task.rows
           .map((r, i) => `${r.label} = ${answer.assignments[i] ?? "(tom)"}`)
           .filter((line, i) => task.blankIndexes.includes(i))
-          .join(" ; ");
+          .join(" – ");
       }
       return "(ikke besvaret)";
     }

@@ -5,7 +5,7 @@ const c = "sproghandlinger" as const;
 
 // SPROGHANDLINGER (HHX-pensum: "sproghandlinger" + "elementær viden om
 // sproghandlinger og kommunikationsteori ... både receptivt og produktivt").
-// Kernepointen: når vi taler og skriver, GØR vi noget ; vi påstår, spørger,
+// Kernepointen: når vi taler og skriver, GØR vi noget – vi påstår, spørger,
 // opfordrer, lover, råder, advarer, undskylder osv.
 export const SPROGHANDLINGER_TASKS: Task[] = [
  mc(
@@ -22,7 +22,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling udfører man med sætningen 'Jeg lover at sende tilbuddet i morgen'?",
  ["Et løfte", "En påstand", "Et spørgsmål", "En advarsel"],
  0,
- "Verbet 'lover' viser, at taleren forpligter sig til noget fremadrettet ; det er et løfte."
+ "Verbet 'lover' viser, at taleren forpligter sig til noget fremadrettet – det er et løfte."
  ),
  mc(
  "sproghandlinger-3",
@@ -38,7 +38,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling er 'Pas på med at sende fortrolige oplysninger i chatten'?",
  ["En advarsel", "Et løfte", "En påstand", "En hilsen"],
  0,
- "Taleren gør opmærksom på en risiko og opfordrer til forsigtighed ; en advarsel (ofte kombineret med en opfordring)."
+ "Taleren gør opmærksom på en risiko og opfordrer til forsigtighed – en advarsel (ofte kombineret med en opfordring)."
  ),
  mc(
  "sproghandlinger-5",
@@ -46,7 +46,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling er 'Undskyld, at svaret trak ud'?",
  ["En undskyldning", "Et spørgsmål", "En trussel", "Et tilbud"],
  0,
- "Taleren anerkender en fejl og beder om tilgivelse ; en klassisk undskyldning. I kundeservice er den vigtig for at bevare relationen."
+ "Taleren anerkender en fejl og beder om tilgivelse – en klassisk undskyldning. I kundeservice er den vigtig for at bevare relationen."
  ),
  mc(
  "sproghandlinger-6",
@@ -54,7 +54,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling er 'Rapporten er nu færdig og sendt til gennemsyn'?",
  ["En påstand", "En opfordring", "Et løfte", "En advarsel"],
  0,
- "Taleren fremsætter noget, der kan vurderes som sandt eller falsk ; en påstand."
+ "Taleren fremsætter noget, der kan vurderes som sandt eller falsk – en påstand."
  ),
  mc(
  "sproghandlinger-7",
@@ -62,12 +62,12 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling er 'Jeg synes, du skal tage til netværksmødet på torsdag'?",
  ["Et råd", "Et løfte", "En undskyldning", "Et spørgsmål"],
  0,
- "Taleren anbefaler noget til modtagerens eget bedste ; et råd. Råd kan sagtens være indirekte: 'Jeg ville nok tage af sted, hvis jeg var dig.'"
+ "Taleren anbefaler noget til modtagerens eget bedste – et råd. Råd kan sagtens være indirekte: 'Jeg ville nok tage af sted, hvis jeg var dig.'"
  ),
  mc(
  "sproghandlinger-8",
  c,
- "En reklame slutter med 'Køb nu ; og få 20 % rabat i dag!'. Hvilken sproghandling dominerer?",
+ "En reklame slutter med 'Køb nu – og få 20 % rabat i dag!'. Hvilken sproghandling dominerer?",
  ["En opfordring", "En påstand", "Et løfte", "En undskyldning"],
  0,
  "Reklamen opfordrer modtageren til at handle nu. Opfordringer er reklamens vigtigste sproghandling."
@@ -86,7 +86,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvorfor bruger man ofte indirekte sproghandlinger i professionelle sammenhænge?",
  ["Fordi de lyder høfligere og giver modtageren plads til at sige nej", "Fordi de er kortere og hurtigere at skrive i en travl hverdag", "Fordi de altid er mere præcise og dækker flere betydninger", "Fordi man dermed undgår grammatiske fejl i sine formuleringer"],
  0,
- "Indirekte opfordringer ('Vil du være sød at ...?') blødgør budskabet og bevarer en god relation ; vigtigt, når man skal samarbejde med kunder og kolleger."
+ "Indirekte opfordringer ('Vil du være sød at ...?') blødgør budskabet og bevarer en god relation – vigtigt, når man skal samarbejde med kunder og kolleger."
  ),
  mc(
  "sproghandlinger-11",
@@ -94,7 +94,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "En chef siger på et møde: 'Jeg synes, vi skal overveje at udskyde deadline.' Hvad er den reelle sproghandling?",
  ["En indirekte opfordring til at udskyde deadline", "Et spørgsmål om tidspunkter og tidsplaner", "Et løfte om at arbejde hurtigere på projektet", "En ren påstand uden nogen betydning for mødet"],
  0,
- "Chefen lægger op til en beslutning uden at give en direkte ordre ; en indirekte opfordring, typisk for ledelseskommunikation."
+ "Chefen lægger op til en beslutning uden at give en direkte ordre – en indirekte opfordring, typisk for ledelseskommunikation."
  ),
  mc(
  "sproghandlinger-12",
@@ -110,7 +110,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling er 'Stop! Det må du ikke gøre!'?",
  ["En ordre/forbud", "Et tilbud", "En undskyldning", "Et løfte"],
  0,
- "Taleren kræver, at modtageren stopper ; en ordre eller et forbud. Ordre er den mest direkte form for opfordring."
+ "Taleren kræver, at modtageren stopper – en ordre eller et forbud. Ordre er den mest direkte form for opfordring."
  ),
  mc(
  "sproghandlinger-14",
@@ -118,7 +118,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling udfører man ved at sige 'Tillykke med fødselsdagen'?",
  ["En lykønskning", "En påstand", "Et spørgsmål", "En advarsel"],
  0,
- "Selve det at sige det ER handlingen: man lykønsker. Den slags kaldes også performative ytringer ; ordet gør det, det siger."
+ "Selve det at sige det ER handlingen: man lykønsker. Den slags kaldes også performative ytringer – ordet gør det, det siger."
  ),
  mc(
  "sproghandlinger-15",
@@ -142,7 +142,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Klik på det ord, der gør sætningen til en DIREKTE opfordring.",
  "Send venligst jeres tilbud inden fredag",
  [0],
- "'Send' er imperativformen (bydeform) ; den gør sætningen til en direkte opfordring."
+ "'Send' er imperativformen (bydeform) – den gør sætningen til en direkte opfordring."
  ),
  ck(
  "sproghandlinger-18",
@@ -158,7 +158,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvilken sproghandling er 'Vil du have et glas vand?'?",
  "Skriv sproghandlingen:",
  "tilbud",
- "Taleren tilbyder modtageren noget ; et tilbud (ikke et løfte, for der er ingen forpligtelse før modtageren svarer).",
+ "Taleren tilbyder modtageren noget – et tilbud (ikke et løfte, for der er ingen forpligtelse før modtageren svarer).",
  ["et tilbud", "tilbuddet"]
  ),
  mc(
@@ -167,7 +167,7 @@ export const SPROGHANDLINGER_TASKS: Task[] = [
  "Hvorfor er sproghandlinger vigtige at kunne analysere i HHX AP?",
  ["Fordi man skal kunne genkende, hvad en tekst prøver at GØRE ved sin læser", "Fordi man skal kunne stave dem korrekt i en tekst, ellers tæller det forkert", "Fordi de kun findes på engelsk, aldrig på dansk, så man skal oversætte", "Fordi de altid står i bydeform, også kaldet imperativ, i alle tekster"],
  0,
- "En tekst er ikke bare ord ; den handler. I prøven skal du kunne sige, hvilke sproghandlinger en tekst udfører, og vurdere om de passer til situationen."
+ "En tekst er ikke bare ord – den handler. I prøven skal du kunne sige, hvilke sproghandlinger en tekst udfører, og vurdere om de passer til situationen."
  ),
 
   mc("sproghandlinger-21", c, "Hvad er forskellen på en advarsel og en trussel?", ["En advarsel gør opmærksom på en risiko; en trussel lover selv at skade eller straffe", "En advarsel er altid skriftlig, en trussel altid mundtlig", "En advarsel er en påstand, en trussel et spørgsmål", "Der er ingen forskel"], 0, "Ved en advarsel advarer man mod noget, der kan ske; ved en trussel forpligter taleren sig til at gøre noget skadeligt."),

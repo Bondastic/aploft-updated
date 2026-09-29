@@ -39,7 +39,7 @@ export default function SchoolGatePage({
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
           >
-            <p className="font-display text-2xl font-extrabold text-ink sm:text-3xl">Opdatering : vælg din skole</p>
+            <p className="font-display text-2xl font-extrabold text-ink sm:text-3xl">Opdatering – vælg din skole</p>
             <p className="mx-auto mt-1.5 max-w-md text-sm text-ink/55">
               Du har allerede valgt {theme.label}. Nu skal vi bare vide, hvilken skole du går på, så du kan se eksamensformen på{" "}
               <span className="font-semibold text-ink">præcis din skole</span> under fanen Prøve.

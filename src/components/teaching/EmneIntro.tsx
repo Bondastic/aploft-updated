@@ -21,7 +21,7 @@ export default function EmneIntro({
   reduceMotion,
   onStart,
   onBack,
-  startLabel = "Jeg er klar : start opgaverne",
+  startLabel = "Jeg er klar – start opgaverne",
 }: {
   intro: EmneIntroT;
   /** Tailwind-klasser for sporets farve (fx "bg-blue-600"). */
@@ -45,7 +45,7 @@ export default function EmneIntro({
       )}
 
       <div>
-        <p className="text-[11px] font-extrabold uppercase tracking-widest text-ink/40">Læs først : 1 minut</p>
+        <p className="text-[11px] font-extrabold uppercase tracking-widest text-ink/40">Læs først – 1 minut</p>
         <h1 className="font-display text-2xl font-extrabold text-ink">{intro.title}</h1>
         <p className="mt-1 text-sm leading-relaxed text-ink/60">{intro.lead}</p>
       </div>
@@ -76,7 +76,7 @@ export default function EmneIntro({
 
       <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
         <p className="font-bold text-ink">Begreberne, du skal bruge</p>
-        <p className="text-[11px] text-ink/45">De latinske betegnelser er de primære : det er dem, du bruger til eksamen.</p>
+        <p className="text-[11px] text-ink/45">De latinske betegnelser er de primære – det er dem, du bruger til eksamen.</p>
         <dl className="mt-2 space-y-1.5">
           {intro.terms.map((t) => (
             <div key={t.term} className="rounded-xl bg-ink/[0.03] px-3 py-2">
@@ -89,7 +89,7 @@ export default function EmneIntro({
 
       {intro.walkthrough && (
         <div className="rounded-2xl border border-ink/10 bg-white p-4 shadow-sm">
-          <p className="font-bold text-ink">Sådan gør du : trin for trin</p>
+          <p className="font-bold text-ink">Sådan gør du – trin for trin</p>
           <p className="mt-1.5 rounded-xl bg-ink/[0.04] px-3 py-2 text-[13px] font-semibold italic leading-relaxed text-ink/70">
             {intro.walkthrough.case}
           </p>
@@ -127,7 +127,7 @@ export default function EmneIntro({
         </div>
       )}
 
-      <Mascot pose="explain" size="sm" reduceMotion={reduceMotion} speech="Læs det roligt igennem : så giver opgaverne meget mere mening bagefter." />
+      <Mascot pose="explain" size="sm" reduceMotion={reduceMotion} speech="Læs det roligt igennem – så giver opgaverne meget mere mening bagefter." />
 
       <button
         type="button"
